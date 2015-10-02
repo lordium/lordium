@@ -1,0 +1,13 @@
+#!/bin/bash
+INSTALL_TOOLS_PATH=${INSTALL_TOOLS_PATH:-$(dirname $0)}
+VENV_PATH=${VENV_PATH:-${INSTALL_TOOLS_PATH}}
+VENV_DIR=${VENV_NAME:-/../.venv}
+TOOLS=${INSTALL_TOOLS_PATH}
+VENV=${VENV:-${VENV_PATH}/${VENV_DIR}}
+echo $INSTALL_TOOLS_PATH
+echo $VENV_PATH
+echo $VENV_DIR
+echo $TOOLS
+echo $VENV
+
+source ${VENV}/bin/activate && "$@"
