@@ -59,3 +59,18 @@ target/
 
 #virtual environment
 .venv
+
+#db.sql
+db.sqlite3
+
+#static_executed_files
+super_static/
+
+#node_modules
+node_modules/
+
+#dist
+dist/
+
+#sass cache
+.sass-cache
