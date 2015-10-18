@@ -90,3 +90,118 @@ body {
     border-bottom: 0;
   }
 }
+////////////////////////
+$buttons-border: RED;
+$border-round-str: 100px;
+$mock-background-color: #eeeeee;
+.round-borders{
+  -moz-border-radius: $border-round-str;
+  -webkit-border-radius: $border-round-str;
+  border-radius: $border-round-str;
+  -khtml-border-radius: $border-round-str;
+}
+
+.common-shadow{
+  -webkit-box-shadow: 0px 2px 1px 0px rgba(0,0,0,0.12);
+  -moz-box-shadow: 0px 2px 1px 0px rgba(0,0,0,0.12);
+  box-shadow: 0px 2px 1px 0px rgba(0,0,0,0.12);
+}
+
+/////////////////
+
+body,html{
+  background-color: #E9E9E9;
+}
+
+.navbar-fixed-top{
+  .brand-container{
+    width: 80px;
+    height: auto;
+    background-color: #f8f8f8;
+    border-color: #e7e7e7;
+    padding: 4px;
+    margin-top: -9px;
+    margin-left: 22px;
+    @extend .round-borders;
+    @extend .common-shadow;
+
+    img{
+      width: 100%;
+      height: auto;
+      @extend .round-borders;
+      background-color: $mock-background-color;
+      min-width: 100%;
+      min-height: 70px;
+
+    }
+  }
+}
+
+.data-container{
+  padding-top: 100px;
+  //Add box sizing
+  background-color: #E9E9E9;
+  min-height: 100%;
+
+  .row {
+
+    .post-container{
+      //background-color: RED;
+
+      .thumbnail{
+        padding: 0px;
+
+        .caption{
+
+          .tags-container{
+            width: 100%;
+            max-width: 100%;
+
+            span{
+              display: inline-block;
+              position: relative;
+              padding: 2px;
+              color: #999999;
+
+            }
+          }
+
+          h3{
+            padding-top: 0px;
+          }
+
+          .location-container{
+            color: #999999;
+            font-size: 12px;
+            text-align: right;
+            margin-bottom: 0px;
+            span {
+
+            }
+
+            .glyphicon{
+              color: #999999;
+            }
+          }
+        }
+      }
+
+    }
+  }
+}
+
+.mock{
+
+  h3, p, span, .glyphicon {
+    color: $mock-background-color !important;
+    background-color: $mock-background-color !important;
+  }
+
+  img{
+    width: 400px;
+    height: 320px;
+    background-color: $mock-background-color;
+  }
+}
+
+

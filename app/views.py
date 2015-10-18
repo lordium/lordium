@@ -31,9 +31,18 @@ def login_redirect(request):
 
 		api = InstaMine(request=request)
 		if api.authenticate_user(code):
-			api.flow_manager()
+			return api.flow_manager()
 			result = api.get_snaps()
 	return HttpResponse(result or 'Got it')
+
+
+def process_setup(request):
+	context = RequestContext(request, {
+									'sometext': settings.STATIC_URL,
+									'instagram_url': '/redirect_url'
+									})
+	template = loader.get_template('app/views/process_setup.html')
+	return HttpResponse(template.render(context))
 
 def account_setup(request):
 	"""

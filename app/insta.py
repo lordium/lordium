@@ -1,5 +1,6 @@
 
 from instagram.client import InstagramAPI
+from django.http import HttpResponse, HttpResponseRedirect
 from datetime import datetime
 from models import Account
 import requests
@@ -74,9 +75,12 @@ class InstaMine(InstagramAPI):
 		Check user, initiate or let user login
 		"""
 		user_status = self.detect_user()
-		if user_status == False:
+		if user_status == False: #there is no user
 			#initiate the setup
 			self.create_user()
+
+			return HttpResponseRedirect('/process_setup')
+
 			# enable setup mode in responose
 			# use ajax and angular view OK?
 			return #Some json response
@@ -172,9 +176,8 @@ def get_user_obj(user_obj):
 	return {
 				'username': user_obj.get('username'),
 				'insta_id': user_obj.get('id'),
-				'username': user.get('username'),
 				'full_name': user.get('full_name'),
-				'bio': user.get('bio'),
+				'slogan': user.get('bio'),
 				'website': user.get('website'),
 				'profile_picture': user.get('profile_picture')
 			}
@@ -183,14 +186,6 @@ def get_user_obj(user_obj):
 		#{u'username': u'arslanrafique', u'bio': u'Engineer, <3 Stockholm!', u'website': u'', u'profile_picture': u'https://scontent.cdninstagram.com/hphotos-xpf1/t51.2885-19/924761_778256512251267_1485306869_a.jpg', u'full_name': u'Arslan Rafique', u'id': u'1141033715'}
 
 
-username = models.CharField(max_length=140, unique=True) # check with instagram
-	email = models.EmailField(unique=True)
-	insta_id = models.CharField(max_length=140, unique=True, null=True)
-	insta_token = models.TextField("Token", null=True)
-	first_name = models.CharField(max_length=40, null=True)
-	last_name = models.CharField(max_length=40, null=True)
-	slogan = models.CharField(max_length=140, null=True)
-	date_created = models.DateTimeField(auto_now_add=True)
-	date_update = models.DateTimeField(auto_now=True)
+
 
 

@@ -15,6 +15,7 @@ class Account(AbstractBaseUser):
 	insta_token = models.TextField("Token", null=True)
 	first_name = models.CharField(max_length=40, null=True)
 	last_name = models.CharField(max_length=40, null=True)
+	profile_picture = models.TextField(validators=[URLValidator()],null=True)
 	slogan = models.CharField(max_length=140, null=True)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_update = models.DateTimeField(auto_now=True)
