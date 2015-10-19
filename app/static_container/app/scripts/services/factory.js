@@ -24,7 +24,8 @@ angular.module('staticContainerApp')
 	  super_container.middle_tunnel = []; // will show posts on middle column
 	  super_container.right_tunnel = []; // will show posts on right column
 	  super_container.last_index = ''; // will contain ids of last post for each tunnel
-	  super_container.tunnels = [];
+	  super_container.tunnels = [[],[],[]]; //three main tunnels
+	  super_container.tunnels_sizes = [0,0,0]; //keep the posts sizes for each tunnel
 
 
 	                            // will be end product of this factory
@@ -85,7 +86,7 @@ angular.module('staticContainerApp')
 
 	  	//file the frame with mocks
 	  	// check width and setup tunnels process
-
+	  	var all_posts = [];
 	  	for(var i=0; i< 5; i++){
 	  		var mock_post = {
 					  	'img_url': '',//'http://i.imgur.com/1taT5sV.jpg',
@@ -96,12 +97,26 @@ angular.module('staticContainerApp')
 					    'location_link': '',
 					    'class': 'mock'
 					};
-	  		super_container.left_tunnel.push(mock_post);
-	  		super_container.middle_tunnel.push(mock_post);
-	  		super_container.right_tunnel.push(mock_post);
+	  		all_posts.push(mock_post);
+
 	  	}
-	  	super_container.tunnels = [super_container.left_tunnel,super_container.middle_tunnel,super_container.right_tunnel];
+	  	super_container.update_tunnels(all_posts);
 	  	super_container.poke(); // call for initial images
+	  }
+
+	  super_container.update_tunnels = function(posts){
+	  	var tunnel_swap = 0;
+	  	angular.forEach(posts, function(post){
+	  			super_container.tunnels[tunnel_swap].push(post);
+	  			tunnel_swap +=1;
+	  			if(tunnel_swap > 2){
+	  				tunnel_swap = 0;
+	  			}
+	  	});
+	  }
+
+	  super_container.flush_tunnels = function(){
+	  	super_container.tunnels = [];
 	  }
 
 
