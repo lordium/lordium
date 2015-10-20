@@ -22,8 +22,25 @@ angular
   ])
   .config(function($interpolateProvider){
     $interpolateProvider.startSymbol('{$').endSymbol('$}');
+}).config(function($provide) {
+    $provide.decorator('$httpBackend', function($delegate) {
+        var proxy = function(method, url, data, callback, headers) {
+            var interceptor = function() {
+                var _this = this,
+                    _arguments = arguments;
+                setTimeout(function() {
+                    callback.apply(_this, _arguments);
+                }, 3000);
+            };
+            return $delegate.call(this, method, url, data, interceptor, headers);
+        };
+        for(var key in $delegate) {
+            proxy[key] = $delegate[key];
+        }
+        return proxy;
+    });
 })
-  .run(function($httpBackend) {
+  .run(function($httpBackend, $timeout) {
     var phones = [{name: 'phone1'}, {name: 'phone2'}];
 
     // returns the current list of phones
@@ -36,7 +53,7 @@ angular
       for(var i=0; i< 5; i++){
         var single_post = {
               'img_url': 'http://i.imgur.com/1taT5sV.jpg',
-              'title': 'Your awesome title' + String(i),
+              'title': 'Your awesome title' + String(i) + String(new Date()),
               'tags': ['awesome', 'amazing', 'cool'],
               'description': 'Breach your limits and show the world all you got! ' + String(i),
               'location': 'Stockholm, Sweden' + String(i),
@@ -50,7 +67,7 @@ angular
       // var phone = angular.fromJson(data);
       // phones.push(phone);
 
-      return [200, posts, {}];
+      return [200, angular.fromJson(posts), {}];
     });
 
     $httpBackend.whenGET(/^\/templates\//).passThrough();

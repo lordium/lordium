@@ -53,7 +53,7 @@
   <div class="container-fluid data-container">
 
     <div class="row">
-      <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 post-container" ng-repeat="tunnel in super_container.tunnels">
+      <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 post-container" ng-repeat="tunnel in super_container.tunnels" ng-cloak>
        <div class="thumbnail {$ im_post.class $}" ng-repeat="im_post in tunnel">
          <img src="{$ im_post.img_url $}" alt="">
          <div class="caption">
@@ -70,6 +70,9 @@
        </div>
       </div>
     </div>
+    <!-- <div class="bottom-animation">
+      Loader
+    </div> -->
   </div>
 
 

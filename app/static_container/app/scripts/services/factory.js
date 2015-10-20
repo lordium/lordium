@@ -26,6 +26,8 @@ angular.module('staticContainerApp')
 	  super_container.last_index = ''; // will contain ids of last post for each tunnel
 	  super_container.tunnels = [[],[],[]]; //three main tunnels
 	  super_container.tunnels_sizes = [0,0,0]; //keep the posts sizes for each tunnel
+	  super_container.tunnels_mock = false;
+	  super_container.tunnel_swap = 0;
 
 
 	                            // will be end product of this factory
@@ -60,10 +62,11 @@ angular.module('staticContainerApp')
            data: post_data
 	       })
 	       .success(function (data) {
-	       		return data;// TODO:return wont work, use scope assignment etc
+	       		console.log(data);
+	       		super_container.update_tunnels(data);
 	       })
 	       .error(function (data, status) {
-	       		return data; // TODO:return wont work, use scope assignment etc
+	       		alert(data);
 	       });
 	  };
 
@@ -72,14 +75,9 @@ angular.module('staticContainerApp')
 	  	//2- show suitable response
 
 	  	//get posts
+	  	console.log('POCKED');
 	  	var server_obj = {}
 	  	var server_response = super_container.post_server(server_obj); //will return promise
-	  	console.log(server_response);
-	  	server_response.then(console.log('done'), console.log('ERROR'));
-	  	var deferred = $q.defer();
-	  	console.log(deferred);
-	  	console.log(deferred.promise);
-	  	deferred.promise.then(console.log('function'), console.log('error'));
 	  }
 
 	  super_container.init = function(){
@@ -101,25 +99,38 @@ angular.module('staticContainerApp')
 
 	  	}
 	  	super_container.update_tunnels(all_posts);
+	  	super_container.tunnels_mock = true;
 	  	super_container.poke(); // call for initial images
+
 	  }
 
 	  super_container.update_tunnels = function(posts){
-	  	var tunnel_swap = 0;
+	  	if(super_container.tunnels_mock == true){
+	  		super_container.flush_tunnels();
+	  		super_container.tunnels_mock = false;
+	  	}
 	  	angular.forEach(posts, function(post){
-	  			super_container.tunnels[tunnel_swap].push(post);
-	  			tunnel_swap +=1;
-	  			if(tunnel_swap > 2){
-	  				tunnel_swap = 0;
+	  			super_container.tunnels[super_container.tunnel_swap].push(post);
+	  			console.log(super_container.tunnel_swap);
+	  			super_container.tunnel_swap +=1;
+	  			if(super_container.tunnel_swap > 2){
+	  				super_container.tunnel_swap = 0;
 	  			}
+
 	  	});
 	  }
 
 	  super_container.flush_tunnels = function(){
-	  	super_container.tunnels = [];
+	  	super_container.tunnels = [[],[],[]];
 	  }
 
 
+	 $(window).scroll(function() {
+	     if($(window).scrollTop() + $(window).height() == $(document).height()) {
+	     	//TODO: Start animation here
+	     	super_container.poke(); //TODO: End animation in this function
+	     }
+	  });
 
 	  return super_container; // if everything is ok, send object else exception
 
