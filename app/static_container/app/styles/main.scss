@@ -108,6 +108,15 @@ $mock-background-color: #eeeeee;
 }
 
 /////////////////
+.finish-him{
+  display: none !important;
+
+  .navbar-right{
+    display: none !important;
+  }
+}
+
+
 
 body,html{
   background-color: #E9E9E9;
@@ -145,6 +154,25 @@ body,html{
   min-height: 100%;
 
   .row {
+
+    &.login-inpage{
+      text-align: center;
+      padding: 66px;
+
+      h1{
+        font-weight: 100;
+      }
+
+      a{
+
+        img{
+          width: 64px;
+          height: auto;
+          padding-top: 20px;
+        }
+
+      }
+    }
 
     .post-container{
       //background-color: RED;
@@ -213,5 +241,7 @@ body,html{
     background-color: $mock-background-color;
   }
 }
+
+
 
 

@@ -30,4 +30,71 @@ angular.module('staticContainerApp')
   		$scope.super_container.poke();
   	}
 
-  }]);
+  }])
+  .directive('letmeIn', function(){
+  	return {
+  		restrict: 'A',
+  		link: function(scope, element, attrs){
+  			//redirect user to login page/instagram
+  			element.on('click', function(){
+  				scope.super_container.login();
+  			});
+
+  			scope.$watch('super_container.account_configured', function(){
+  				if(scope.super_container.account_configured == false){
+  					element.removeClass('finish-him');
+  				}
+  				else{
+  					element.addClass('finish-him');
+  				}
+  			});
+  		}
+  	}
+  })
+  .directive('luckyYou', function(){
+  	return {
+  		restrict: 'A',
+  		link: function(scope, element, attrs){
+			scope.$watch('super_container.account_configured', function(){
+				if(scope.super_container.account_configured == false){
+					attrs.$set('src',"images/insta.png");
+					// element.addClass('finish-him');
+				}
+				else{
+					// element.removeClass('finish-him');
+					attrs.$set('src',"images/insta.png");
+				}
+			});
+  		}
+  	}
+  })
+  .directive('rightBar', function(){
+  	return{
+  		restrict: 'A',
+  		template: menu_tempate,
+  		link: function(scope, element, attrs){
+  			if(scope.super_container.account_configured == false){
+  				element.addClass('finish-him');
+  			}
+  			else{
+  				element.removeClass('finish-him');
+  			}
+  		}
+  	}
+  });
+
+  var menu_tempate = '<ul class="nav navbar-nav navbar-right">'+
+              '<li><a href="#">About</a></li>'+
+              '<li class="something">'+
+                '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Login<span class="caret"></span></a>'+
+                '<ul class="dropdown-menu">'+
+                  '<li><a href="#">Action</a></li>'+
+                  '<li><a href="#">Another action</a></li>'+
+                  '<li><a href="#">Something else here</a></li>'+
+                  '<li role="separator" class="divider"></li>'+
+                  '<li><a href="#">Separated link</a></li>'+
+                  '<li role="separator" class="divider"></li>'+
+                  '<li><a href="#">One more separated link</a></li>'+
+                '</ul>'+
+              '</li>'+
+            '</ul>';

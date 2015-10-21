@@ -47,6 +47,8 @@ angular
     var json_data = JSON.stringify(phones);
     $httpBackend.whenGET('/get_update').respond(json_data);
 
+    $httpBackend.whenGET('/login').respond(json_data);
+
     // adds a new phone to the phones array
     $httpBackend.whenPOST('/get_update').respond(function(method, url, data) {
       var posts = [];

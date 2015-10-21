@@ -20,6 +20,8 @@ angular.module('staticContainerApp')
 	    'location': 'Stockholm, Sweden',
 	    'location_link': ''};
 
+	  super_container.account_configured = false;
+	  super_container.perform_update = false; // make it false if no need to update tunnels
 	  super_container.left_tunnel = []; // will show posts on left column
 	  super_container.middle_tunnel = []; // will show posts on middle column
 	  super_container.right_tunnel = []; // will show posts on right column
@@ -32,7 +34,7 @@ angular.module('staticContainerApp')
 
 	                            // will be end product of this factory
 
-	  super_container.get_posts = function get_posts(post_url){
+	  super_container.get_posts = function(post_url){
 	  	post_url = '/get_update';
  		$http({
            method: 'GET',
@@ -52,7 +54,7 @@ angular.module('staticContainerApp')
 	       });
 	  };
 
-	  super_container.post_server = function post_server(post_data){
+	  super_container.post_server = function(post_data){
  		return $http({
            method: 'POST',
            url: '/get_update',
@@ -63,21 +65,46 @@ angular.module('staticContainerApp')
 	       })
 	       .success(function (data) {
 	       		console.log(data);
-	       		super_container.update_tunnels(data);
+	       		super_container.update_tunnels(data, 'real');
 	       })
 	       .error(function (data, status) {
 	       		alert(data);
 	       });
 	  };
 
-	  super_container.poke = function poke(){
+	  super_container.get_server = function(get_url, data){
+ 		return $http({
+           method: 'GET',
+           url: get_url,
+           headers: {
+               'Content-Type': undefined
+           },
+           data: data
+	       })
+	       .success(function (data) {
+	       		console.log(data);
+	       		// super_container.update_tunnels(data);
+	       })
+	       .error(function (data, status) {
+	       		alert(data);
+	       });
+	  }
+
+	  super_container.poke = function(){
 	  	//1- get data from server
 	  	//2- show suitable response
 
 	  	//get posts
 	  	console.log('POCKED');
-	  	var server_obj = {}
-	  	var server_response = super_container.post_server(server_obj); //will return promise
+	  	super_container.post_server({}); //will return promise
+	  }
+
+	  super_container.response_type = function(data){
+	  	//TODO: check, if not posts then perform suitable action
+	  }
+
+	  super_container.login = function(){
+	  	super_container.get_server('/login', 'letmein');
 	  }
 
 	  super_container.init = function(){
@@ -98,26 +125,30 @@ angular.module('staticContainerApp')
 	  		all_posts.push(mock_post);
 
 	  	}
-	  	super_container.update_tunnels(all_posts);
+	  	super_container.update_tunnels(all_posts, 'dum');
 	  	super_container.tunnels_mock = true;
 	  	super_container.poke(); // call for initial images
 
 	  }
 
-	  super_container.update_tunnels = function(posts){
-	  	if(super_container.tunnels_mock == true){
-	  		super_container.flush_tunnels();
-	  		super_container.tunnels_mock = false;
-	  	}
-	  	angular.forEach(posts, function(post){
-	  			super_container.tunnels[super_container.tunnel_swap].push(post);
-	  			console.log(super_container.tunnel_swap);
-	  			super_container.tunnel_swap +=1;
-	  			if(super_container.tunnel_swap > 2){
-	  				super_container.tunnel_swap = 0;
-	  			}
+	  super_container.update_tunnels = function(posts, utype){
+	  	super_container.response_type(posts);
+	  	if(utype=='dum' || super_container.perform_update){
+	  		if(super_container.tunnels_mock == true){
+	  			super_container.flush_tunnels();
+	  			super_container.tunnels_mock = false;
+	  		}
+	  		angular.forEach(posts, function(post){
+	  				super_container.tunnels[super_container.tunnel_swap].push(post);
+	  				console.log(super_container.tunnel_swap);
+	  				super_container.tunnel_swap +=1;
+	  				if(super_container.tunnel_swap > 2){
+	  					super_container.tunnel_swap = 0;
+	  				}
 
-	  	});
+	  		});
+	  	}
+
 	  }
 
 	  super_container.flush_tunnels = function(){
