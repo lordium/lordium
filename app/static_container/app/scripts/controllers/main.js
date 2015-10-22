@@ -40,8 +40,28 @@ angular.module('staticContainerApp')
   				scope.super_container.login();
   			});
 
-  			scope.$watch('super_container.account_configured', function(){
-  				if(scope.super_container.account_configured == false){
+  			scope.$watch('super_container.show_login', function(){
+  				if(scope.super_container.show_login == true){
+  					element.removeClass('finish-him');
+  				}
+  				else{
+  					element.addClass('finish-him');
+  				}
+  			});
+  		}
+  	}
+  })
+  .directive('messageInpage', function(){
+  	return {
+  		restrict: 'A',
+  		link: function(scope, element, attrs){
+  			//redirect user to login page/instagram
+  			element.on('click', function(){
+  				scope.super_container.login();
+  			});
+
+  			scope.$watch('super_container.show_message', function(){
+  				if(scope.super_container.show_message == true){
   					element.removeClass('finish-him');
   				}
   				else{
@@ -79,11 +99,21 @@ angular.module('staticContainerApp')
   			else{
   				element.removeClass('finish-him');
   			}
+
+  			scope.$watch('super_container.account_configured', function(){
+  				if(scope.super_container.account_configured == false){
+  					element.addClass('finish-him');
+  				}
+  				else{
+  					element.removeClass('finish-him');
+  				}
+  			});
+
   		}
   	}
   });
 
-  var menu_tempate = '<ul class="nav navbar-nav navbar-right">'+
+  var menu_tempate = '<ul class="nav navbar-nav navbar-right finish-him">'+
               '<li><a href="#">About</a></li>'+
               '<li class="something">'+
                 '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Login<span class="caret"></span></a>'+

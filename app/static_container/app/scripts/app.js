@@ -45,6 +45,9 @@ angular
 
     // returns the current list of phones
     var json_data = JSON.stringify(phones);
+    var login_json_data = JSON.stringify({'login': true, 'posts_status': 'fetching'});
+    $httpBackend.whenGET('/login').respond(login_json_data);
+
     $httpBackend.whenGET('/get_update').respond(json_data);
 
     $httpBackend.whenGET('/login').respond(json_data);
@@ -69,7 +72,16 @@ angular
       // var phone = angular.fromJson(data);
       // phones.push(phone);
 
-      return [200, angular.fromJson(posts), {}];
+      /////NO ACCOUNT SETUP/////
+      var result = {'account_setup': false}
+      /////////
+
+      /////NO MORE POSTS//////
+      // var result = {'more_posts': false}
+      ///////////////////////
+
+
+      return [200, angular.fromJson(result), {}];
     });
 
     $httpBackend.whenGET(/^\/templates\//).passThrough();

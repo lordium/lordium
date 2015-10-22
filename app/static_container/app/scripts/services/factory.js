@@ -20,7 +20,9 @@ angular.module('staticContainerApp')
 	    'location': 'Stockholm, Sweden',
 	    'location_link': ''};
 
-	  super_container.account_configured = false;
+	  super_container.account_configured = undefined;
+	  super_container.show_login = undefined;
+	  super_container.show_message = undefined;
 	  super_container.perform_update = false; // make it false if no need to update tunnels
 	  super_container.left_tunnel = []; // will show posts on left column
 	  super_container.middle_tunnel = []; // will show posts on middle column
@@ -65,6 +67,7 @@ angular.module('staticContainerApp')
 	       })
 	       .success(function (data) {
 	       		console.log(data);
+
 	       		super_container.update_tunnels(data, 'real');
 	       })
 	       .error(function (data, status) {
@@ -83,6 +86,9 @@ angular.module('staticContainerApp')
 	       })
 	       .success(function (data) {
 	       		console.log(data);
+	       		//TODO: 1 account setup
+	       		super_container.response_type(data);
+
 	       		// super_container.update_tunnels(data);
 	       })
 	       .error(function (data, status) {
@@ -90,17 +96,40 @@ angular.module('staticContainerApp')
 	       });
 	  }
 
+
 	  super_container.poke = function(){
 	  	//1- get data from server
 	  	//2- show suitable response
 
 	  	//get posts
-	  	console.log('POCKED');
-	  	super_container.post_server({}); //will return promise
+	  	if(typeof super_container.account_configured ==='undefined' || super_container.account_configured ==true){
+	  		super_container.post_server({}); //will return promise
+	  	}
+
 	  }
 
 	  super_container.response_type = function(data){
 	  	//TODO: check, if not posts then perform suitable action
+	  	if(typeof data.account_setup !== 'undefined'){
+	  		//TODO: launch the login button
+	  		if(data.account_setup == true){
+	  			super_container.account_configured=true;
+	  		}
+	  		else{
+	  			super_container.account_configured=false;
+	  			super_container.show_login = true;
+	  		}
+
+
+	  	}
+	  	if(typeof data.posts_status !== 'undefined' && data.posts_status == 'fetching'){
+	  		super_container.show_message = true;
+	       	super_container.show_login = false;
+
+	       	//TODO: awake a method to communicate for updates
+	  	}
+
+
 	  }
 
 	  super_container.login = function(){
@@ -132,7 +161,10 @@ angular.module('staticContainerApp')
 	  }
 
 	  super_container.update_tunnels = function(posts, utype){
-	  	super_container.response_type(posts);
+	  	if(utype !='dum'){
+	  		super_container.response_type(posts);
+	  	}
+
 	  	if(utype=='dum' || super_container.perform_update){
 	  		if(super_container.tunnels_mock == true){
 	  			super_container.flush_tunnels();
