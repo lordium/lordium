@@ -40,8 +40,8 @@ angular.module('staticContainerApp')
   				scope.super_container.login();
   			});
 
-  			scope.$watch('super_container.show_login', function(){
-  				if(scope.super_container.show_login == true){
+  			scope.$watch('super_container.flagger.login', function(){
+  				if(scope.super_container.flagger.login == true){
   					element.removeClass('finish-him');
   				}
   				else{
@@ -60,8 +60,8 @@ angular.module('staticContainerApp')
   				scope.super_container.login();
   			});
 
-  			scope.$watch('super_container.show_message', function(){
-  				if(scope.super_container.show_message == true){
+  			scope.$watch('super_container.flagger.mesg', function(){
+  				if(scope.super_container.flagger.mesg == true){
   					element.removeClass('finish-him');
   				}
   				else{
@@ -75,8 +75,8 @@ angular.module('staticContainerApp')
   	return {
   		restrict: 'A',
   		link: function(scope, element, attrs){
-			scope.$watch('super_container.account_configured', function(){
-				if(scope.super_container.account_configured == false){
+			scope.$watch('super_container.flagger.config', function(){
+				if(scope.super_container.flagger.config == false){
 					attrs.$set('src',"images/insta.png");
 					// element.addClass('finish-him');
 				}
@@ -93,15 +93,16 @@ angular.module('staticContainerApp')
   		restrict: 'A',
   		template: menu_tempate,
   		link: function(scope, element, attrs){
-  			if(scope.super_container.account_configured == false){
+  			if(scope.super_container.flagger.config == false){
   				element.addClass('finish-him');
   			}
   			else{
   				element.removeClass('finish-him');
   			}
 
-  			scope.$watch('super_container.account_configured', function(){
-  				if(scope.super_container.account_configured == false){
+  			scope.$watch('super_container.flagger.config', function(){
+
+  				if(scope.super_container.flagger.config == false){
   					element.addClass('finish-him');
   				}
   				else{
@@ -113,7 +114,7 @@ angular.module('staticContainerApp')
   	}
   });
 
-  var menu_tempate = '<ul class="nav navbar-nav navbar-right finish-him">'+
+  var menu_tempate = '<ul class="nav navbar-nav navbar-right">'+
               '<li><a href="#">About</a></li>'+
               '<li class="something">'+
                 '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Login<span class="caret"></span></a>'+

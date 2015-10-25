@@ -41,6 +41,7 @@ angular
     });
 })
   .run(function($httpBackend, $timeout) {
+    var count = 0;
     var phones = [{name: 'phone1'}, {name: 'phone2'}];
 
     // returns the current list of phones
@@ -50,7 +51,8 @@ angular
 
     $httpBackend.whenGET('/get_update').respond(json_data);
 
-    $httpBackend.whenGET('/login').respond(json_data);
+    var login_status_data = {'login': true, 'posts_status':'fetching', 'progress': 100 };
+    $httpBackend.whenGET('/login_status').respond(login_status_data);
 
     // adds a new phone to the phones array
     $httpBackend.whenPOST('/get_update').respond(function(method, url, data) {
@@ -72,8 +74,16 @@ angular
       // var phone = angular.fromJson(data);
       // phones.push(phone);
 
+      // var result = {'posts': posts};
+      var result;
+
+      if(Math.floor((Math.random() * 10) + 1) > 5){
+        result = {'account_setup': false};
+      } else {
+        result = {'posts': posts};
+      }
       /////NO ACCOUNT SETUP/////
-      var result = {'account_setup': false}
+      // var result = {'account_setup': false}
       /////////
 
       /////NO MORE POSTS//////
