@@ -46,16 +46,17 @@ angular
 
     // returns the current list of phones
     var json_data = JSON.stringify(phones);
-    var login_json_data = JSON.stringify({'login': true, 'posts_status': 'fetching'});
+    // var login_json_data = JSON.stringify({'login': true, 'posts_status': 'fetching'});
+    var login_json_data = JSON.stringify({'login': false, 'posts_status': 'fetching'});
     $httpBackend.whenGET('/login').respond(login_json_data);
 
-    $httpBackend.whenGET('/get_update').respond(json_data);
+    // $httpBackend.whenGET('/get_update').respond(json_data);
 
     var login_status_data = {'login': true, 'posts_status':'fetching', 'progress': 100 };
     $httpBackend.whenGET('/login_status').respond(login_status_data);
 
     // adds a new phone to the phones array
-    $httpBackend.whenPOST('/get_update').respond(function(method, url, data) {
+    $httpBackend.whenPOST('/update').respond(function(method, url, data) {
       var posts = [];
       for(var i=0; i< 5; i++){
         var single_post = {
@@ -77,10 +78,16 @@ angular
       // var result = {'posts': posts};
       var result;
 
-      if(Math.floor((Math.random() * 10) + 1) > 5){
-        result = {'account_setup': false};
-      } else {
-        result = {'posts': posts};
+      // if(Math.floor((Math.random() * 10) + 1) > 5){
+      //   result = {'account_setup': false};
+      // } else
+      if(true){
+        result = {
+                  'success': true,
+                  'data_type': 'no_posts',
+                  'account_status': 3,
+                  'posts': posts
+                }
       }
       /////NO ACCOUNT SETUP/////
       // var result = {'account_setup': false}

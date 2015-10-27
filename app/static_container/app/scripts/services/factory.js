@@ -21,7 +21,10 @@ angular.module('staticContainerApp')
 	    'description': 'lorem ipsum sadf adfll e hfasdl klek i asdf asdf akjsdhf',
 	    'location': 'Stockholm, Sweden',
 	    'location_link': ''};
-
+	  super_container.inpage_messages = {
+	  									'1': 'Gathering your awesome moments',
+	  									'2': 'Login failed',
+	  									'3': 'Something bad happened'}
 	  super_container.flagger = {'config': false,
 	  							 'login': false,
 	  							 'mesg': false,
@@ -58,10 +61,10 @@ angular.module('staticContainerApp')
 	       });
 	  };
 
-	  super_container.post_server = function(post_data, success_track, failure_track){
+	  super_container.post_server = function(post_url,post_data, success_track, failure_track){
  		return $http({
            method: 'POST',
-           url: '/get_update',
+           url: post_url,
            headers: {
                'Content-Type': undefined
            },
@@ -119,7 +122,7 @@ angular.module('staticContainerApp')
 	  }
 
 	  super_container.login_success_track = function(data){
-	  	super_container.response_type(data);
+	  	super_container.response_manager(data);
 	  }
 
 	  super_container.common_failure_track = function(data){
@@ -132,18 +135,136 @@ angular.module('staticContainerApp')
 
 	  	//get posts
 
-  		super_container.post_server({},
+  		super_container.post_server('/update',
+  									{},
   									super_container.update_tunnels,
   									super_container.common_failure_track); //will return promise
 
 
 	  }
 
-	  super_container.response_type = function(data){
+	  super_container.configure_views = function(mode){
+	  	/*
+	  	0: login needed
+	  	1: New account
+	  	2: Show fetching message
+	  	3: show no more posts message
+	  	4: there are posts
+	  	5: show exception
+	  	"""*/
+	  	if(mode == 0){
+	  		super_container.flagger.config=false;
+  			super_container.flagger.login = true;
+  			super_container.flagger.update = false;
+  			super_container.flagger.mesg = false;
+	  	}
+	  	else if(mode == 1){
+	  		super_container.flagger.config=true;
+  			super_container.flagger.login = false;
+  			super_container.flagger.update = false;
+  			super_container.flagger.mesg = true;
+	  	}
+	  	else if(mode == 2){
+	  		super_container.flagger.config=true;
+  			super_container.flagger.login = false;
+  			super_container.flagger.update = false;
+  			super_container.flagger.mesg = true;
+	  	}
+	  	else if(mode == 3){
+	  		super_container.flagger.config=true;
+  			super_container.flagger.login = false;
+  			super_container.flagger.update = false;
+  			super_container.flagger.mesg = false;
+  			//TODO: show no more posts message
+	  	}
+	  	else if(mode == 4){
+	  		super_container.flagger.config=true;
+  			super_container.flagger.login = false;
+  			super_container.flagger.update = true;
+  			super_container.flagger.mesg = false;
+	  	}
+	  	else if(mode == 5){
+	  		//TODO: handle exception
+	  	}
+
+	  }
+
+	  super_container.response_filter = function(data){
+	  	var result = false;
+	  	var data = data; // parse if needed
+	  	/*""" Filter the data and send predefined responses
+	  	0: if account is not setup (show login)
+	  	1: account setup but not fetched yet
+	  	2: account setup and fetching (show message)
+	  	3: account setup but no posts (show bottom message)
+	  	4: there are posts
+	  	5: exception (show bottom meessage/error)
+	  	"""*/
+	  	if(data.hasOwnProperty('success') && data.success == true){
+	  		if(data.hasOwnProperty('account_status'))
+	  		{
+	  			if(data.account_status == 0){
+	  				return 0  // no account
+	  			}
+	  			if(data.account_status == 1){
+	  				return 1 //new account/needs fetch
+	  			}
+
+	  			if(data.account_status == 2){
+	  				return 2 // fetching data
+	  			}
+
+	  			if(data.account_status == 3){
+	  				// there is possibility to have posts
+	  				console.log(data.posts);
+	  				if(data.hasOwnProperty('data_type')){
+	  					if(data.data_type == 'posts'){
+	  						return data.posts
+	  					}
+	  					else{
+	  						return 3 //fetched but no posts
+	  					}
+	  				}
+	  			}
+	  		}
+	  	}
+	  	return result
+	  }
+
+	  super_container.response_manager = function(data){
 	  	//TODO: check, if not posts then perform suitable action
 
 	  	//first check the negative responses
 	  	//check positive responses below
+
+	  	var result = super_container.response_filter(data); //parse, if needed
+	  	if(result !== false){
+	  		if(result == 0){ //show login
+	  			super_container.configure_views(0);
+	  		}
+	  		else if(result == 1){
+	  			super_container.configure_views(1);
+	  			//ping server to initiate fetching
+
+	  		}
+	  		else if(result == 2){
+	  			super_container.configure_views(2);
+	  		}
+	  		else if(result == 3){
+	  			super_container.configure_views(3);
+	  		}
+	  		else if(result == 5){
+	  			super_container.configure_views(5);
+	  		}
+	  		else{ //if there are posts
+	  			super_container.configure_views(4);
+	  		}
+
+	  	} else {
+	  		alert('ERROR....');
+	  	}
+	  	/////////BELOW IS OLD CODE
+
 	  	if(data.hasOwnProperty('account_setup')){
 	  		//TODO: launch the login button
 	  		if(data.account_setup == true){
@@ -159,7 +280,7 @@ angular.module('staticContainerApp')
 
 	  		return;
 	  	}
-	  	if(data.hasOwnProperty('posts_status') && data.posts_status == 'fetching'){
+	  	if(data.hasOwnProperty('posts_status') && data.posts_status == 'fetching' && data.login == true){
 	  		super_container.flagger.mesg = true;
 	       	super_container.flagger.login = false;
 
@@ -171,7 +292,11 @@ angular.module('staticContainerApp')
 	       	// if update complete, hide the meessage
 	       	// start displaying images
 	       	return;
+	  	}else if (data.login == false){
+	  		alert('login ERROR');
 	  	}
+
+
 
 	  	if(data.hasOwnProperty('posts')){
 	  		super_container.flagger.mesg = false;
@@ -222,7 +347,7 @@ angular.module('staticContainerApp')
 	  super_container.update_tunnels = function(posts, utype){
 	  	var iposts = posts;
 	  	if(utype !='dum'){
-	  		super_container.response_type(iposts);
+	  		super_container.response_manager(iposts);
 	  	}
 
 	  	if(utype=='dum' || super_container.flagger.update){

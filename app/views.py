@@ -5,6 +5,10 @@ from django.conf import settings
 import insta
 from insta import InstaMine
 from models import Account
+from manager import Provider as pd
+
+
+import json
 
 def index(request):
 	"""
@@ -23,7 +27,6 @@ def index(request):
 
 def login_redirect(request):
 	code = request.GET.get('code', False)
-
 	if not code:
 		return HttpResponseRedirect(insta.INSTA_URL)
 	else:
@@ -31,7 +34,8 @@ def login_redirect(request):
 
 		api = InstaMine(request=request)
 		if api.authenticate_user(code):
-			return api.flow_manager()
+			request_result = api.flow_manager()
+			return HttpResponse(request_result, content_type="application/json")
 			result = api.get_snaps()
 	return HttpResponse(result or 'Got it')
 
@@ -57,6 +61,53 @@ def get_snaps(self):
 	"""
 	pass
 
+def login(request):
+	# get the code and redirect user to instagram
+	login_json_data = JSON.stringify({'login': true, 'posts_status': 'fetching'});
+	code = request.Get.get('code', False)
+	if not code:
+		return HttpResponseRedirect(insta.INSTA_URL)
+	else:
+		api = InstaMine(request = request)
+		if api.authenticate_user(code):
+			return api.flow_manager()
+
+def init_fetch(request):
+	#TODO: initiate fetching here
+	#client will just poke
+	#check login
+	#fetch data
+	if api.db_check_user(): #this function will check if token and user both are there
+		api.get_snaps()
+	pass
+
+def get_update(request):
+	#TODO: if user is logged in, return fetching
+	# else return login false
+	if api.db_check_user():
+
+		fetching_status = api.db_fetch_status() #check from database the level of fetching
+		if fetching_status.status == 'fetching':
+			return {'login': True, 'posts_status': 'fetching'}
+		elif fetching_status.status == 'done':
+			return {'login': True, 'posts_status': 'done', 'progress': 100}
+	else:
+		return {'login': False}
+
+
+def update(request):
+	#check for posts
+	# if found posts return it
+	# if no posts then check account
+	# if no account then send no account response
+	resp = pd.get_posts()
+	print resp
+	if resp:
+		return HttpResponse(json.dumps(resp))
+	return HttpResponse(json.dumps({'test': False}))
+
+def login(request):
+	pass
 
 
 

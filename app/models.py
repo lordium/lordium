@@ -8,6 +8,13 @@ MEDIA_CHOICES = (
     (1, _("Image")),
     (2, _("Video"))
 )
+
+FETCH_STATUS = (
+	(1, _("New")),
+	(2, _("Fetching")),
+	(3, _("Fetch Completed")),
+)
+
 class Account(AbstractBaseUser):
 	username = models.CharField(max_length=140, unique=True) # check with instagram
 	email = models.EmailField(unique=True)
@@ -19,6 +26,7 @@ class Account(AbstractBaseUser):
 	slogan = models.CharField(max_length=140, null=True)
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_update = models.DateTimeField(auto_now=True)
+	fetch_status = models.IntegerField(choices=FETCH_STATUS, default=1)
 
 	def __str__(self):
 		return self.username

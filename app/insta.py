@@ -74,11 +74,18 @@ class InstaMine(InstagramAPI):
 		"""
 		Check user, initiate or let user login
 		"""
+
 		user_status = self.detect_user()
 		if user_status == False: #there is no user
 			#initiate the setup
-			self.create_user()
+			self.create_user() #TODO: get user token here
 
+			dummy = {'login': True, 'posts_status': 'fetching'}
+			return json.dumps(dummy)
+			# 1 create user success
+			# 2 return response to user
+			# 3 somehow initiage data gathering
+			#TODO: return json with JSON.stringify({'login': true, 'posts_status': 'fetching'});
 			return HttpResponseRedirect('/process_setup')
 
 			# enable setup mode in responose
@@ -164,6 +171,12 @@ class InstaMine(InstagramAPI):
 				print tag.name
 			result+='<h1>%s</h1>'%tg
 		return result
+
+	def db_check_user(self):
+		pass
+
+	def db_fetch_status(self):
+		pass
 
 	def create_snaps(self):
 		"""
