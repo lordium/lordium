@@ -5,8 +5,8 @@ from django.core.validators import URLValidator
 # Create your models here.
 
 MEDIA_CHOICES = (
-    (1, _("Image")),
-    (2, _("Video"))
+    ('image', _("Image")),
+    ('video', _("Video"))
 )
 
 FETCH_STATUS = (
@@ -17,7 +17,7 @@ FETCH_STATUS = (
 
 class Account(AbstractBaseUser):
 	username = models.CharField(max_length=140, unique=True) # check with instagram
-	email = models.EmailField(unique=True)
+	email = models.EmailField(default=None, unique=True, null=True)
 	insta_id = models.CharField(max_length=140, unique=True, null=True)
 	insta_token = models.TextField("Token", null=True)
 	first_name = models.CharField(max_length=40, null=True)
@@ -33,6 +33,34 @@ class Account(AbstractBaseUser):
 
 	def __unicode__(self):
 		return self.username
+
+	@classmethod
+	def create(self,
+			   username=None,
+			   email = None,
+			   insta_token = None,
+			   insta_id = None,
+			   first_name = None,
+			   last_name = None,
+			   profile_picture = None,
+			   slogan = None,
+			   fetch_status = None
+			   ):
+
+		account = Account(
+						username = username,
+						email = email,
+						insta_token = insta_token,
+						insta_id = insta_id,
+						first_name = first_name,
+						last_name = last_name,
+						profile_picture = profile_picture,
+						slogan = slogan,
+						fetch_status = fetch_status)
+
+		account.save()
+		return True
+
 
 class Post(models.Model):
 	media_id = models.CharField(max_length=200, null=True)
@@ -51,6 +79,11 @@ class Post(models.Model):
 
 	def __unicode__(self):
 		return self.title
+
+	@classmethod
+	def post_bulk_create(self, posts):
+		Post.objects.bulk_create(posts)
+		return True
 
 	@classmethod
 	def filter_detail(description):

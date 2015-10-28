@@ -40,21 +40,14 @@ class InstaMine(InstagramAPI):
 											  client_secret=self.CONFIG['client_secret'])
 		self.user_info = user_info
 		self.request.session['access_token'] = access_token
-		return True
+		if self.user_info:
+			return self.user_info
+		else:
+			return False
 
-	def verify_property(self, obj, prop):
-		if hasattr(obj, prop):
-			return getattr(obj, prop)
-		return None
 
-	def make_tags(self, media, tags):
-		tags = self.verify_property(media, tags)
-		if tags:
-			new_tags = []
-			for tag in tags:
-				new_tags.append(tag.name)
-			return json.dumps(new_tags)
-		return False
+
+
 
 	def detect_user(self):
 		"""

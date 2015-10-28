@@ -6,6 +6,8 @@ import insta
 from insta import InstaMine
 from models import Account
 from manager import Provider as pd
+from manager import LoginManager as lm
+from manager import FetchManager as fm
 
 
 import json
@@ -25,19 +27,7 @@ def index(request):
 	return HttpResponse(template.render(context))
 
 
-def login_redirect(request):
-	code = request.GET.get('code', False)
-	if not code:
-		return HttpResponseRedirect(insta.INSTA_URL)
-	else:
-		#show a page first and then execute below
 
-		api = InstaMine(request=request)
-		if api.authenticate_user(code):
-			request_result = api.flow_manager()
-			return HttpResponse(request_result, content_type="application/json")
-			result = api.get_snaps()
-	return HttpResponse(result or 'Got it')
 
 
 def process_setup(request):
@@ -61,16 +51,16 @@ def get_snaps(self):
 	"""
 	pass
 
-def login(request):
-	# get the code and redirect user to instagram
-	login_json_data = JSON.stringify({'login': true, 'posts_status': 'fetching'});
-	code = request.Get.get('code', False)
-	if not code:
-		return HttpResponseRedirect(insta.INSTA_URL)
-	else:
-		api = InstaMine(request = request)
-		if api.authenticate_user(code):
-			return api.flow_manager()
+# def login(request):
+# 	# get the code and redirect user to instagram
+# 	login_json_data = JSON.stringify({'login': true, 'posts_status': 'fetching'});
+# 	code = request.Get.get('code', False)
+# 	if not code:
+# 		return HttpResponseRedirect(insta.INSTA_URL)
+# 	else:
+# 		api = InstaMine(request = request)
+# 		if api.authenticate_user(code):
+# 			return api.flow_manager()
 
 def init_fetch(request):
 	#TODO: initiate fetching here
@@ -94,20 +84,56 @@ def get_update(request):
 	else:
 		return {'login': False}
 
+def fetch(request):
+	print 'here'
+	last_id = request.POST.get('last_id', None)
+	action = request.POST.get('fetch', False) or 'fetch' #remove after or
+
+	if action == 'fetch':
+		return pd.fetch_update_posts(username = 'arslanrafique', last_id = last_id)
+	else:
+		return pd.troll()
 
 def update(request):
 	#check for posts
 	# if found posts return it
 	# if no posts then check account
 	# if no account then send no account response
+
+	## ---- Get last id and return posts
+	# request.post.get('')
+	##
+
+	# fm.fetch_posts(username='arslanrafique')
 	resp = pd.get_posts()
-	print resp
 	if resp:
 		return HttpResponse(json.dumps(resp))
 	return HttpResponse(json.dumps({'test': False}))
 
 def login(request):
-	pass
+	code = False
+	resp = lm.login(request = request)
+	return resp
+	#return HttpResponse(json.dumps({'test': False}))
+
+def login_redirect(request):
+	code = request.GET.get('code', False)
+
+
+	if not code:
+		return HttpResponseRedirect(insta.INSTA_URL)
+	else:
+		#show a page first and then execute below
+
+		api = InstaMine(request=request)
+		if api.authenticate_user(code):
+			request_result = api.flow_manager()
+			return HttpResponse(request_result, content_type="application/json")
+			result = api.get_snaps()
+	return HttpResponse(result or 'Got it')
+
+
+
 
 
 
