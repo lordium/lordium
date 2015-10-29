@@ -41,19 +41,30 @@ angular
     });
 })
   .run(function($httpBackend, $timeout) {
+
     var count = 0;
     var phones = [{name: 'phone1'}, {name: 'phone2'}];
 
     // returns the current list of phones
     var json_data = JSON.stringify(phones);
     // var login_json_data = JSON.stringify({'login': true, 'posts_status': 'fetching'});
-    var login_json_data = JSON.stringify({'login': false, 'posts_status': 'fetching'});
-    $httpBackend.whenGET('/login').respond(login_json_data);
+    // var login_json_data = {'login_status': false, 'account_status': 'permission_denied'};
+    // var login_json_data = {'login_status': false, 'account_status': 'creation_failed'};
+    // var login_json_data = {'login_status': true, 'account_status': 'new_account'};
+    // var login_json_data = {'login_status': true, 'account_status': 'fetching'};
+    var login_json_data = {'login_status': false, 'account_status': 'fetch_completed'};
+
+
+    $httpBackend.whenGET('/login').respond(JSON.stringify((login_json_data)));
+
+    // var fetch_json = {'status': 'failed', 'fetch_status': 'not_completed'};
+    var fetch_json = {'status': 'success', 'fetch_status': 'completed'};
+
+    $httpBackend.whenGET('/fetch').respond(JSON.stringify((fetch_json)));
 
     // $httpBackend.whenGET('/get_update').respond(json_data);
 
-    var login_status_data = {'login': true, 'posts_status':'fetching', 'progress': 100 };
-    $httpBackend.whenGET('/login_status').respond(login_status_data);
+
 
     // adds a new phone to the phones array
     $httpBackend.whenPOST('/update').respond(function(method, url, data) {
@@ -86,7 +97,7 @@ angular
                   'success': true,
                   'data_type': 'no_posts',
                   'account_status': 3,
-                  'posts': posts
+                  // 'posts': posts
                 }
       }
       /////NO ACCOUNT SETUP/////
@@ -98,7 +109,14 @@ angular
       ///////////////////////
 
 
-      return [200, angular.fromJson(result), {}];
+      var response = {'success': true, 'data_type': 'posts', 'account_status': 'fetch_completed', 'posts': posts};
+      // var response = {'success': true, 'data_type': 'no_posts', 'account_status': 'new_account'};
+      // var response = {'success': true, 'data_type': 'no_posts', 'account_status': 'fetching'};
+      // var response = {'success': true, 'data_type': 'no_posts', 'account_status': 'fetch_completed'};
+      // var response = {'success': false, 'data_type': 'no_posts', 'account_status': 'no_account'};
+
+
+      return [200, angular.fromJson(response), {}];
     });
 
     $httpBackend.whenGET(/^\/templates\//).passThrough();

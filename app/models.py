@@ -5,8 +5,8 @@ from django.core.validators import URLValidator
 # Create your models here.
 
 MEDIA_CHOICES = (
-    ('image', _("Image")),
-    ('video', _("Video"))
+    (1, _("Image")),
+    (2, _("Video"))
 )
 
 FETCH_STATUS = (

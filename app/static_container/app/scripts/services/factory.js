@@ -96,15 +96,26 @@ angular.module('staticContainerApp')
 	  }
 
 	  super_container.fetch_success = function(data){
-	  	if(data.posts_status == 'fetching'){
-	  		if(typeof data.progress !== 'undefined'){
+	  	console.log(data.status);
+	  	if(data.status == 'success'){
+	  		if(data.fetch_status == 'completed'){
+  				super_container.flagger.mesg = false;
+  				super_container.flagger.config = true;
+  				super_container.flagger.update = true;
+  				super_container.poke();
 
-	  			if(data.progress == '100'){
-	  				super_container.flagger.mesg = false;
-	  				super_container.flagger.config = true;
-	  				super_container.flagger.update = true;
-	  				super_container.poke();
-	  			}
+	  		}
+	  	}
+	  	if(data.status == 'failed'){
+	  		if(data.fetch_status == 'not_completed'){
+	  			//prompt for login if not able to fetch, easiest way for now
+  				super_container.flagger.mesg = false;
+  				super_container.flagger.config = false;
+  				super_container.flagger.update = false;
+  				super_container.flagger.login = true;
+
+  				// super_container.poke();
+
 	  		}
 	  	}
 	  }
@@ -134,62 +145,17 @@ angular.module('staticContainerApp')
 	  	//2- show suitable response
 
 	  	//get posts
+	  	console.log('Poke called!')
 
   		super_container.post_server('/update',
-  									{},
+  									{'last_id': super_container.last_index},
   									super_container.update_tunnels,
   									super_container.common_failure_track); //will return promise
 
 
 	  }
 
-	  super_container.configure_views = function(mode){
-	  	/*
-	  	0: login needed
-	  	1: New account
-	  	2: Show fetching message
-	  	3: show no more posts message
-	  	4: there are posts
-	  	5: show exception
-	  	"""*/
-	  	if(mode == 0){
-	  		super_container.flagger.config=false;
-  			super_container.flagger.login = true;
-  			super_container.flagger.update = false;
-  			super_container.flagger.mesg = false;
-	  	}
-	  	else if(mode == 1){
-	  		super_container.flagger.config=true;
-  			super_container.flagger.login = false;
-  			super_container.flagger.update = false;
-  			super_container.flagger.mesg = true;
-	  	}
-	  	else if(mode == 2){
-	  		super_container.flagger.config=true;
-  			super_container.flagger.login = false;
-  			super_container.flagger.update = false;
-  			super_container.flagger.mesg = true;
-	  	}
-	  	else if(mode == 3){
-	  		super_container.flagger.config=true;
-  			super_container.flagger.login = false;
-  			super_container.flagger.update = false;
-  			super_container.flagger.mesg = false;
-  			//TODO: show no more posts message
-	  	}
-	  	else if(mode == 4){
-	  		super_container.flagger.config=true;
-  			super_container.flagger.login = false;
-  			super_container.flagger.update = true;
-  			super_container.flagger.mesg = false;
-	  	}
-	  	else if(mode == 5){
-	  		//TODO: handle exception
-	  	}
-
-	  }
-
-	  super_container.response_filter = function(data){
+	  super_container.update_response_filter = function(data){
 	  	var result = false;
 	  	var data = data; // parse if needed
 	  	/*""" Filter the data and send predefined responses
@@ -200,33 +166,65 @@ angular.module('staticContainerApp')
 	  	4: there are posts
 	  	5: exception (show bottom meessage/error)
 	  	"""*/
-	  	if(data.hasOwnProperty('success') && data.success == true){
+	  	console.log("update response filter");
+	  	console.log(data.hasOwnProperty('account_status'));
+
+	  	function checkStatus(data){
+	  		// alert(data);
 	  		if(data.hasOwnProperty('account_status'))
-	  		{
-	  			if(data.account_status == 0){
-	  				return 0  // no account
-	  			}
-	  			if(data.account_status == 1){
-	  				return 1 //new account/needs fetch
-	  			}
+		  	{
+	  			var account_status = data.account_status;
+	  			// alert(account_status);
+		  		if(account_status)
+		  		{
+		  			if(account_status == 'no_account'){
+		  				return 'no_account'  // no account
+		  			}
+		  			if(account_status == 'new_account'){
+		  				return 'new_account' //new account/needs fetch
+		  			}
 
-	  			if(data.account_status == 2){
-	  				return 2 // fetching data
-	  			}
+		  			if(account_status == 'fetching'){
+		  				return 'fetching' // fetching data
+		  			}
 
-	  			if(data.account_status == 3){
-	  				// there is possibility to have posts
-	  				console.log(data.posts);
-	  				if(data.hasOwnProperty('data_type')){
-	  					if(data.data_type == 'posts'){
-	  						return data.posts
-	  					}
-	  					else{
-	  						return 3 //fetched but no posts
-	  					}
-	  				}
-	  			}
+		  			if(account_status == 'fetch_completed'){
+		  				return 'fetch_completed'
+
+		  			}
+
+		  			if(account_status == 'creation_failed'){
+		  				return 'creation_failed'
+		  			}
+		  		}
+		  	}
+	  	}
+
+	  	// alert('sdf');
+
+	  	if(data.hasOwnProperty('success') && data.success == true){
+	  		if(data.hasOwnProperty('account_status')){
+	  			return checkStatus(data)
 	  		}
+
+	  	}
+
+	  	if(data.hasOwnProperty('success') && data.success == false){
+	  		if(data.hasOwnProperty('account_status')){
+	  			return checkStatus(data)
+	  		}
+
+	  	}
+
+
+	  	if(data.hasOwnProperty('login_status') && data.login_status == true){
+	  		if(data.hasOwnProperty('account_status')){
+	  			return checkStatus(data)
+	  		}
+
+	  	} else if(data.hasOwnProperty('login_status') && data.login_status == false){
+
+	  		return checkStatus(data)
 	  	}
 	  	return result
 	  }
@@ -236,81 +234,88 @@ angular.module('staticContainerApp')
 
 	  	//first check the negative responses
 	  	//check positive responses below
+	  	function extractPosts(data){
+			if(data.hasOwnProperty('data_type')){
+				if(data.data_type == 'posts'){
+					return data.posts
+				}
+				else{
+					return 'no_posts' //fetched but no posts
+				}
+			}
+	  	}
 
-	  	var result = super_container.response_filter(data); //parse, if needed
+	  	var result = super_container.update_response_filter(data); //parse, if needed
+	  	console.log('response filter result');
+	  	console.log(result);
+
 	  	if(result !== false){
-	  		if(result == 0){ //show login
-	  			super_container.configure_views(0);
+	  		if(result == 'no_account'){ //show login
+	  			super_container.flagger.config=false;
+	  			super_container.flagger.login = true;
+	  			super_container.flagger.update = false;
+	  			super_container.flagger.mesg = false;
 	  		}
-	  		else if(result == 1){
-	  			super_container.configure_views(1);
+	  		else if(result == 'new_account'){
+	  			super_container.flagger.config=true;
+	  			super_container.flagger.login = false;
+	  			super_container.flagger.update = false;
+	  			super_container.flagger.mesg = true;
 	  			//ping server to initiate fetching
-
+	  			//TODO: write ping here
+	  			super_container.initiate_fetch();
 	  		}
-	  		else if(result == 2){
-	  			super_container.configure_views(2);
+	  		else if(result == 'fetching'){
+	  			super_container.flagger.config=true;
+	  			super_container.flagger.login = false;
+	  			super_container.flagger.update = false;
+	  			super_container.flagger.mesg = true;
 	  		}
-	  		else if(result == 3){
-	  			super_container.configure_views(3);
+	  		else if(result == 'no_posts'){
+	  			super_container.flagger.config=true;
+	  			super_container.flagger.login = false;
+	  			super_container.flagger.update = false;
+	  			super_container.flagger.mesg = false;
 	  		}
-	  		else if(result == 5){
-	  			super_container.configure_views(5);
+	  		else if(result == 'exception'){
+	  			//TODO: check exception here
+	  		}
+	  		else if(result == 'creation_failed'){
+	  			super_container.flagger.config=false;
+	  			super_container.flagger.login = true;
+	  			super_container.flagger.update = false;
+	  			super_container.flagger.mesg = false;
+	  		}
+	  		else if( result == 'login_failed'){
+	  			super_container.flagger.config=true;
+	  			super_container.flagger.login = true;
+	  			super_container.flagger.update = false;
+	  			super_container.flagger.mesg = false;
 	  		}
 	  		else{ //if there are posts
-	  			super_container.configure_views(4);
+	  			super_container.flagger.config=true;
+	  			super_container.flagger.login = false;
+	  			super_container.flagger.update = true;
+	  			super_container.flagger.mesg = false;
 	  		}
 
 	  	} else {
 	  		alert('ERROR....');
 	  	}
-	  	/////////BELOW IS OLD CODE
-
-	  	if(data.hasOwnProperty('account_setup')){
-	  		//TODO: launch the login button
-	  		if(data.account_setup == true){
-	  			super_container.flagger.config=true;
-	  			super_container.flagger.update = false;
-	  		}
-	  		else{
-	  			super_container.flagger.config=false;
-	  			super_container.flagger.login = true;
-	  			super_container.flagger.update = false;
-	  			return;
-	  		}
-
-	  		return;
-	  	}
-	  	if(data.hasOwnProperty('posts_status') && data.posts_status == 'fetching' && data.login == true){
-	  		super_container.flagger.mesg = true;
-	       	super_container.flagger.login = false;
-
-	       	super_container.fetch_status();
-	       	//TODO: awake a method to communicate for updates
-	       	// var promise = $q.defer();
-	       	// post to server for update
-	       	// get the update
-	       	// if update complete, hide the meessage
-	       	// start displaying images
-	       	return;
-	  	}else if (data.login == false){
-	  		alert('login ERROR');
-	  	}
-
-
-
-	  	if(data.hasOwnProperty('posts')){
-	  		super_container.flagger.mesg = false;
-	  		super_container.flagger.login = false;
-	  		super_container.flagger.update = true;
-	  		super_container.flagger.config = true;
-	  	}
-
 	  }
 
 	  super_container.login = function(){
 	  	super_container.get_server('/login',
-	  							   'letmein',
+	  							   {'mesg': 'letmein'},
 	  							    super_container.login_success_track,
+	  							    super_container.common_failure_track
+	  							    );
+	  }
+
+	  super_container.initiate_fetch = function(){
+	  	super_container.get_server('/fetch',
+	  							   {'fetch': 'fetch'},
+	  							    super_container.fetch_success,
 	  							    super_container.common_failure_track
 	  							    );
 	  }
@@ -345,6 +350,8 @@ angular.module('staticContainerApp')
 	  }
 
 	  super_container.update_tunnels = function(posts, utype){
+	  	console.log('Update Tunnels Called');
+	  	console.log(posts);
 	  	var iposts = posts;
 	  	if(utype !='dum'){
 	  		super_container.response_manager(iposts);

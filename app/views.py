@@ -62,14 +62,14 @@ def get_snaps(self):
 # 		if api.authenticate_user(code):
 # 			return api.flow_manager()
 
-def init_fetch(request):
-	#TODO: initiate fetching here
-	#client will just poke
-	#check login
-	#fetch data
-	if api.db_check_user(): #this function will check if token and user both are there
-		api.get_snaps()
-	pass
+# def init_fetch(request):
+# 	#TODO: initiate fetching here
+# 	#client will just poke
+# 	#check login
+# 	#fetch data
+# 	if api.db_check_user(): #this function will check if token and user both are there
+# 		api.get_snaps()
+# 	pass
 
 def get_update(request):
 	#TODO: if user is logged in, return fetching
@@ -86,11 +86,15 @@ def get_update(request):
 
 def fetch(request):
 	print 'here'
-	last_id = request.POST.get('last_id', None)
-	action = request.POST.get('fetch', False) or 'fetch' #remove after or
+	#TODO: Check token here
+	#get username
+
+	last_id = request.GET.get('last_id', None)
+	action = request.GET.get('fetch', False) or 'fetch' #remove after or
+	username = 'arslanrafique'
 
 	if action == 'fetch':
-		return pd.fetch_update_posts(username = 'arslanrafique', last_id = last_id)
+		return pd.fetch_update_posts(username = username, last_id = last_id)
 	else:
 		return pd.troll()
 
@@ -105,13 +109,12 @@ def update(request):
 	##
 
 	# fm.fetch_posts(username='arslanrafique')
-	resp = pd.get_posts()
+	last_id = None
+	resp = pd.get_posts(last_id = last_id)
 	if resp:
-		return HttpResponse(json.dumps(resp))
-	return HttpResponse(json.dumps({'test': False}))
+		return resp
 
 def login(request):
-	code = False
 	resp = lm.login(request = request)
 	return resp
 	#return HttpResponse(json.dumps({'test': False}))

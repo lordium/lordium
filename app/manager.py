@@ -6,6 +6,21 @@ from instagram.client import InstagramAPI
 import json
 import confs
 
+
+# Below is utility function section
+def response_wrapper(response_function):
+	def inner(*args, **kwargs):
+		data = response_function(*args, **kwargs)
+		response = HttpResponse(json.dumps(data))
+		## can use below as well
+		#from django.http import JsonResponse
+		#return JsonResponse({'foo':'bar'})
+		#TODO: use below for error
+		#response.status_code = 500
+		return response
+	return inner
+
+
 class LoginManager(object):
 	"""
 	This manager is responsible for geting login signal from
@@ -37,7 +52,7 @@ class LoginManager(object):
 						#TODO: add session/cookies here
 						# print request.session['access_token']
 						# print fetch_status
-						account_status = 1
+						account_status = 'new_account'
 						if fetch_status == 1:
 							account_status = 'new_account'
 						elif fetch_status == 2:
@@ -52,7 +67,7 @@ class LoginManager(object):
 							return ResponseManager.simple_response({'login_status': True, 'account_status': 'new_account'})
 						else:
 							return ResponseManager.simple_response({'login_status': False, 'account_status': 'creation_failed'})
-
+				return ResponseManager.simple_response({'login_status': False, 'account_status': 'permission_failed'})
 
 	@classmethod
 	def init_account(self):
@@ -177,7 +192,6 @@ class DBManager(object):
 
 
 
-
 class CacheManager(object):
 	"""
 	This manager is responsible to get data from cache, if data
@@ -237,9 +251,9 @@ class FetchManager(object):
 						for media in recent_media:
 							last_media_id = media.id
 							posts.append({ 	'media_id': media.id,
-										 	'description': self.verify_property(media, 'caption'),
+										 	'description': self.verify_property(media, 'caption') or '',
 										 	'date_published': self.verify_property(media, 'created_time'),
-											'post_type': self.verify_property(media, 'type'),
+											'post_type': self.check_media_type(media, 'type'),
 											'post_url': media.get_standard_resolution_url(),
 											'post_tags': self.make_tags(media, 'tags'),
 											'location': self.verify_property(media, 'location'),
@@ -257,6 +271,18 @@ class FetchManager(object):
 		if hasattr(obj, prop):
 			return getattr(obj, prop)
 		return None
+
+	@classmethod
+	def check_media_type(self, obj, prop):
+		media_type = self.verify_property(obj, prop)
+		if media_type:
+			if media_type == 'image':
+				return 1
+			elif media_type == 'video':
+				return 2
+			else:
+				return 3
+
 
 	@classmethod
 	def make_tags(self, media, tags):
@@ -303,12 +329,12 @@ class FetchManager(object):
 class Provider(object):
 
 	@classmethod
+	@response_wrapper
 	def get_posts(self, last_id=None):
 		"""
 		get posts, if not, check account,
 		"""
-		final_result = False
-		posts = DBManager.get_posts()
+		posts = DBManager.get_posts(last_id = last_id)
 		if posts:
 			return self.make_posts(posts)
 		else:
@@ -322,7 +348,7 @@ class Provider(object):
 					return self.make_dict(True, 'no_posts', 'fetch_completed')
 			else:
 				return self.make_dict(False, 'no_posts', 'no_account')
-		return final_result
+
 
 	@classmethod
 	def make_dict(self, success=True, data_type=None, account_status=None):
@@ -380,6 +406,9 @@ class ResponseManager(object):
 		if make_json:
 			data = json.dumps(data)
 		return HttpResponse(data)
+
+
+
 
 
 
