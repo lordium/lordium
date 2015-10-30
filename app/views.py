@@ -8,11 +8,14 @@ from models import Account
 from manager import Provider as pd
 from manager import LoginManager as lm
 from manager import FetchManager as fm
+from django.contrib.auth.decorators import login_required
 
 
 import json
 
 def index(request):
+	print request
+	print request.user
 	"""
 	Show initial document to user
 	"""
@@ -83,6 +86,7 @@ def get_update(request):
 			return {'login': True, 'posts_status': 'done', 'progress': 100}
 	else:
 		return {'login': False}
+
 
 def fetch(request):
 	print 'here'

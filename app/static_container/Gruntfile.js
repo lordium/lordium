@@ -297,18 +297,22 @@ module.exports = function (grunt) {
     //     }
     //   }
     // },
-    // uglify: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/scripts/scripts.js': [
-    //         '<%= yeoman.dist %>/scripts/scripts.js'
-    //       ]
-    //     }
-    //   }
-    // },
-    // concat: {
-    //   dist: {}
-    // },
+
+
+    uglify: {
+      mangle: false,
+      dist: {
+        files: {'dist/static/scripts/scripts.js': ['app/scripts/app.js', 'app/scripts/services/factory.js','app/scripts/controllers/main.js']},
+      options: {
+          mangle: false
+        }
+      }
+    },
+    concat: {
+      dist: {
+        // files: {'dist/static/scripts/scripts.js': ['app/scripts/app.js', 'app/scripts/services/factory.js','app/scripts/controllers/main.js']}
+      }
+    },
 
     imagemin: {
       dist: {

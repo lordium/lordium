@@ -1,10 +1,13 @@
-import models
-import insta
-from insta import InstaMine as _im
-from django.http import HttpResponse, HttpResponseRedirect
-from instagram.client import InstagramAPI
 import json
 import confs
+import insta
+import models
+from insta import InstaMine as _im
+from instagram.client import InstagramAPI
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as db_login
+from django.contrib.auth import logout as db_logout
+from django.http import HttpResponse, HttpResponseRedirect
 
 
 # Below is utility function section
@@ -47,7 +50,11 @@ class LoginManager(object):
 				user_info = _api.authenticate_user(code)
 				print user_info
 				if user_info:
+					print 'check_account'
 					fetch_status = DBManager.check_account(username=user_info.get('username'))
+					username = user_info.get('username')
+
+
 					if fetch_status:
 						#TODO: add session/cookies here
 						# print request.session['access_token']
@@ -59,15 +66,35 @@ class LoginManager(object):
 							account_status = 'fetching'
 						elif fetch_status == 3:
 							account_status = 'fetch_completed'
+						print 'above auth'
+						u_account = authenticate(username=username, password=username) #;)
+						print u_account, username
+						db_login(request, u_account)
 
 						return ResponseManager.simple_response({'login_status': True, 'account_status': account_status})
 					else:
 						if DBManager.create_account(user_info, request = request):
 							#TODO: add session.cookies here
+
+							# u = models.Account.objects.get(username = username)
+							# print u
+							# u.set_password(username)
+							# u.save()
+
+							u_account = authenticate(username=username, password=username) #;)
+							print u_account
+							db_login(request, u_account)
 							return ResponseManager.simple_response({'login_status': True, 'account_status': 'new_account'})
 						else:
 							return ResponseManager.simple_response({'login_status': False, 'account_status': 'creation_failed'})
 				return ResponseManager.simple_response({'login_status': False, 'account_status': 'permission_failed'})
+
+
+	@classmethod
+	@response_wrapper
+	def logout(self, request):
+		db_logout(request)
+		return {'logout_status': True}
 
 	@classmethod
 	def init_account(self):
@@ -96,10 +123,12 @@ class DBManager(object):
 		"""
 		This will check if user already exists
 		"""
-		account = models.Account.objects.all()
-		if account and len(account) > 0:
-			if account[0].username == username:
-				return account[0].fetch_status
+		accounts = models.Account.objects.all()
+		print 'check in'
+		print accounts
+		if accounts and len(accounts) > 0:
+			if accounts[0].username == username:
+				return accounts[0].fetch_status
 		return False
 
 
@@ -123,12 +152,23 @@ class DBManager(object):
 		if request:
 			print "username is", user_info.get('username')
 			account = models.Account.create(username = user_info.get('username'),
-											slogan = user_info.get('slogan', ''),
+											slogan = user_info.get('bio', ''),
 											profile_picture = user_info.get('profile_picture'),
 											first_name = user_info.get('full_name'),
+											last_name=" ",
+											email="example@example.com",
 											insta_id = user_info.get('id'),
 											insta_token = request.session['access_token'],
 											fetch_status = 1)
+
+			# account = models.Account.create_user(username = user_info.get('username'),
+			# 								slogan = user_info.get('bio', ''),
+			# 								profile_picture = user_info.get('profile_picture'),
+			# 								first_name = user_info.get('full_name'),
+			# 								insta_id = user_info.get('id'),
+			# 								insta_token = request.session['access_token'],
+			# 								fetch_status = 1,
+			# 								password = user_info.get('username'))
 			if account:
 				return True
 		return False

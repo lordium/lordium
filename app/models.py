@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser,User
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import URLValidator
 # Create your models here.
@@ -13,26 +13,39 @@ FETCH_STATUS = (
 	(1, _("New")),
 	(2, _("Fetching")),
 	(3, _("Fetch Completed")),
+	(4, _("Dirty"))
 )
 
-class Account(AbstractBaseUser):
-	username = models.CharField(max_length=140, unique=True) # check with instagram
-	email = models.EmailField(default=None, unique=True, null=True)
+class Account(User):
+	# username = models.CharField(max_length=140, unique=True) # check with instagram
+	# email = models.EmailField(default=None, unique=True, null=True)
 	insta_id = models.CharField(max_length=140, unique=True, null=True)
 	insta_token = models.TextField("Token", null=True)
-	first_name = models.CharField(max_length=40, null=True)
-	last_name = models.CharField(max_length=40, null=True)
+	# first_name = models.CharField(max_length=40, null=True)
+	# last_name = models.CharField(max_length=40, null=True)
 	profile_picture = models.TextField(validators=[URLValidator()],null=True)
 	slogan = models.CharField(max_length=140, null=True)
-	date_created = models.DateTimeField(auto_now_add=True)
-	date_update = models.DateTimeField(auto_now=True)
+	# date_created = models.DateTimeField(auto_now_add=True)
+	# date_update = models.DateTimeField(auto_now=True)
 	fetch_status = models.IntegerField(choices=FETCH_STATUS, default=1)
+	# backend = ""
 
-	def __str__(self):
-		return self.username
+	# USERNAME_FIELD =  ['username']
 
-	def __unicode__(self):
-		return self.username
+	# def __str__(self):
+	# 	return self.username
+
+	# def __unicode__(self):
+	# 	return self.username
+
+	def __init__(self, *args, **kwargs):
+		super(Account, self).__init__(*args, **kwargs)
+		# Making name required
+		# self.fields['last_name'].required = True
+		# self.fields['email'].required = True
+
+		# self.fields['bio'].required = True
+		# self.fields['profession'].required = True
 
 	@classmethod
 	def create(self,
@@ -57,9 +70,19 @@ class Account(AbstractBaseUser):
 						profile_picture = profile_picture,
 						slogan = slogan,
 						fetch_status = fetch_status)
-
+		account.set_password(username)
+		account.backend='django.contrib.auth.backends.ModelBackend'
 		account.save()
-		return True
+		return account
+
+	@classmethod
+	def authenticate(self, username=None, password=None):
+		try:
+		    account = Account.objects.get(username=username)
+		    if account.check_password(password):
+		        return account
+		except Account.DoesNotExist:
+		    return None
 
 
 class Post(models.Model):
