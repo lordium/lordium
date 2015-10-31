@@ -48,9 +48,7 @@ class LoginManager(object):
 			else:
 				_api = _im(request)
 				user_info = _api.authenticate_user(code)
-				print user_info
 				if user_info:
-					print 'check_account'
 					fetch_status = DBManager.check_account(username=user_info.get('username'))
 					username = user_info.get('username')
 
@@ -71,7 +69,7 @@ class LoginManager(object):
 						print u_account, username
 						db_login(request, u_account)
 
-						return ResponseManager.simple_response({'login_status': True, 'account_status': account_status})
+						return ResponseManager.redirect('/') #simple_response({'login_status': True, 'account_status': account_status})
 					else:
 						if DBManager.create_account(user_info, request = request):
 							#TODO: add session.cookies here
@@ -84,7 +82,7 @@ class LoginManager(object):
 							u_account = authenticate(username=username, password=username) #;)
 							print u_account
 							db_login(request, u_account)
-							return ResponseManager.simple_response({'login_status': True, 'account_status': 'new_account'})
+							return ResponseManager.redirect('/')# ({'login_status': True, 'account_status': 'new_account'})
 						else:
 							return ResponseManager.simple_response({'login_status': False, 'account_status': 'creation_failed'})
 				return ResponseManager.simple_response({'login_status': False, 'account_status': 'permission_failed'})
@@ -176,8 +174,11 @@ class DBManager(object):
 
 	@classmethod
 	def last_id(self):
-		latest = models.Post.objects.latest('id')
-		return latest and latest.media_id
+		try:
+			latest = models.Post.objects.latest('id').id
+		except:
+			latest = False
+		return latest
 
 
 	@classmethod
@@ -225,7 +226,11 @@ class DBManager(object):
 		This function will fetch posts from database
 		"""
 		final_result = False
-		posts = models.Post.objects.all()
+		# posts = models.Post.objects.all()
+		if last_id:
+			posts = models.Post.objects.filter(id__gt=last_id).order_by('id')[:2]
+		else:
+			posts = models.Post.objects.order_by('id')[:2]
 		if posts and len(posts) > 0:
 			return posts
 		return final_result
@@ -275,13 +280,10 @@ class FetchManager(object):
 		loop_flag = True
 		posts = []
 
-		print 'here'
 		if vendor and vendor == 'insta' and username:
 			account = models.Account.objects.filter(username=username)
-			print 'dfd', len(account)
 			if account and len(account) > 0:
 				token = account[0].insta_token
-				print 'insta_token', token
 				if token:
 					api = InstagramAPI(access_token=token, client_secret=client_secret)
 					while loop_flag:
@@ -378,7 +380,7 @@ class Provider(object):
 		if posts:
 			return self.make_posts(posts)
 		else:
-			accounts = models.Account.object.add()
+			accounts = models.Account.objects.all()
 			if accounts and len(accounts) > 0:
 				if accounts[0].fetch_status == 1: #1 => NEW
 					return self.make_dict(True, 'no_posts', 'new_account')
@@ -401,7 +403,12 @@ class Provider(object):
 		posts_dict = self.make_dict(True, 'posts', 'fetch_completed')
 		posts_container = []
 		for post in posts:
-			posts_container.append({ 'title': post.title
+			posts_container.append({ 'title': post.title or None,
+									 'type': post.post_type,
+									 'id': post.id,
+									 'img_url': post.post_url or None,
+									 'description': post.description or None,
+									 'location': post.location_name or None
 									})
 
 		posts_dict['posts'] = posts_container

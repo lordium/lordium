@@ -86,7 +86,7 @@
 	           headers: {
 	               'Content-Type': undefined
 	           },
-	           data: data
+	           params: data
 		       })
 		       .success(function (data) {
 		       		success_track(data);
@@ -138,7 +138,7 @@
 		  }
 
 		  super_container.common_failure_track = function(data){
-		  	alert('login failure');
+		  	console.log('Something Went wrong...');
 		  }
 
 		  super_container.poke = function(){
@@ -148,7 +148,7 @@
 		  	//get posts
 		  	console.log('Poke called!')
 
-	  		super_container.post_server('/update',
+	  		super_container.get_server('/update/',
 	  									{'last_id': super_container.last_index},
 	  									super_container.update_tunnels,
 	  									super_container.common_failure_track); //will return promise
@@ -303,10 +303,10 @@
 		  	} else {
 		  		alert('ERROR....');
 		  	}
-		  }
+		  };
 
 		  super_container.login = function(){
-		  	super_container.get_server('/login',
+		  	super_container.get_server('/login/',
 		  							   {'mesg': 'letmein'},
 		  							    super_container.login_success_track,
 		  							    super_container.common_failure_track
@@ -370,6 +370,12 @@
 		  				if(super_container.tunnel_swap > 2){
 		  					super_container.tunnel_swap = 0;
 		  				}
+		  				console.log('Tunnel Swap');
+		  				console.log(super_container.tunnel_swap);
+
+		  				super_container.last_index = post.id;
+		  				console.log('Last Index');
+		  				console.log(super_container.last_index);
 		  		});
 		  	}
 

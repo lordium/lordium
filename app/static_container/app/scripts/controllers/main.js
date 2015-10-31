@@ -32,6 +32,18 @@
 	  	}
 
 	  }])
+	  .directive('superPost', function(){
+	  	return{
+	  		'restrict': 'A',
+	  		// replace: true,
+	  		template: superPostTemplate,
+	  		link: function(scope, element, attrs){
+	  			attrs.$observe('superPost', function(flavor) {
+			        scope.superPost = superPost;
+			    });
+	  		}
+	  	}
+	  })
 	  .directive('letmeIn', function(){
 	  	return {
 	  		restrict: 'A',
@@ -78,12 +90,12 @@
 	  		link: function(scope, element, attrs){
 				scope.$watch('super_container.flagger.config', function(){
 					if(scope.super_container.flagger.config == false){
-						attrs.$set('src',"images/insta.png");
+						attrs.$set('src',"/static/images/insta.png");
 						// element.addClass('finish-him');
 					}
 					else{
 						// element.removeClass('finish-him');
-						attrs.$set('src',"images/insta.png");
+						attrs.$set('src',"/static/images/insta.png");
 					}
 				});
 	  		}
@@ -131,4 +143,17 @@
 	              '</li>'+
 	            '</ul>';
 
+
+	var superPostTemplate = '<img src="{$ superPost.img_url $}" alt="">'+
+         					'<div class="caption">'+
+          					'<div class="tags-container">'+
+            				'<span ng-repeat="label in superPost.tags">{$ label $}</span>'+
+            				'</div>'+
+           					'<h3>{$ superPost.title $}</h3>'+
+           					'<p>{$ superPost.description $}</p>'+
+           					'<p class="location-container">' +
+              				'<span class="glyphicon glyphicon-map-marker"></span>' +
+              				'<span>{$ superPost.location $}</span>'+
+              				'</p>'+
+              				'</div>';
 })();

@@ -14,17 +14,17 @@ from django.contrib.auth.decorators import login_required
 import json
 
 def index(request):
-	print request
-	print request.user
+	# print request
+	# print request.user
 	"""
 	Show initial document to user
 	"""
-	user = Account.objects.all()
-	if len(user) != 1:
-		return HttpResponseRedirect('/account_setup')
+	# user = Account.objects.all()
+	# if len(user) != 1:
+	# 	return HttpResponseRedirect('/login')
 	context = RequestContext(request, {
-									'sometext': settings.STATIC_URL,
-									'instagram_url': '/redirect_url'
+									# 'sometext': settings.STATIC_URL,
+									# 'instagram_url': '/redirect_url'
 									})
 	template = loader.get_template('dist/index.html')
 	return HttpResponse(template.render(context))
@@ -33,26 +33,26 @@ def index(request):
 
 
 
-def process_setup(request):
-	context = RequestContext(request, {
-									'sometext': settings.STATIC_URL,
-									'instagram_url': '/redirect_url'
-									})
-	template = loader.get_template('app/views/process_setup.html')
-	return HttpResponse(template.render(context))
+# def process_setup(request):
+# 	context = RequestContext(request, {
+# 									'sometext': settings.STATIC_URL,
+# 									'instagram_url': '/redirect_url'
+# 									})
+# 	template = loader.get_template('app/views/process_setup.html')
+# 	return HttpResponse(template.render(context))
 
-def account_setup(request):
-	"""
-	Let user login here and get token
-	"""
-	return HttpResponse('<a href="/redirect_url">Setup your account here</a>')
+# def account_setup(request):
+# 	"""
+# 	Let user login here and get token
+# 	"""
+# 	return HttpResponse('<a href="/redirect_url">Setup your account here</a>')
 
 
-def get_snaps(self):
-	"""
-	For Ajax, will grab media from database and send back json
-	"""
-	pass
+# def get_snaps(self):
+# 	"""
+# 	For Ajax, will grab media from database and send back json
+# 	"""
+# 	pass
 
 # def login(request):
 # 	# get the code and redirect user to instagram
@@ -74,18 +74,18 @@ def get_snaps(self):
 # 		api.get_snaps()
 # 	pass
 
-def get_update(request):
-	#TODO: if user is logged in, return fetching
-	# else return login false
-	if api.db_check_user():
+# def get_update(request):
+# 	#TODO: if user is logged in, return fetching
+# 	# else return login false
+# 	if api.db_check_user():
 
-		fetching_status = api.db_fetch_status() #check from database the level of fetching
-		if fetching_status.status == 'fetching':
-			return {'login': True, 'posts_status': 'fetching'}
-		elif fetching_status.status == 'done':
-			return {'login': True, 'posts_status': 'done', 'progress': 100}
-	else:
-		return {'login': False}
+# 		fetching_status = api.db_fetch_status() #check from database the level of fetching
+# 		if fetching_status.status == 'fetching':
+# 			return {'login': True, 'posts_status': 'fetching'}
+# 		elif fetching_status.status == 'done':
+# 			return {'login': True, 'posts_status': 'done', 'progress': 100}
+# 	else:
+# 		return {'login': False}
 
 
 def fetch(request):
@@ -103,18 +103,10 @@ def fetch(request):
 		return pd.troll()
 
 def update(request):
-	#check for posts
-	# if found posts return it
-	# if no posts then check account
-	# if no account then send no account response
 
-	## ---- Get last id and return posts
-	# request.post.get('')
-	##
-
-	# fm.fetch_posts(username='arslanrafique')
-	last_id = None
+	last_id = request.GET.get('last_id', None)
 	resp = pd.get_posts(last_id = last_id)
+	print resp
 	if resp:
 		return resp
 
@@ -123,21 +115,21 @@ def login(request):
 	return resp
 	#return HttpResponse(json.dumps({'test': False}))
 
-def login_redirect(request):
-	code = request.GET.get('code', False)
+# def login_redirect(request):
+# 	code = request.GET.get('code', False)
 
 
-	if not code:
-		return HttpResponseRedirect(insta.INSTA_URL)
-	else:
-		#show a page first and then execute below
+# 	if not code:
+# 		return HttpResponseRedirect(insta.INSTA_URL)
+# 	else:
+# 		#show a page first and then execute below
 
-		api = InstaMine(request=request)
-		if api.authenticate_user(code):
-			request_result = api.flow_manager()
-			return HttpResponse(request_result, content_type="application/json")
-			result = api.get_snaps()
-	return HttpResponse(result or 'Got it')
+# 		api = InstaMine(request=request)
+# 		if api.authenticate_user(code):
+# 			request_result = api.flow_manager()
+# 			return HttpResponse(request_result, content_type="application/json")
+# 			result = api.get_snaps()
+# 	return HttpResponse(result or 'Got it')
 
 
 

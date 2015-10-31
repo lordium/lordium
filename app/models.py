@@ -97,12 +97,6 @@ class Post(models.Model):
 	location_name = models.TextField("Location Name",null=True)
 	account = models.ForeignKey(Account, null=True)
 
-	def __str__(self):
-		return self.title
-
-	def __unicode__(self):
-		return self.title
-
 	@classmethod
 	def post_bulk_create(self, posts):
 		Post.objects.bulk_create(posts)
