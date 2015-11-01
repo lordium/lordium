@@ -25,6 +25,8 @@ urlpatterns = [
 	##user will be directed here and then to instagram
 	url(r'^login/', views.login, name = 'login'),
 
+	url(r'^logout/', views.logout, name = 'logout'),
+
 	##allow user to fetch data
 	url(r'^fetch/', views.fetch, name = 'fetch'),
 

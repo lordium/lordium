@@ -49,6 +49,12 @@
 	      // adds a new phone to the phones array
 	      $httpBackend.whenGET('/update/').respond(function(method, url, data) {
 	        var posts = [];
+
+	        console.log('MOCK: data from get request');
+	        console.log(data);
+	        console.log(url);
+	        console.log(method);
+
 	        for(var i=0; i< 5; i++){
 	          var single_post = {
 	                'img_url': 'http://i.imgur.com/1taT5sV.jpg',
@@ -57,7 +63,8 @@
 	                'description': 'Breach your limits and show the world all you got! ' + String(i),
 	                'location': 'Stockholm, Sweden' + String(i),
 	                'location_link': '',
-	                'class': ''
+	                'class': '',
+	                'post_type': '2'
 	            };
 	            posts.push(single_post);
 	          }
@@ -89,11 +96,11 @@
 	        ///////////////////////
 
 
-	        // var response = {'success': true, 'data_type': 'posts', 'account_status': 'fetch_completed', 'posts': posts};
+	        var response = {'success': true, 'data_type': 'posts', 'account_status': 'fetch_completed', 'posts': posts, 'lucky_image':'https://pbs.twimg.com/profile_images/632135627773906945/qT290uCE_400x400.jpg', 'brand_info': 'Arslan'};
 	        // var response = {'success': true, 'data_type': 'no_posts', 'account_status': 'new_account'};
 	        // var response = {'success': true, 'data_type': 'no_posts', 'account_status': 'fetching'};
-	        // var response = {'success': true, 'data_type': 'no_posts', 'account_status': 'fetch_completed'};
-	        var response = {'success': false, 'data_type': 'no_posts', 'account_status': 'no_account'};
+	        // var response = {'success': true, 'data_type': 'no_posts', 'account_status': 'fetch_completed', 'lucky_image':'/images/insta.png'};
+	        // var response = {'success': false, 'data_type': 'no_posts', 'account_status': 'no_account'};
 
 
 	        return [200, angular.fromJson(response), {}];

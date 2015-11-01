@@ -36,10 +36,14 @@
 	  	return{
 	  		'restrict': 'A',
 	  		// replace: true,
-	  		template: superPostTemplate,
+	  		// template: superPostTemplate,
 	  		link: function(scope, element, attrs){
+	  			scope.video_type = false;
 	  			attrs.$observe('superPost', function(flavor) {
 			        scope.superPost = superPost;
+			        if(superPost.post_tyle == 'video'){
+			        	scope.video_type = true;
+			        }
 			    });
 	  		}
 	  	}
@@ -88,15 +92,8 @@
 	  	return {
 	  		restrict: 'A',
 	  		link: function(scope, element, attrs){
-				scope.$watch('super_container.flagger.config', function(){
-					if(scope.super_container.flagger.config == false){
-						attrs.$set('src',"/static/images/insta.png");
-						// element.addClass('finish-him');
-					}
-					else{
-						// element.removeClass('finish-him');
-						attrs.$set('src',"/static/images/insta.png");
-					}
+				scope.$watch('super_container.brand_image', function(){
+					attrs.$set('src', scope.super_container.brand_image);
 				});
 	  		}
 	  	}
@@ -106,6 +103,13 @@
 	  		restrict: 'A',
 	  		template: menu_tempate,
 	  		link: function(scope, element, attrs){
+	  			scope.brand_name = false;
+	  			scope.$watch('super_container.brand_detail.name', function(){
+	  				if(scope.super_container.brand_detail.name !== false){
+	  					scope.brand_name = scope.super_container.brand_detail.name;
+	  				}
+				});
+
 	  			if(scope.super_container.flagger.config == false){
 	  				element.addClass('finish-him');
 	  			}
@@ -125,26 +129,37 @@
 
 	  		}
 	  	}
+	  })
+	  .directive('fixVidBug', function(){
+	  	return{
+	  		'restrict': 'A',
+	  		link: function(scope,element, attrs){
+	  			scope.$watch('im_post.img_url', function(){
+	  				attrs.$set('src', scope.im_post.img_url);
+	  			})
+
+	  		}
+	  	}
 	  });
 
 	  var menu_tempate = '<ul class="nav navbar-nav navbar-right">'+
-	              '<li><a href="#">About</a></li>'+
-	              '<li class="something">'+
-	                '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Login<span class="caret"></span></a>'+
+	              '<li><a href="#">+</a></li>'+
+	              '<li><a href="/login" ng-show="brand_name ==false">Login</a></li>'+
+	              '<li class="" ng-show="brand_name != false">'+
+	                '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{$ brand_name $}<span class="caret"></span></a>'+
 	                '<ul class="dropdown-menu">'+
-	                  '<li><a href="#">Action</a></li>'+
-	                  '<li><a href="#">Another action</a></li>'+
-	                  '<li><a href="#">Something else here</a></li>'+
+	                  '<li><a href="#">Dashboard</a></li>'+
 	                  '<li role="separator" class="divider"></li>'+
-	                  '<li><a href="#">Separated link</a></li>'+
+	                  '<li><a href="#">Help</a></li>'+
 	                  '<li role="separator" class="divider"></li>'+
-	                  '<li><a href="#">One more separated link</a></li>'+
+	                  '<li><a href="/logout/">Logout</a></li>'+
 	                '</ul>'+
 	              '</li>'+
 	            '</ul>';
 
 
-	var superPostTemplate = '<img src="{$ superPost.img_url $}" alt="">'+
+	var superPostTemplate = '<img ng-hide={$ video_type $} src="{$ superPost.img_url $}" alt="">'+
+							'<video ng-show={$ video_type $} controls width height="150"><source type="video/mp4" src="%s"/></video>'+
          					'<div class="caption">'+
           					'<div class="tags-container">'+
             				'<span ng-repeat="label in superPost.tags">{$ label $}</span>'+

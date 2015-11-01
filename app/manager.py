@@ -37,6 +37,10 @@ class LoginManager(object):
 		"""
 		Let the user login using vendor
 		"""
+
+		if request.user.is_authenticated():
+			return ResponseManager.redirect('/')
+
 		code = request.GET.get('code', False)
 
 		if not request:
@@ -71,7 +75,7 @@ class LoginManager(object):
 
 						return ResponseManager.redirect('/') #simple_response({'login_status': True, 'account_status': account_status})
 					else:
-						if DBManager.create_account(user_info, request = request):
+						if DBManager.db_create_account(user_info, request = request):
 							#TODO: add session.cookies here
 
 							# u = models.Account.objects.get(username = username)
@@ -89,10 +93,10 @@ class LoginManager(object):
 
 
 	@classmethod
-	@response_wrapper
+	# @response_wrapper
 	def logout(self, request):
 		db_logout(request)
-		return {'logout_status': True}
+		return ResponseManager.redirect('/')
 
 	@classmethod
 	def init_account(self):
@@ -131,7 +135,7 @@ class DBManager(object):
 
 
 	@classmethod
-	def create_account(self, user_info, request = None,  **kwargs):
+	def db_create_account(self, user_info, request = None,  **kwargs):
 		"""
 		This function will create account and write it to
 		database
@@ -173,7 +177,7 @@ class DBManager(object):
 
 
 	@classmethod
-	def last_id(self):
+	def db_last_id(self):
 		try:
 			latest = models.Post.objects.latest('id').id
 		except:
@@ -189,7 +193,7 @@ class DBManager(object):
 		pass
 
 	@classmethod
-	def create_posts(self, posts, account_reference):
+	def db_create_posts(self, posts, account_reference):
 		"""
 		This function will create new posts in database
 		its going to be bulk function
@@ -221,7 +225,7 @@ class DBManager(object):
 		"""
 
 	@classmethod
-	def get_posts(self, last_id=None):
+	def db_get_posts(self, last_id=None):
 		"""
 		This function will fetch posts from database
 		"""
@@ -245,14 +249,14 @@ class CacheManager(object):
 	"""
 
 	@classmethod
-	def get_posts(self, last_id=None):
+	def cache_get_posts(self, last_id=None):
 		"""
 		This function will fetch posts from cache
 		"""
 		pass
 
 	@classmethod
-	def get_db(self, last_id=None):
+	def cache_get_db(self, last_id=None):
 		"""
 		This function will get posts from DB and update the cache
 		"""
@@ -269,7 +273,7 @@ class FetchManager(object):
 	This manager is responsible for fetching data from vendors
 	"""
 	@classmethod
-	def fetch_posts(self, vendor='insta', username = None, last_id=None):
+	def fm_fetch_posts(self, vendor='insta', username = None, last_id=None):
 		"""
 		This function will fetch posts from vendors
 		"""
@@ -291,15 +295,17 @@ class FetchManager(object):
 																	count = count_limit,
 																	max_id = last_media_id)
 						for media in recent_media:
+							print media
 							last_media_id = media.id
 							posts.append({ 	'media_id': media.id,
-										 	'description': self.verify_property(media, 'caption') or '',
-										 	'date_published': self.verify_property(media, 'created_time'),
-											'post_type': self.check_media_type(media, 'type'),
+										 	'description': self.fm_verify_property(media, 'caption') or '',
+										 	'date_published': self.fm_verify_property(media, 'created_time'),
+											'post_type': self.fm_check_media_type(media, 'type'),
 											'post_url': media.get_standard_resolution_url(),
-											'post_tags': self.make_tags(media, 'tags'),
-											'location': self.verify_property(media, 'location'),
-											'location_name': self.verify_property(media, 'location.name'),
+											'post_tags': self.fm_make_tags(media, 'tags'),
+											'location': self.fm_verify_property(media, 'location'),
+											'location_name': self.fm_verify_property(media, 'location') and
+												self.fm_verify_property(media, 'location').name,
 											'account': None
 										})
 						loop_flag = len(recent_media) > 0
@@ -309,14 +315,14 @@ class FetchManager(object):
 		return False
 
 	@classmethod
-	def verify_property(self, obj, prop):
+	def fm_verify_property(self, obj, prop):
 		if hasattr(obj, prop):
 			return getattr(obj, prop)
 		return None
 
 	@classmethod
-	def check_media_type(self, obj, prop):
-		media_type = self.verify_property(obj, prop)
+	def fm_check_media_type(self, obj, prop):
+		media_type = self.fm_verify_property(obj, prop)
 		if media_type:
 			if media_type == 'image':
 				return 1
@@ -327,8 +333,8 @@ class FetchManager(object):
 
 
 	@classmethod
-	def make_tags(self, media, tags):
-		tags = self.verify_property(media, tags)
+	def fm_make_tags(self, media, tags):
+		tags = self.fm_verify_property(media, tags)
 		if tags:
 			new_tags = []
 			for tag in tags:
@@ -368,71 +374,6 @@ class FetchManager(object):
 # 			return True #update data base here with user data and snaps
 # 		return False
 
-class Provider(object):
-
-	@classmethod
-	@response_wrapper
-	def get_posts(self, last_id=None):
-		"""
-		get posts, if not, check account,
-		"""
-		posts = DBManager.get_posts(last_id = last_id)
-		if posts:
-			return self.make_posts(posts)
-		else:
-			accounts = models.Account.objects.all()
-			if accounts and len(accounts) > 0:
-				if accounts[0].fetch_status == 1: #1 => NEW
-					return self.make_dict(True, 'no_posts', 'new_account')
-				elif accounts[0].fetch_status == 2: #2 => Fetching
-				 	return self.make_dict(True, 'no_posts', 'fetching')
-				elif accounts[0].fetch_status == 3: #3 => Fetch Completed
-					return self.make_dict(True, 'no_posts', 'fetch_completed')
-			else:
-				return self.make_dict(False, 'no_posts', 'no_account')
-
-
-	@classmethod
-	def make_dict(self, success=True, data_type=None, account_status=None):
-		return {'success': success,
-				'data_type': data_type,
-				'account_status': account_status}
-
-	@classmethod
-	def make_posts(self, posts):
-		posts_dict = self.make_dict(True, 'posts', 'fetch_completed')
-		posts_container = []
-		for post in posts:
-			posts_container.append({ 'title': post.title or None,
-									 'type': post.post_type,
-									 'id': post.id,
-									 'img_url': post.post_url or None,
-									 'description': post.description or None,
-									 'location': post.location_name or None
-									})
-
-		posts_dict['posts'] = posts_container
-		return posts_dict
-
-	@classmethod
-	def fetch_update_posts(self, vendor='insta', username=None, last_id = None):
-		#TODO: get last data id from database
-		last_id = DBManager.last_id()
-		last_id = last_id or None
-
-		posts = FetchManager.fetch_posts(vendor=vendor, username=username, last_id = last_id)
-		account = models.Account.objects.filter(username=username)
-		if account and len(account) > 0 and DBManager.create_posts(posts, account[0]):
-			return ResponseManager.simple_response({'status': 'success', 'fetch_status': 'complete'})
-		return ResponseManager.simple_response({'status': 'failed', 'fetch_status': 'not_completed'})
-
-	@classmethod
-	def troll(self):
-		return ResponseManager.simple_response({'hey': ';)'})
-
-
-
-
 
 class ResponseManager(object):
 	"""
@@ -453,6 +394,90 @@ class ResponseManager(object):
 		if make_json:
 			data = json.dumps(data)
 		return HttpResponse(data)
+
+class Provider(LoginManager, DBManager, FetchManager, ResponseManager):
+
+	@classmethod
+	@response_wrapper
+	def get_posts(self, last_id=None, request=None):
+		"""
+		get posts, if not, check account,
+		"""
+
+		posts = self.db_get_posts(last_id = last_id)
+		if posts:
+			lucky_image = False
+			brand_info = False
+			if not last_id:
+				accounts = models.Account.objects.all()
+				if accounts and len(accounts) > 0:
+					lucky_image = accounts[0].profile_picture
+					if request.user.is_authenticated():
+						brand_info = accounts[0].username
+
+			return self.make_posts(posts, lucky_image, brand_info)
+		else:
+			accounts = models.Account.objects.all()
+			if accounts and len(accounts) > 0:
+				if accounts[0].fetch_status == 1: #1 => NEW
+					return self.make_dict(True, 'no_posts', 'new_account')
+				elif accounts[0].fetch_status == 2: #2 => Fetching
+				 	return self.make_dict(True, 'no_posts', 'fetching')
+				elif accounts[0].fetch_status == 3: #3 => Fetch Completed
+					return self.make_dict(True, 'no_posts', 'fetch_completed')
+			else:
+				return self.make_dict(False, 'no_posts', 'no_account')
+
+
+	@classmethod
+	def make_dict(self, success=True, data_type=None, account_status=None):
+		return {'success': success,
+				'data_type': data_type,
+				'account_status': account_status}
+
+	@classmethod
+	def make_posts(self, posts, lucky_image, brand_info):
+		posts_dict = self.make_dict(True, 'posts', 'fetch_completed')
+		posts_dict['lucky_image'] = lucky_image or None
+		posts_dict['brand_info'] = brand_info or None
+		posts_container = []
+		for post in posts:
+			posts_container.append({ 'title': post.title or None,
+									 'type': post.post_type,
+									 'id': post.id,
+									 'img_url': post.post_url or None,
+									 'description': post.description or None,
+									 'location': post.location_name or None,
+									 'post_type': post.post_type or None
+									})
+
+
+		posts_dict['posts'] = posts_container
+		return posts_dict
+
+	@classmethod
+	def fetch_update_posts(self, vendor='insta', username=None, last_id = None):
+		#TODO: get last data id from database
+		last_id = self.db_last_id()
+		last_id = last_id or None
+
+		posts = self.fm_fetch_posts(vendor=vendor, username=username, last_id = last_id)
+		account = models.Account.objects.filter(username=username)
+		if account and len(account) > 0 and self.db_create_posts(posts, account[0]):
+			account[0].fetch_status = 3
+			account[0].save()
+			return self.simple_response({'status': 'success', 'fetch_status': 'completed'})
+		return self.simple_response({'status': 'failed', 'fetch_status': 'not_completed'})
+
+	@classmethod
+	def troll(self):
+		return self.simple_response({'status': 'failed', 'fetch_status': 'not_completed'})
+
+
+
+
+
+
 
 
 

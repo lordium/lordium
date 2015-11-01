@@ -14,7 +14,8 @@
 	angular.module('staticContainerApp')
 		.factory('SuperFactory', ['$http', '$q', '$timeout', function($http, $q, $timeout){
 		  var super_container = {}; // will contain all objects,
-
+		  super_container.brand_detail = {'name': false};
+		  super_container.brand_image='/static/images/insta.png';
 		  super_container.single_post = {
 		  	'imgage_url': 'http://i.imgur.com/1taT5sV.jpg',
 		    'title': 'This is title',
@@ -92,7 +93,7 @@
 		       		success_track(data);
 		       })
 		       .error(function (data, status) {
-		       		failure_track(data);
+		       		failure_track(data, status);
 		       });
 		  }
 
@@ -137,8 +138,9 @@
 		  	super_container.response_manager(data);
 		  }
 
-		  super_container.common_failure_track = function(data){
+		  super_container.common_failure_track = function(data, error){
 		  	console.log('Something Went wrong...');
+		  	console.log(error);
 		  }
 
 		  super_container.poke = function(){
@@ -147,9 +149,9 @@
 
 		  	//get posts
 		  	console.log('Poke called!')
-
+		  	var data = {'last_id': super_container.last_index}
 	  		super_container.get_server('/update/',
-	  									{'last_id': super_container.last_index},
+	  									data,
 	  									super_container.update_tunnels,
 	  									super_container.common_failure_track); //will return promise
 
@@ -351,6 +353,16 @@
 		  }
 
 		  super_container.update_tunnels = function(posts, utype){
+
+		  	if(posts.brand_info){
+		  		super_container.brand_detail.name = posts.brand_info;
+		  	}
+
+		  	if(posts.lucky_image){
+		  		super_container.brand_image = posts.lucky_image;
+		  		console.log('lucky_image');
+		  		console.log(super_container.brand_image);
+		  	}
 		  	console.log('Update Tunnels Called');
 		  	console.log(posts);
 		  	var iposts = posts;
@@ -376,6 +388,7 @@
 		  				super_container.last_index = post.id;
 		  				console.log('Last Index');
 		  				console.log(super_container.last_index);
+		  				console.log('Flagger Config:' + String(super_container.flagger.config));
 		  		});
 		  	}
 
