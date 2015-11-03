@@ -46,7 +46,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app'
+    'app',
+    'darbaan'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -112,19 +113,20 @@ STATICFILES_DIRS =(
     # os.path.join(BASE_DIR, "app/static_container/app/app/images"),
 )
 
+SOCIAL_AUTH = {
+    'insta': {
+                'client_id': '924d5f65c1ad45fa8e262ca99f966227',
+                'client_secret': 'f81039c72b98401da0402b05b0a16954',
+                }
+}
 
-# TEMPLATES = [
-#     {
-#         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-#         'DIRS': [os.path.join(BASE_DIR, 'templates')],
-#         'APP_DIRS': True,
-#         'OPTIONS': {
-#             'context_processors': [
-#                 'django.template.context_processors.debug',
-#                 'django.template.context_processors.request',
-#                 'django.contrib.auth.context_processors.auth',
-#                 'django.contrib.messages.context_processors.messages',
-#             ],
-#         },
-#     },
-# ]
+SOCIAL_HOOKS = {
+    'insta': {
+        'access_url':'https://api.instagram.com/oauth/access_token',
+        'insta_url': 'https://api.instagram.com/oauth/authorize/?client_id=924d5f65c1ad45fa8e262ca99f966227&redirect_uri=http://localhost:8000/redirect_url/&response_type=code'
+    }
+}
+
+
+REDIRECT_URI = 'http://localhost:8000/redirect_url/'
+

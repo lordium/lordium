@@ -57,14 +57,14 @@
 
 	        for(var i=0; i< 5; i++){
 	          var single_post = {
-	                'img_url': 'http://i.imgur.com/1taT5sV.jpg',
+	                'img_url': 'http://www.1999.co.jp/itbig18/10184905a.jpg',
 	                'title': 'Your awesome title' + String(i) + String(new Date()),
 	                'tags': ['awesome', 'amazing', 'cool'],
 	                'description': 'Breach your limits and show the world all you got! ' + String(i),
 	                'location': 'Stockholm, Sweden' + String(i),
 	                'location_link': '',
 	                'class': '',
-	                'post_type': '2'
+	                'post_type': '1'
 	            };
 	            posts.push(single_post);
 	          }

@@ -2,12 +2,13 @@ import json
 import confs
 import insta
 import models
-from insta import InstaMine as _im
-from instagram.client import InstagramAPI
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as db_login
 from django.contrib.auth import logout as db_logout
 from django.http import HttpResponse, HttpResponseRedirect
+
+from darbaan.darbaan import Darbaan
+
 
 
 # Below is utility function section
@@ -48,10 +49,10 @@ class LoginManager(object):
 
 		if vendor and vendor == 'insta':
 			if not code:
-				return ResponseManager.redirect(insta.INSTA_URL)
+				return Darbaan.insta_redirect() #
 			else:
-				_api = _im(request)
-				user_info = _api.authenticate_user(code)
+				_api = Darbaan(request)
+				user_info = _api.insta_login(code)
 				if user_info:
 					fetch_status = DBManager.check_account(username=user_info.get('username'))
 					username = user_info.get('username')
@@ -88,8 +89,10 @@ class LoginManager(object):
 							db_login(request, u_account)
 							return ResponseManager.redirect('/')# ({'login_status': True, 'account_status': 'new_account'})
 						else:
-							return ResponseManager.simple_response({'login_status': False, 'account_status': 'creation_failed'})
-				return ResponseManager.simple_response({'login_status': False, 'account_status': 'permission_failed'})
+							return ResponseManager.redirect('/')#
+							# return ResponseManager.simple_response({'login_status': False, 'account_status': 'creation_failed'})
+				return ResponseManager.redirect('/')#
+				# return ResponseManager.simple_response({'login_status': False, 'account_status': 'permission_failed'})
 
 
 	@classmethod
@@ -97,21 +100,6 @@ class LoginManager(object):
 	def logout(self, request):
 		db_logout(request)
 		return ResponseManager.redirect('/')
-
-	@classmethod
-	def init_account(self):
-		"""
-		This function will create a new account
-		"""
-		pass
-
-	@classmethod
-	def check_token_validity(self, token, vendor=None):
-		"""
-		Check if Token is still valid or not, if not update
-		user model with token exception
-		"""
-		pass
 
 
 class DBManager(object):
@@ -163,14 +151,6 @@ class DBManager(object):
 											insta_token = request.session['access_token'],
 											fetch_status = 1)
 
-			# account = models.Account.create_user(username = user_info.get('username'),
-			# 								slogan = user_info.get('bio', ''),
-			# 								profile_picture = user_info.get('profile_picture'),
-			# 								first_name = user_info.get('full_name'),
-			# 								insta_id = user_info.get('id'),
-			# 								insta_token = request.session['access_token'],
-			# 								fetch_status = 1,
-			# 								password = user_info.get('username'))
 			if account:
 				return True
 		return False
@@ -277,103 +257,13 @@ class FetchManager(object):
 		"""
 		This function will fetch posts from vendors
 		"""
-		token = None
-		client_secret = confs.CLIENT_SECRET
-		count_limit = 20
-		last_media_id = last_id
-		loop_flag = True
-		posts = []
 
 		if vendor and vendor == 'insta' and username:
 			account = models.Account.objects.filter(username=username)
 			if account and len(account) > 0:
 				token = account[0].insta_token
-				if token:
-					api = InstagramAPI(access_token=token, client_secret=client_secret)
-					while loop_flag:
-						recent_media, next = api.user_recent_media(
-																	count = count_limit,
-																	max_id = last_media_id)
-						for media in recent_media:
-							print media
-							last_media_id = media.id
-							posts.append({ 	'media_id': media.id,
-										 	'description': self.fm_verify_property(media, 'caption') or '',
-										 	'date_published': self.fm_verify_property(media, 'created_time'),
-											'post_type': self.fm_check_media_type(media, 'type'),
-											'post_url': media.get_standard_resolution_url(),
-											'post_tags': self.fm_make_tags(media, 'tags'),
-											'location': self.fm_verify_property(media, 'location'),
-											'location_name': self.fm_verify_property(media, 'location') and
-												self.fm_verify_property(media, 'location').name,
-											'account': None
-										})
-						loop_flag = len(recent_media) > 0
-
-					return posts
-
+				return Darbaan.insta_fetch(token=token, last_id=last_id)
 		return False
-
-	@classmethod
-	def fm_verify_property(self, obj, prop):
-		if hasattr(obj, prop):
-			return getattr(obj, prop)
-		return None
-
-	@classmethod
-	def fm_check_media_type(self, obj, prop):
-		media_type = self.fm_verify_property(obj, prop)
-		if media_type:
-			if media_type == 'image':
-				return 1
-			elif media_type == 'video':
-				return 2
-			else:
-				return 3
-
-
-	@classmethod
-	def fm_make_tags(self, media, tags):
-		tags = self.fm_verify_property(media, tags)
-		if tags:
-			new_tags = []
-			for tag in tags:
-				new_tags.append(tag.name)
-			return json.dumps(new_tags)
-		return False
-
-
-# def initiate_setup(self):
-# 		"""
-# 		grabs the data and updates the database
-# 		"""
-# 		user_obj = {}
-# 		fresh_media = []
-# 		count_limit = 20
-# 		last_media_id = None
-# 		loop_flag = True
-# 		access_token = self.request.session['access_token']
-# 		api = InstagramAPI(access_token=access_token, client_secret=self.CONFIG['client_secret'])
-
-# 		while loop_flag:
-# 			recent_media, next = api.user_recent_media(count=count_limit, max_id=last_media_id)
-# 			for media in recent_media:
-# 				last_media_id = media.id
-# 				fresh_media.append({ 'media_id': media.id,
-# 									 'description': self.verify_property(media, 'caption'),
-# 									 'date_published': self.verify_property(media, 'created_time'),
-# 									 'post_type': self.verify_property(media, 'type'),
-# 									 'post_url': media.get_standard_resolution_url(),
-# 									 'post_tags': self.make_tags(media, 'tags'),
-# 									 'location': self.verify_property(media, 'location'),
-# 									 'location_name': self.verify_property(media, 'location.name'),
-# 									})
-# 			loop_flag = len(recent_media) > 0
-# 		if len(fresh_media) > 0:
-# 			print fresh_media
-# 			return True #update data base here with user data and snaps
-# 		return False
-
 
 class ResponseManager(object):
 	"""
@@ -448,7 +338,8 @@ class Provider(LoginManager, DBManager, FetchManager, ResponseManager):
 									 'img_url': post.post_url or None,
 									 'description': post.description or None,
 									 'location': post.location_name or None,
-									 'post_type': post.post_type or None
+									 'post_type': post.post_type or None,
+									 'tags': post.post_tags or None
 									})
 
 

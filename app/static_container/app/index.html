@@ -60,7 +60,7 @@
          <video  ng-show="im_post.post_type == '2'"  controls width="100%" height="100%"><source ng-src="" fix-vid-bug type="video/mp4"/></video>
 
          <div class="caption">
-          <div class="tags-container" ng-show="im_post.tags">
+          <div class="tags-container" >
             <span ng-repeat="label in im_post.tags" >{$ label $}</span>
           </div>
            <h3 ng-click="update_tunnel()" ng-show="im_post.title">{$ im_post.title $} </h3>
