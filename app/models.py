@@ -87,7 +87,7 @@ class Account(User):
 
 class Post(models.Model):
 	media_id = models.CharField(max_length=200, null=True)
-	title = models.CharField(max_length=200)
+	title = models.CharField(max_length=200, null=True)
 	date_published = models.DateTimeField("Date Published")
 	post_type = models.IntegerField(choices=MEDIA_CHOICES, default=1)
 	post_url = models.TextField(validators=[URLValidator()],null=True)

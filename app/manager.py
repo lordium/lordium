@@ -2,6 +2,7 @@ import json
 import confs
 import insta
 import models
+from django.db.models import Q
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as db_login
 from django.contrib.auth import logout as db_logout
@@ -113,12 +114,13 @@ class DBManager(object):
 		"""
 		This will check if user already exists
 		"""
-		accounts = models.Account.objects.all()
-		print 'check in'
-		print accounts
-		if accounts and len(accounts) > 0:
-			if accounts[0].username == username:
-				return accounts[0].fetch_status
+		account = False
+		try:
+			account = models.Account.objects.get(username=username)
+		except models.Account.DoesNotExist:
+			account = False
+		if account:
+			return account.fetch_status
 		return False
 
 
@@ -157,13 +159,16 @@ class DBManager(object):
 
 
 	@classmethod
-	def db_last_id(self):
+	def db_last_id(self, account):
 		try:
-			latest = models.Post.objects.latest('id').id
+			latest = models.Post.objects.filter(account=account).latest('id').id
 		except:
 			latest = False
 		return latest
 
+	@classmethod
+	def db_get_dirty_accounts(self):
+		return models.Account.objects.filter(Q(fetch_status=1)|Q(fetch_status=4))
 
 	@classmethod
 	def delete_account(self):
@@ -184,7 +189,8 @@ class DBManager(object):
 		for post in posts:
 			single_post = models.Post(
 								media_id = post.get('media_id'),
-								title = post.get('description'),
+								title = post.get('title', None),
+								description = post.get('description', None),
 								date_published = post.get('date_published'),
 								post_type = post.get('post_type'),
 								post_url = post.get('post_url'),
@@ -257,11 +263,10 @@ class FetchManager(object):
 		"""
 		This function will fetch posts from vendors
 		"""
-
 		if vendor and vendor == 'insta' and username:
-			account = models.Account.objects.filter(username=username)
-			if account and len(account) > 0:
-				token = account[0].insta_token
+			account = models.Account.objects.get(username=username)
+			if account:
+				token = account.insta_token
 				return Darbaan.insta_fetch(token=token, last_id=last_id)
 		return False
 
@@ -302,12 +307,13 @@ class Provider(LoginManager, DBManager, FetchManager, ResponseManager):
 				accounts = models.Account.objects.all()
 				if accounts and len(accounts) > 0:
 					lucky_image = accounts[0].profile_picture
-					if request.user.is_authenticated():
-						brand_info = accounts[0].username
+					if request and request.user.is_authenticated():
+						brand_info = accounts[0].username #TODO: use session here
 
 			return self.make_posts(posts, lucky_image, brand_info)
 		else:
 			accounts = models.Account.objects.all()
+			#using account[0], first user will be king!
 			if accounts and len(accounts) > 0:
 				if accounts[0].fetch_status == 1: #1 => NEW
 					return self.make_dict(True, 'no_posts', 'new_account')
@@ -349,15 +355,16 @@ class Provider(LoginManager, DBManager, FetchManager, ResponseManager):
 	@classmethod
 	def fetch_update_posts(self, vendor='insta', username=None, last_id = None):
 		#TODO: get last data id from database
-		last_id = self.db_last_id()
-		last_id = last_id or None
-
-		posts = self.fm_fetch_posts(vendor=vendor, username=username, last_id = last_id)
-		account = models.Account.objects.filter(username=username)
-		if account and len(account) > 0 and self.db_create_posts(posts, account[0]):
-			account[0].fetch_status = 3
-			account[0].save()
-			return self.simple_response({'status': 'success', 'fetch_status': 'completed'})
+		#Get the accounts for dirty/new
+		dirty_accounts = self.db_get_dirty_accounts()
+		if dirty_accounts and len(dirty_accounts) > 0:
+			for account in dirty_accounts:
+				last_id = self.db_last_id(account) or None
+				posts = self.fm_fetch_posts(vendor=vendor, username=account.username, last_id=last_id)
+				if posts and self.db_create_posts(posts, account):
+					account.fetch_status = 3
+					account.save()
+					return self.simple_response({'status': 'success', 'fetch_status': 'completed'})
 		return self.simple_response({'status': 'failed', 'fetch_status': 'not_completed'})
 
 	@classmethod

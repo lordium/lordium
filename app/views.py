@@ -43,11 +43,9 @@ def fetch(request):
 	return pd.troll()
 
 def update(request):
-	print request
-
 	last_id = request.GET.get('last_id', None)
 	resp = pd.get_posts(last_id = last_id, request = request)
-	print request.user.is_authenticated()
+	# print request.user.is_authenticated()
 	# print resp
 	if resp:
 		return resp
