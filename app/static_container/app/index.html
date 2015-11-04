@@ -61,7 +61,7 @@
 
          <div class="caption">
           <div class="tags-container" >
-            <span ng-repeat="label in im_post.tags" >{$ label $}</span>
+            <span ng-repeat="label in im_post.tags.split(',')" >{$ label $}</span>
           </div>
            <h3 ng-click="update_tunnel()" ng-show="im_post.title">{$ im_post.title $} </h3>
            <p ng-show="im_post.description">{$ im_post.description $}</p>

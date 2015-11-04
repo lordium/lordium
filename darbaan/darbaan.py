@@ -1,3 +1,4 @@
+import re
 import requests
 from django.conf import settings
 from instagram.client import InstagramAPI
@@ -48,12 +49,14 @@ class Darbaan(object):
 				for media in recent_media:
 					print media
 					last_media_id = media.id
+					title, description = self.insta_get_title_description(media, 'caption')
 					posts.append({ 	'media_id': media.id,
-								 	'description': self.verify_property(media, 'caption') or '',
+									'title':title,
+								 	'description': description,
 								 	'date_published': self.verify_property(media, 'created_time'),
 									'post_type': self.insta_check_type(media, 'type'),
 									'post_url': media.get_standard_resolution_url(),
-									'post_tags': self.verify_property(media, 'tags'),
+									'post_tags': self.insta_make_tags(media, 'tags'),
 									'location': self.verify_property(media, 'location'),
 									'location_name': self.verify_property(media, 'location') and
 										self.verify_property(media, 'location').name,
@@ -78,12 +81,36 @@ class Darbaan(object):
 		return 1
 
 
-	# @classmethod
-	# def fm_make_tags(self, media, tags):
-	# 	tags = self.verify_property(media, tags)
-	# 	if tags:
-	# 		new_tags = []
-	# 		for tag in tags:
-	# 			new_tags.append(tag.name)
-	# 		return json.dumps(new_tags)
-	# 	return False
+	@classmethod
+	def insta_make_tags(self, media, tags):
+		tags = self.verify_property(media, tags)
+		if tags:
+			tags = str(tags)
+			tags = tags[1:-1].split()
+			final_tags = ''
+			for tag in tags:
+				if tag != 'Tag:':
+					final_tags+=',' + tag.split(',')[0]
+			print 'final tags'
+			print final_tags
+			return final_tags
+		return ''
+
+	@classmethod
+	def insta_get_title_description(self, media, comment):
+		comment = self.verify_property(media, comment)
+		if comment:
+			comment = str(comment)
+			data =  re.findall(r'(?=.*?\".*?\")(.*?)"(.*)"', comment)[0][1]
+			title = ''
+			description = data
+			headMatch = re.match(r'(.*)--(.*)--(.*)', data)
+			if headMatch:
+				total_breaks = headMatch.groups()
+				total_breaks_len = len(total_breaks)
+				if total_breaks_len == 3:
+					# if headMatch.group(1) == '':
+					title = headMatch.group(2)
+			return title, description
+		else:
+			return '', ''
