@@ -94,6 +94,7 @@ class Darbaan(object):
 			print 'final tags'
 			print final_tags
 			return final_tags
+
 		return ''
 
 	@classmethod
