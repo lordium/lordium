@@ -1,5 +1,6 @@
 from django.conf.urls import url
 import views
+import app
 
 urlpatterns = [
 	url(r'^$', views.index, name = 'index'),
@@ -31,3 +32,4 @@ urlpatterns = [
 	url(r'^fetch/', views.fetch, name = 'fetch'),
 
 ]
+

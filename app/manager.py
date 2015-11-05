@@ -120,6 +120,9 @@ class DBManager(object):
 		except models.Account.DoesNotExist:
 			account = False
 		if account:
+			if account.fetch_status == 0:
+				account_status.fetch_status = 1
+				account.save()
 			return account.fetch_status
 		return False
 
@@ -141,19 +144,25 @@ class DBManager(object):
 		u'id': u'1141033715'
 		 }
 		"""
-		if request:
-			print "username is", user_info.get('username')
-			account = models.Account.create(username = user_info.get('username'),
-											slogan = user_info.get('bio', ''),
-											profile_picture = user_info.get('profile_picture'),
-											first_name = user_info.get('full_name'),
-											last_name=" ",
-											email="example@example.com",
-											insta_id = user_info.get('id'),
-											insta_token = request.session['access_token'],
-											fetch_status = 1)
+
+		## should create only first account, will all permissions
+		if len(models.Account.objects.all()) == 0:
+			if request:
+				print "username is", user_info.get('username')
+				account = models.Account.create(username = user_info.get('username'),
+												slogan = user_info.get('bio', ''),
+												profile_picture = user_info.get('profile_picture'),
+												first_name = user_info.get('full_name'),
+												last_name=" ",
+												email="example@example.com",
+												insta_id = user_info.get('id'),
+												insta_token = request.session['access_token'],
+												fetch_status = 1)
 
 			if account:
+				account.is_staff = True
+				account.is_superuser = True
+				account.save()
 				return True
 		return False
 
@@ -370,7 +379,6 @@ class Provider(LoginManager, DBManager, FetchManager, ResponseManager):
 	@classmethod
 	def troll(self):
 		return self.simple_response({'status': 'failed', 'fetch_status': 'not_completed'})
-
 
 
 

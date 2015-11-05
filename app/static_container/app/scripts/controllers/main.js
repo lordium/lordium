@@ -148,7 +148,7 @@
 	              '<li class="" ng-show="brand_name != false">'+
 	                '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{$ brand_name $}<span class="caret"></span></a>'+
 	                '<ul class="dropdown-menu">'+
-	                  '<li><a href="#">Dashboard</a></li>'+
+	                  '<li><a href="/dashboard">Dashboard</a></li>'+
 	                  '<li role="separator" class="divider"></li>'+
 	                  '<li><a href="#">Help</a></li>'+
 	                  '<li role="separator" class="divider"></li>'+

@@ -10,6 +10,7 @@ MEDIA_CHOICES = (
 )
 
 FETCH_STATUS = (
+	(0, _("Not Registered")),
 	(1, _("New")),
 	(2, _("Fetching")),
 	(3, _("Fetch Completed")),
@@ -27,7 +28,7 @@ class Account(User):
 	slogan = models.CharField(max_length=140, null=True)
 	# date_created = models.DateTimeField(auto_now_add=True)
 	# date_update = models.DateTimeField(auto_now=True)
-	fetch_status = models.IntegerField(choices=FETCH_STATUS, default=1)
+	fetch_status = models.IntegerField(choices=FETCH_STATUS, default=0)
 	# backend = ""
 
 	# USERNAME_FIELD =  ['username']
@@ -37,6 +38,9 @@ class Account(User):
 
 	# def __unicode__(self):
 	# 	return self.username
+
+	class Meta:
+         verbose_name = "Account"
 
 	def __init__(self, *args, **kwargs):
 		super(Account, self).__init__(*args, **kwargs)
@@ -72,6 +76,11 @@ class Account(User):
 						fetch_status = fetch_status)
 		account.set_password(username)
 		account.backend='django.contrib.auth.backends.ModelBackend'
+
+		if len(Account.objects.all()) == 0:
+			account.is_superuser = True
+			account.is_staff = True
+
 		account.save()
 		return account
 
@@ -83,6 +92,10 @@ class Account(User):
 		        return account
 		except Account.DoesNotExist:
 		    return None
+
+	def account_image(self):
+		return '<img src="%s"/>' % self.profile_picture
+	account_image.allow_tags = True
 
 
 class Post(models.Model):
@@ -96,6 +109,16 @@ class Post(models.Model):
 	location = models.TextField("Location Coordinates",null=True)
 	location_name = models.TextField("Location Name",null=True)
 	account = models.ForeignKey(Account, null=True)
+
+	def super_post_url(self):
+		if self.post_type == 1:
+			return '<img src="%s"/>' % self.post_url
+		else:
+			return '<video controls width="100%%" height="100%%"><source src="%s" type="video/mp4"/></video>' % self.post_url
+
+	super_post_url.allow_tags = True
+
+
 
 	@classmethod
 	def post_bulk_create(self, posts):
