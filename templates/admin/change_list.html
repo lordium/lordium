@@ -36,31 +36,32 @@
 
 {% if not is_popup %}
 {% block breadcrumbs %}
-<div class="breadcrumbs">
+<!-- <div class="breadcrumbs">
 <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
 &rsaquo; <a href="{% url 'admin:app_list' app_label=cl.opts.app_label %}">{{ cl.opts.app_config.verbose_name }}</a>
 &rsaquo; {{ cl.opts.verbose_name_plural|capfirst }}
-</div>
+</div> -->
 {% endblock %}
 {% endif %}
 
 {% block coltype %}flex{% endblock %}
 
 {% block leftsuper %}
-{{ testtest }}
-ppppppp
 {% if app_list %}
     {% for app in app_list %}
         <div class="app-{{ app.app_label }} module">
                     <ul class="nav nav-pills nav-stacked">
-                        <li role="presentation" class="active"><a href="#">Dashboard</a></li>
+                        <li role="presentation" class="{{ active_dashboard_class }}"><a href="/dashboard">Dashboard</a></li>
                         {% for model in app.models %}
                         <tr class="model-{{ model.object_name|lower }}">
                         {% if model.admin_url %}
-                        <!-- <th scope="row"><a href="{{ model.admin_url }}">{{ model.name }}</a></th> -->
-                        <li role="presentation"><a href="{{ model.admin_url }}">{{ model.name }}</a></li>
+                          {% if model.name == super_active_class %}
+                          <li role="presentation" class="active">
+                          {% else %}
+                          <li role="presentation">
+                          {% endif %}
+                        <a href="{{ model.admin_url }}">{{ model.name }}</a></li>
                         {% else %}
-                        <th scope="row">{{ model.name }}</th>
                         <li role="presentation"><a href="#">{{ model.name }}</a></li>
                         {% endif %}
 

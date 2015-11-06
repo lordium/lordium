@@ -2,12 +2,14 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.utils import six
 from django.apps import apps
 from django.utils.text import capfirst
-from django.contrib.admin import AdminSite,ModelAdmin
+from django.contrib.admin import AdminSite
 from django.template.response import TemplateResponse
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse, NoReverseMatch
 from app.models import Account
+
+# from django.contrib.admin.templatetags.admin_list
 
 class SuperAdmin(AdminSite):
 	# @never_cache
@@ -37,6 +39,7 @@ class SuperAdmin(AdminSite):
 				pass
 		if super_user:
 			index_response.context_data['super_user'] = super_user
+		index_response.context_data['active_dashboard_class'] = 'active'
 
 		return index_response
 
@@ -54,19 +57,8 @@ class SuperAdmin(AdminSite):
 				pass
 		if super_user:
 			app_index_response.context_data['super_user'] = super_user
-
+		app_index_response.context_data['active_dashboard_class'] = 'active'
 		return app_index_response
-
-
-class SuperBaseModelAdmin(ModelAdmin):
-
-    def changelist_view(self, request, extra_context=None):
-    	change_list_resp = super(SuperBaseModelAdmin, self).changelist_view(request, extra_context = extra_context)
-    	change_list_resp.context_data['testtest'] = 'yahoo'
-    	print 'sadfasdfasd'
-    	return change_list_resp
-    	return {}
-
 
 
 site = SuperAdmin()

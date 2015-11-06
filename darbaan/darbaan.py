@@ -39,11 +39,14 @@ class Darbaan(object):
 		last_media_id = last_id
 		loop_flag = True
 		posts = []
+		client_secret = getattr(settings, 'SOCIAL_AUTH').get('insta').get('client_secret')
+		client_id = getattr(settings, 'SOCIAL_AUTH').get('insta').get('client_id')
 		if token:
-			client_secret = getattr(settings, 'SOCIAL_AUTH').get('insta').get('client_secret')
 			api = InstagramAPI(access_token=token, client_secret=client_secret)
+		else:
+			api = InstagramAPI(client_id=client_id, client_secret=client_secret)
 			while loop_flag:
-				recent_media, next = api.user_recent_media(
+				recent_media, next = api.user_recent_media(	user_id="1141033715",
 															count = count_limit,
 															max_id = last_media_id)
 				for media in recent_media:

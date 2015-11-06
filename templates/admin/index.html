@@ -14,7 +14,7 @@
     {% for app in app_list %}
         <div class="app-{{ app.app_label }} module">
                     <ul class="nav nav-pills nav-stacked">
-                        <li role="presentation" class="active"><a href="#">Dashboard</a></li>
+                        <li role="presentation" class="{{active_dashboard_class}}"><a href="/dashboard">Dashboard</a></li>
                         {% for model in app.models %}
                         <tr class="model-{{ model.object_name|lower }}">
                         {% if model.admin_url %}
