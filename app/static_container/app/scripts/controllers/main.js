@@ -101,7 +101,7 @@
 	  .directive('rightBar', function(){
 	  	return{
 	  		restrict: 'A',
-	  		template: menu_tempate,
+	  		// template: menu_tempate,
 	  		link: function(scope, element, attrs){
 	  			scope.brand_name = false;
 	  			scope.$watch('super_container.brand_detail.name', function(){
@@ -142,20 +142,23 @@
 	  	}
 	  });
 
-	  var menu_tempate = '<ul class="nav navbar-nav navbar-right">'+
-	              '<li><a href="#">+</a></li>'+
-	              '<li><a href="/login" ng-show="brand_name ==false">Login</a></li>'+
-	              '<li class="" ng-show="brand_name != false">'+
-	                '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{$ brand_name $}<span class="caret"></span></a>'+
-	                '<ul class="dropdown-menu">'+
-	                  '<li><a href="/dashboard">Dashboard</a></li>'+
-	                  '<li role="separator" class="divider"></li>'+
-	                  '<li><a href="#">Help</a></li>'+
-	                  '<li role="separator" class="divider"></li>'+
-	                  '<li><a href="/logout/">Logout</a></li>'+
-	                '</ul>'+
-	              '</li>'+
-	            '</ul>';
+	  // var menu_tempate = '<ul class="nav navbar-nav navbar-right">'+
+	  //             '<li><span class="glyphicon glyphicon-search" aria-hidden="true"></span>'+
+	  //             '<div class="form-group">'+
+   //  			  '<input type="text" class="form-control" ng-model="search" placeholder="">'+
+  	// 			  '</div></li>'+
+	  //             '<li><a href="/login" ng-show="brand_name ==false">Login</a></li>'+
+	  //             '<li class="" ng-show="brand_name != false">'+
+	  //               '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{$ brand_name $}<span class="caret"></span></a>'+
+	  //               '<ul class="dropdown-menu">'+
+	  //                 '<li><a href="/dashboard">Dashboard</a></li>'+
+	  //                 '<li role="separator" class="divider"></li>'+
+	  //                 '<li><a href="#">Help</a></li>'+
+	  //                 '<li role="separator" class="divider"></li>'+
+	  //                 '<li><a href="/logout/">Logout</a></li>'+
+	  //               '</ul>'+
+	  //             '</li>'+
+	  //           '</ul>';
 
 
 	var superPostTemplate = '<img ng-hide={$ video_type $} src="{$ superPost.img_url $}" alt="">'+

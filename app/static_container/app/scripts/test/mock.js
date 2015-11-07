@@ -9,7 +9,7 @@
 	                      _arguments = arguments;
 	                  setTimeout(function() {
 	                      callback.apply(_this, _arguments);
-	                  }, 3000);
+	                  }, 1000);
 	              };
 	              return $delegate.call(this, method, url, data, interceptor, headers);
 	          };
@@ -54,7 +54,15 @@
 	        console.log(data);
 	        console.log(url);
 	        console.log(method);
+	        var brand_post = {
+	                'img_url': 'https://pbs.twimg.com/profile_images/632135627773906945/qT290uCE_400x400.jpg',
+	                'description': 'Your awesome title' + String(i) + String(new Date()),
+	                // 'id': 0,
+	                'class': 'super_brand_section'
+	            };
 
+	            //
+	        // posts.push(brand_post);
 	        for(var i=0; i< 5; i++){
 	          var single_post = {
 	                'img_url': 'http://www.1999.co.jp/itbig18/10184905a.jpg',
@@ -64,7 +72,8 @@
 	                'location': 'Stockholm, Sweden' + String(i),
 	                'location_link': '',
 	                'class': '',
-	                'post_type': '1'
+	                'post_type': '1',
+	                // 'id': i+1
 	            };
 	            posts.push(single_post);
 	          }
@@ -96,7 +105,7 @@
 	        ///////////////////////
 
 
-	        var response = {'success': true, 'data_type': 'posts', 'account_status': 'fetch_completed', 'posts': posts, 'lucky_image':'https://pbs.twimg.com/profile_images/632135627773906945/qT290uCE_400x400.jpg', 'brand_info': 'Arslan'};
+	        var response = {'brand_post': brand_post,'success': true, 'data_type': 'posts', 'account_status': 'fetch_completed', 'posts': posts, 'lucky_image':'https://pbs.twimg.com/profile_images/632135627773906945/qT290uCE_400x400.jpg', 'brand_info': 'The Arslan Rafique'};
 	        // var response = {'success': true, 'data_type': 'no_posts', 'account_status': 'new_account'};
 	        // var response = {'success': true, 'data_type': 'no_posts', 'account_status': 'fetching'};
 	        // var response = {'success': true, 'data_type': 'no_posts', 'account_status': 'fetch_completed', 'lucky_image':'/images/insta.png'};

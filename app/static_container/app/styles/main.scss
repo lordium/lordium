@@ -93,7 +93,17 @@ body {
 ////////////////////////
 $buttons-border: RED;
 $border-round-str: 100px;
+$border-round-brand-str: 300px;
+$border-round-page-post-str: 7px;
 $mock-background-color: #eeeeee;
+$common-font-color: #777;
+.no-round-borders{
+  -moz-border-radius: 0px;
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+  -khtml-border-radius: 0px;
+}
+
 .round-borders{
   -moz-border-radius: $border-round-str;
   -webkit-border-radius: $border-round-str;
@@ -101,6 +111,18 @@ $mock-background-color: #eeeeee;
   -khtml-border-radius: $border-round-str;
 }
 
+.round-borders-brand{
+  -moz-border-radius: $border-round-brand-str;
+  -webkit-border-radius: $border-round-brand-str;
+  border-radius: $border-round-brand-str;
+  -khtml-border-radius: $border-round-brand-str;
+}
+.round-borders-admn-post{
+  -moz-border-radius: $border-round-page-post-str;
+  -webkit-border-radius: $border-round-page-post-str;
+  border-radius: $border-round-page-post-str;
+  -khtml-border-radius: $border-round-page-post-str;
+}
 .common-shadow{
   -webkit-box-shadow: 0px 2px 1px 0px rgba(0,0,0,0.12);
   -moz-box-shadow: 0px 2px 1px 0px rgba(0,0,0,0.12);
@@ -180,6 +202,7 @@ $mock-background-color: #eeeeee;
   }
 }
 
+
 /////////////////
 .finish-him{
   position: absolute;
@@ -195,6 +218,8 @@ $mock-background-color: #eeeeee;
     top: -10000px;
     opacity: 0 !important;
 
+
+
   }
 }
 
@@ -204,7 +229,30 @@ body,html{
   background-color: #E9E9E9;
 }
 
-.navbar-fixed-top{
+.mini-bottom-top-director{
+  content: "^";
+  position: fixed;
+  height: 40px;
+  line-height: 1;
+  font-family: monospace;
+  font-size: 30px;
+  /* background-color: RED; */
+  bottom: 26px;
+  right: 27px;
+  background-color: #fff;
+  padding: 14px;
+  border-radius: 33px;
+}
+
+.brand-container{
+  font-weight: 100;
+  font-size: 36px;
+  color: #000;
+}
+.navbar-fixed-top-custom{
+  background-color: transparent;
+  border-color: transparent;
+
   .brand-container{
     width: 80px;
     height: auto;
@@ -231,15 +279,289 @@ body,html{
     @extend .common-transition;
     visibility: visible;
     opacity: 1;
+
+    .dropdown-menu{
+      margin-left: -26px;
+      right: 15px;
+    }
+
+    label[for='top-search']{
+      position: absolute;
+      top: 17px;
+      left: 25px;
+      opacity: 1;
+      @extend .common-transition;
+    }
+
+    .glyphicon-search{
+      color: $common-font-color;
+    }
+
+    .form-group{
+      padding: 8px 0px;
+      margin: 0px;
+      input {
+        padding: 0px;
+        width: 48px;
+        border: none;
+        box-shadow: none;
+        font-size: 20px;
+        font-weight: 100;
+        background-color: transparent;
+        @extend .common-transition;
+        @extend .no-round-borders;
+        opacity: 0;
+
+        &:focus{
+          width: 400px;
+          background-color: #ffffff;
+          padding: 0px 10px;
+          opacity: 1;
+        }
+
+        &:focus ~ label{
+            opacity: 0;
+        }
+      }
+    }
   }
 }
 
 .data-container{
-  padding-top: 100px;
+  padding-top: 0px;
   padding-bottom: 100px;
   //Add box sizing
   background-color: #E9E9E9;
   min-height: 100%;
+
+  &.admin-data{
+    padding-top: 100px;
+
+    .admin-main-container{
+
+      .panel{
+        text-align: center;
+
+        h1{
+          font-weight: 100;
+        }
+      }
+    }
+
+    .main-options-container{
+      .nav {
+        padding-bottom: 20px;
+
+        li {
+          a {
+            padding: 16px 20px;
+            color: $common-font-color;
+            &:hover{
+              background-color: #fff;
+              color: $common-font-color;
+            }
+          }
+
+          &.active a{
+            background-color: #fff;
+          }
+        }
+      }
+
+      .admin-super-table{
+        img{
+          width: 100%;
+          height: auto;
+        }
+        tbody{
+          display: block;
+          border: none !important;;
+        }
+        thead{
+          display: block;
+          border: none !important;;
+        }
+
+        th{
+          display: block;
+          position:relative;
+          padding: 10px;
+          padding-bottom: 0px;
+          line-height: 2;
+          border: none !important;;
+        }
+
+        td{
+          display: block;
+          position:relative;
+          padding: 10px;
+          line-height: 2;
+          border: none !important;
+          &.field-account{
+            text-align: right;
+            float: right;
+            &::before{
+              content: "By";
+              padding-right: 5px;
+              color: $common-font-color;
+            }
+          }
+        }
+
+        tr{
+          display: inline-block;
+          border: solid;
+          border-color: #E9E9E9;
+          @extend .round-borders-admn-post;
+          video{
+            position: relative;
+            float: left;
+          }
+
+        }
+
+      }
+
+      form {
+        div.actions{
+          line-height: 4;
+          margin-bottom: 8px;
+
+          label{
+            font-size: 0px !important;
+          }
+          @extend .panel;
+          background: #fff !important;
+          select{
+            @extend .form-control;
+          }
+
+          button{
+            @extend .form-control;
+            @extend .btn;
+            @extend .btn-default;
+            width: 100px;
+            margin: -4px 10px 0px 17px;
+          }
+        }
+      }
+
+      .column-super_post_url{
+        display: none !important;
+      }
+      .column-account{
+        display: none !important;
+      }
+      .column-account_image{
+        display: none !important;
+      }
+      .column-username{
+        display: none !important;
+      }
+
+      .column-first_name{
+        display: none !important;
+      }
+
+      .column-fetch_status{
+        display: none !important;
+      }
+
+      .field-super_post_url{
+        float: left;
+      }
+
+      .account-common-th{
+        padding: 2px !important;
+      }
+      .field-username{
+        @extend .account-common-th;
+        padding-top: 10px !important;
+        &::before{
+          content: "Username";
+          color: $common-font-color;
+          padding:0px 11px 0px 2px;
+          font-size: 11px;
+        }
+      }
+      .field-first_name{
+        @extend .account-common-th;
+        &::before{
+          content: "Name";
+          color: $common-font-color;
+          padding:0px 11px 0px 2px;
+          font-size: 11px;
+        }
+      }
+      .field-fetch_status{
+        @extend .account-common-th;
+        &::before{
+          content: "Posts Status";
+          color: $common-font-color;
+          padding:0px 11px 0px 2px;
+          font-size: 11px;
+        }
+      }
+
+      .action-checkbox-column{
+        &::after{
+          content: "select all";
+          left: 25px;
+          font-size: 11px;
+          font-weight: 400;
+          color: #999;
+          position: absolute;
+          top: 4px;
+        }
+      }
+
+      .object-tools{
+        position: relative;
+        float: right;
+        z-index: 1;
+        padding: 21px;
+        li{
+          display: block;
+        }
+      }
+
+      p.paginator{
+        @extend .pagination;
+        @extend .panel;
+        line-height: 3;
+        width: 100%;
+        padding: 10px;
+        background-color: #fff !important;
+        a,span{
+          position: relative;
+          float: left;
+          padding: 6px 12px;
+          margin-left: -1px;
+          line-height: 1.42857143;
+          color: #337ab7;
+          text-decoration: none;
+          background-color: #fff;
+          border: 1px solid #ddd;
+        }
+
+          span.this-page{
+          z-index: 2;
+          color: #fff;
+          cursor: default;
+          background-color: #337ab7;
+          border-color: #337ab7;
+        }
+        a.end{
+          border-width: thin !important;
+        }
+        a.showall{
+          margin: 9px;
+        }
+      }
+    }
+  }
+
+
 
   .row {
 
@@ -298,6 +620,23 @@ body,html{
 
     .post-container{
       //background-color: RED;
+
+      .super_brand_section{
+        margin-top: -45px;
+        padding: 14px !important;
+        text-align: center;
+        img{
+          @extend .round-borders-brand;
+          height: 120px;
+          width: auto;
+        }
+        .post-description{
+          margin:0px;
+        }
+        .caption{
+          color: #666666;
+        }
+      }
 
       .thumbnail{
         padding: 0px;
@@ -363,8 +702,6 @@ body,html{
     background-color: $mock-background-color;
   }
 }
-
-
 
 
 

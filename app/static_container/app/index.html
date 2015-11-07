@@ -21,16 +21,38 @@
 
     <!-- Add your site or application content here -->
   <div class="container-fluid">
-    <nav class="navbar navbar-default navbar-fixed-top">
+    <nav class="navbar navbar-default navbar-fixed-top-custom">
       <div class="container-fluid">
-        <div class="navbar-header">
+        <!-- <div class="navbar-header">
           <a class="navbar-brand" href="#">
             <div class='brand-container'>
               <img lucky-you src="">
             </div>
           </a>
+        </div> -->
+        <div class="collapse navbar-collapse" right-bar>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <div class="form-group">
+                <input type="text" class="form-control" id="top-search"ng-model="search" placeholder=""/>
+                <label for="top-search">
+                  <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                </label>
+              </div>
+            </li>
+            <li><a href="/login" ng-show="brand_name ==false">Login</a></li>
+            <li class="" ng-show="brand_name != false">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{$ brand_name $}<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#">Help</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="/logout/">Logout</a></li>
+              </ul>
+            </li>
+          </ul>
         </div>
-        <div class="collapse navbar-collapse" right-bar></div>
       </div>
     </nav>
   </div>
@@ -55,7 +77,19 @@
     </div>
     <div class="row">
       <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 post-container" ng-repeat="tunnel in super_container.tunnels" ng-cloak>
-       <div class="thumbnail {$ im_post.class $}" ng-repeat="im_post in tunnel" >
+        <!-- Brand post-->
+         <div class="thumbnail {$ super_container.brand_post.class $}" ng-show="$index==0">
+         <img ng-hide="im_post.post_type == '2'" ng-src="{$ super_container.brand_post.img_url $}" alt="">
+         <div class="caption">
+           <p class="post-description">{$ super_container.brand_post.description $}</p>
+           <!-- <p class="location-container" ng-show="im_post.location">
+              <span class="glyphicon glyphicon-map-marker"></span>
+              <span >{$ super_container.brand_post.location $}</span>
+            </p> -->
+         </div>
+       </div>
+        <!-- Brand post end-->
+       <div class="thumbnail {$ im_post.class $}" ng-repeat="im_post in tunnel|filter:search" >
          <img ng-hide="im_post.post_type == '2'" ng-src="{$ im_post.img_url $}" alt="">
          <video  ng-show="im_post.post_type == '2'"  controls width="100%" height="100%"><source ng-src="" fix-vid-bug type="video/mp4"/></video>
 
@@ -64,7 +98,7 @@
             <span ng-repeat="label in im_post.tags.split(',')" >{$ label $}</span>
           </div>
            <h3 ng-click="update_tunnel()" ng-show="im_post.title">{$ im_post.title $} </h3>
-           <p ng-show="im_post.description">{$ im_post.description $}</p>
+           <p ng-show="im_post.description" class="post-description">{$ im_post.description $}</p>
            <p class="location-container" ng-show="im_post.location">
               <span class="glyphicon glyphicon-map-marker"></span>
               <span >{$ im_post.location $}</span>

@@ -312,14 +312,16 @@ class Provider(LoginManager, DBManager, FetchManager, ResponseManager):
 		if posts:
 			lucky_image = False
 			brand_info = False
+			brand_account = False
 			if not last_id:
 				accounts = models.Account.objects.all()
 				if accounts and len(accounts) > 0:
 					lucky_image = accounts[0].profile_picture
+					brand_account = accounts[0]
 					if request and request.user.is_authenticated():
 						brand_info = accounts[0].username #TODO: use session here
 
-			return self.make_posts(posts, lucky_image, brand_info)
+			return self.make_posts(posts, lucky_image, brand_info, brand_account)
 		else:
 			accounts = models.Account.objects.all()
 			#using account[0], first user will be king!
@@ -341,11 +343,19 @@ class Provider(LoginManager, DBManager, FetchManager, ResponseManager):
 				'account_status': account_status}
 
 	@classmethod
-	def make_posts(self, posts, lucky_image, brand_info):
+	def make_posts(self, posts, lucky_image, brand_info, brand_account):
 		posts_dict = self.make_dict(True, 'posts', 'fetch_completed')
 		posts_dict['lucky_image'] = lucky_image or None
 		posts_dict['brand_info'] = brand_info or None
+		posts_dict['brand_post'] = False
 		posts_container = []
+		if brand_account:
+			posts_dict['brand_post'] = {
+		                'img_url': brand_account.profile_picture,
+		                'description': brand_account.slogan,
+		                # 'id': 10000000,
+		                'class': 'super_brand_section'
+		            	}
 		for post in posts:
 			posts_container.append({ 'title': post.title or None,
 									 'type': post.post_type,

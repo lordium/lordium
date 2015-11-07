@@ -94,7 +94,7 @@ class Account(User):
 		    return None
 
 	def account_image(self):
-		return '<img src="%s"/>' % self.profile_picture
+		return '<img src="%s" class="img-rounded"/>' % self.profile_picture
 	account_image.allow_tags = True
 
 
@@ -112,9 +112,9 @@ class Post(models.Model):
 
 	def super_post_url(self):
 		if self.post_type == 1:
-			return '<img src="%s"/>' % self.post_url
+			return '<img src="%s" class="img-rounded"/>' % self.post_url
 		else:
-			return '<video controls width="100%%" height="100%%"><source src="%s" type="video/mp4"/></video>' % self.post_url
+			return '<video class="img-rounded" controls width="100%%" height="100%%"><source src="%s" type="video/mp4"/></video>' % self.post_url
 
 	super_post_url.allow_tags = True
 

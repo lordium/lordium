@@ -27,7 +27,8 @@
           <div class="navbar-header">
             <a class="navbar-brand" href="#">
               <div class='brand-container' id="branding">
-                <img src='{{ super_user.profile_picture }}'>
+                Dashboard
+                <!-- <img src='{{ super_user.profile_picture }}'> -->
               </div>
             </a>
           </div>
@@ -35,6 +36,7 @@
           <div class="collapse navbar-collapse" id="user-tools">
             {% block userlinks %}
             <ul class="nav navbar-nav navbar-right">
+                <li><a href="/">Home</a></li>
                 <li class="">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% firstof user.get_short_name user.get_username %}<span class="caret"></span></a>
                     <ul class="dropdown-menu">
@@ -75,7 +77,7 @@
     {% endblock messages %}
 
     <!-- Content -->
-    <div id="content" class="{% block coltype %}colM{% endblock %} container-fluid data-container">
+    <div id="content" class="{% block coltype %}colM{% endblock %} container-fluid data-container admin-data">
         <!-- {% block pretitle %}{% endblock %} -->
         <!-- {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %} -->
        <!--  <div class="main-options-container row">

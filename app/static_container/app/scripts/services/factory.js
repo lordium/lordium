@@ -23,6 +23,7 @@
 		    'description': 'lorem ipsum sadf adfll e hfasdl klek i asdf asdf akjsdhf',
 		    'location': 'Stockholm, Sweden',
 		    'location_link': ''};
+		  super_container.brand_post = {},
 		  super_container.inpage_messages = {
 		  									'1': 'Gathering your awesome moments',
 		  									'2': 'Login failed',
@@ -354,6 +355,10 @@
 
 		  super_container.update_tunnels = function(posts, utype){
 
+		  	if(posts.brand_post){
+		  		super_container.brand_post = posts.brand_post;
+		  		console.log(super_container.brand_post);
+		  	}
 		  	if(posts.brand_info){
 		  		super_container.brand_detail.name = posts.brand_info;
 		  	}
