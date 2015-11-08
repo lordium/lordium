@@ -474,33 +474,37 @@ body,html{
       .account-common-th{
         padding: 2px !important;
       }
-      .field-username{
-        @extend .account-common-th;
-        padding-top: 10px !important;
-        &::before{
-          content: "Username";
-          color: $common-font-color;
-          padding:0px 11px 0px 2px;
-          font-size: 11px;
+
+      table{
+        .field-username{
+          @extend .account-common-th;
+          padding-top: 10px !important;
+          &::before{
+            content: "Username";
+            color: $common-font-color;
+            padding:0px 11px 0px 2px;
+            font-size: 11px;
+          }
         }
-      }
-      .field-first_name{
-        @extend .account-common-th;
-        &::before{
-          content: "Name";
-          color: $common-font-color;
-          padding:0px 11px 0px 2px;
-          font-size: 11px;
+        .field-first_name{
+          @extend .account-common-th;
+          &::before{
+            content: "Name";
+            color: $common-font-color;
+            padding:0px 11px 0px 2px;
+            font-size: 11px;
+          }
         }
-      }
-      .field-fetch_status{
-        @extend .account-common-th;
-        &::before{
-          content: "Posts Status";
-          color: $common-font-color;
-          padding:0px 11px 0px 2px;
-          font-size: 11px;
+        .field-fetch_status{
+          @extend .account-common-th;
+          &::before{
+            content: "Posts Status";
+            color: $common-font-color;
+            padding:0px 11px 0px 2px;
+            font-size: 11px;
+          }
         }
+
       }
 
       .action-checkbox-column{
@@ -558,6 +562,74 @@ body,html{
           margin: 9px;
         }
       }
+
+      .submit-row.panel{
+        background: #ffffff !important;
+
+        .cancel, .save{
+          margin: 0.3em;
+        }
+      }
+      /*#content-main{
+        .object-tools{
+          display: none;
+        }
+      }*/
+
+
+      // for object page
+      .form-row.field-username{
+        .help {
+          display: none;
+        }
+      }
+
+      .form-row{
+        p:not(.help){
+          padding:10px;
+        }
+
+        label{
+          padding: 10px;
+        }
+
+        .checkbox-row{
+          padding-top:7px;
+          p.help{
+          padding: 16px;
+          margin: 0px;
+          color: $common-font-color;
+          }
+
+          input {
+            margin-left: 9px;
+          }
+
+          label{
+            position: relative;
+            top: 3px;
+          }
+        }
+
+        &.field-fetch_status{
+
+          p.help{
+            padding:0px !important;
+            margin: 0px !important;
+            color: $common-font-color;
+          }
+        }
+
+        &.field-username{
+          div::after{
+            content:"Instagram username, used to fetch posts";
+            color: $common-font-color;
+          }
+        }
+      }
+
+
+
     }
   }
 

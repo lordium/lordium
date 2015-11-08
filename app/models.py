@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,User
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import URLValidator
+from django.core import validators
 # Create your models here.
 
 MEDIA_CHOICES = (
@@ -18,8 +19,10 @@ FETCH_STATUS = (
 )
 
 class Account(User):
+
 	# username = models.CharField(max_length=140, unique=True) # check with instagram
 	# email = models.EmailField(default=None, unique=True, null=True)
+
 	insta_id = models.CharField(max_length=140, unique=True, null=True)
 	insta_token = models.TextField("Token", null=True)
 	# first_name = models.CharField(max_length=40, null=True)
@@ -28,7 +31,8 @@ class Account(User):
 	slogan = models.CharField(max_length=140, null=True)
 	# date_created = models.DateTimeField(auto_now_add=True)
 	# date_update = models.DateTimeField(auto_now=True)
-	fetch_status = models.IntegerField(choices=FETCH_STATUS, default=0)
+	fetch_status = models.IntegerField(choices=FETCH_STATUS, default=0,
+		help_text=_('Shows account status for fetching posts'))
 	# backend = ""
 
 	# USERNAME_FIELD =  ['username']
@@ -40,10 +44,17 @@ class Account(User):
 	# 	return self.username
 
 	class Meta:
-         verbose_name = "Account"
+		verbose_name = "Account"
+		# labels = {
+		# 	'username': _('Writer'),
+		# 	}
+		# help_texts = {
+		# 	'is_active': _('Some useful help text.'),
+		# 	}
 
 	def __init__(self, *args, **kwargs):
 		super(Account, self).__init__(*args, **kwargs)
+		# self.fields['username'].help_text = '<br/>Hold down "Control" to select more.'
 		# Making name required
 		# self.fields['last_name'].required = True
 		# self.fields['email'].required = True

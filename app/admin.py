@@ -42,13 +42,44 @@ class PostAdmin(admin.ModelAdmin):
 		return change_list_resp
 
 
+
+
 class AccountAdmin(admin.ModelAdmin):
 
-	fields = ['username']
+	readonly_fields = ('fetch_status',)
+
+	# fields = ('username','is_active','fetch_status')
+
+	fieldsets = (
+		('Account', {
+				'fields': ('username', 'is_active', 'fetch_status'),
+				'description': 'Account is used to fetch posts from Instagram',
+				'classes':('panel','col-xs-12 col-sm-12 col-md-12 col-lg-12')
+			}),
+		)
+
+	# fieldsets = (
+ #        (None, {
+ #            'fields': ('url', 'title', 'content', 'sites')
+ #        }),
+ #        ('Advanced options', {
+ #            'classes': ('collapse',),
+ #            'fields': ('enable_comments', 'registration_required', 'template_name')
+ #        }),
+ #    )
 
 	list_display = ('account_image','username', 'first_name','fetch_status')
 
 	list_per_page = 20
+
+	# def __init__(self, *args, **kwargs):
+	# 	# self.the_app_list = app.site.index().context_data.get('app_list')
+	# 	return super(AccountAdmin, self).__init__(*args, **kwargs)
+
+	def get_readonly_fields(self, request, obj=None):
+		if obj:
+			return self.readonly_fields + ('username',)
+		return self.readonly_fields
 
 	def changelist_view(self, request, extra_context=None):
 		super_user={}
@@ -62,10 +93,12 @@ class AccountAdmin(admin.ModelAdmin):
 			extra_context = extra_context).context_data.get('app_list')
 		change_list_resp.context_data['super_user'] = super_user
 		change_list_resp.context_data['super_active_class'] = 'Accounts'
-		print change_list_resp.context_data['cl']
 		return change_list_resp
 
-
+	def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
+		render_response = super(AccountAdmin, self).render_change_form(request, context, add=add, change=change, form_url=form_url, obj=obj)
+		render_response.context_data['app_list'] = app.site.get_app_list(request)
+		return render_response
 
 
 
