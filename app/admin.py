@@ -35,11 +35,14 @@ class PostAdmin(admin.ModelAdmin):
 			except:
 				pass
 		change_list_resp = super(PostAdmin, self).changelist_view(request, extra_context = extra_context)
-		change_list_resp.context_data['app_list'] = app.site.index(request,
-			extra_context = extra_context).context_data.get('app_list')
-		change_list_resp.context_data['super_user'] = super_user
-		change_list_resp.context_data['super_active_class'] = 'Posts'
+		if hasattr(change_list_resp, 'context_data'):
+			change_list_resp.context_data['app_list'] = app.site.get_app_list(request)
+			change_list_resp.context_data['super_user'] = super_user
+			change_list_resp.context_data['super_active_class'] = 'Posts'
 		return change_list_resp
+
+	def has_add_permission(self, request):
+		return False
 
 
 
@@ -76,6 +79,13 @@ class AccountAdmin(admin.ModelAdmin):
 	# 	# self.the_app_list = app.site.index().context_data.get('app_list')
 	# 	return super(AccountAdmin, self).__init__(*args, **kwargs)
 
+	def get_actions(self, request):
+		actions = super(AccountAdmin, self).get_actions(request)
+		# if request.user.username[0].upper() != 'J':
+		#     del actions['delete_selected']
+		print actions
+		return actions
+
 	def get_readonly_fields(self, request, obj=None):
 		if obj:
 			return self.readonly_fields + ('username',)
@@ -89,15 +99,16 @@ class AccountAdmin(admin.ModelAdmin):
 			except:
 				pass
 		change_list_resp = super(AccountAdmin, self).changelist_view(request, extra_context = extra_context)
-		change_list_resp.context_data['app_list'] = app.site.index(request,
-			extra_context = extra_context).context_data.get('app_list')
-		change_list_resp.context_data['super_user'] = super_user
-		change_list_resp.context_data['super_active_class'] = 'Accounts'
+		if hasattr(change_list_resp, 'context_data'):
+			change_list_resp.context_data['app_list'] = app.site.get_app_list(request)
+			change_list_resp.context_data['super_user'] = super_user
+			change_list_resp.context_data['super_active_class'] = 'Accounts'
 		return change_list_resp
 
 	def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
 		render_response = super(AccountAdmin, self).render_change_form(request, context, add=add, change=change, form_url=form_url, obj=obj)
-		render_response.context_data['app_list'] = app.site.get_app_list(request)
+		if hasattr(render_response, 'context_data'):
+			render_response.context_data['app_list'] = app.site.get_app_list(request)
 		return render_response
 
 

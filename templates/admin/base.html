@@ -25,7 +25,7 @@
       <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
           <div class="navbar-header">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="/dashboard">
               <div class='brand-container' id="branding">
                 Dashboard
                 <!-- <img src='{{ super_user.profile_picture }}'> -->
@@ -59,21 +59,19 @@
         </div>
       </nav>
     </div>
-    <!-- END Header -->
-    {% block breadcrumbs %}
-    <div class="breadcrumbs">
-    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
-    {% if title %} &rsaquo; {{ title }}{% endif %}
-    </div>
-    {% endblock %}
     {% endif %}
+
+
 
     {% block messages %}
         {% if messages %}
-        <ul class="messagelist">{% for message in messages %}
-          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}</li>
-        {% endfor %}</ul>
-        {% endif %}
+    <div class="alert alert-warning alert-dismissible main-alert" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        {% for message in messages %}
+        <strong>Warning!</strong> {{ message|capfirst }}
+        {% endfor %}
+    </div>
+    {% endif %}
     {% endblock messages %}
 
     <!-- Content -->

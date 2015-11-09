@@ -58,4 +58,11 @@ def login(request):
 def logout(request):
 	return pd.logout(request)
 
+def user_post(request):
+	post_id = request.Get.get('post_id')
+	if not post_id:
+		return HttpResponseRedirect('/')
+	return pd.logout(request)
+
+
 

@@ -31,5 +31,7 @@ urlpatterns = [
 	##allow user to fetch data
 	url(r'^fetch/', views.fetch, name = 'fetch'),
 
+	url(r'awesome/', views.user_post, name = 'user_post'),
+
 ]
 

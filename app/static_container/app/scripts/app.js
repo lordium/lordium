@@ -22,7 +22,11 @@
     ])
     .config(function($interpolateProvider){
       $interpolateProvider.startSymbol('{$').endSymbol('$}');
-  })
+  }).run(['$http', function($http){
+    $http.defaults.xsrfHeaderName = 'X-CSRFToken';
+    $http.defaults.xsrfCookieName = 'csrftoken';
+  }]);
+
 
     // .config(function ($routeProvider) {
     //   $routeProvider

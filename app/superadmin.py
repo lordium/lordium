@@ -19,7 +19,7 @@ class SuperAdmin(AdminSite):
 
 	def login(self, request, extra_context=None):
 		print request.user.is_authenticated()
-		print request.user.profile_picture
+		# print request.user.profile_picture
 		print 'picture above'
 		if not request.user.is_authenticated():
 			return HttpResponseRedirect('/login')

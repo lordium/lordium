@@ -12,17 +12,6 @@
 
 {% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} change-form{% endblock %}
 
-{% if not is_popup %}
-{% block breadcrumbs %}
-<div class="breadcrumbs">
-<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
-&rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
-&rsaquo; {% if has_change_permission %}<a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>{% else %}{{ opts.verbose_name_plural|capfirst }}{% endif %}
-&rsaquo; {% if add %}{% trans 'Add' %} {{ opts.verbose_name }}{% else %}{{ original|truncatewords:"18" }}{% endif %}
-</div>
-{% endblock %}
-{% endif %}
-
 {% block leftsuper %}
 {% if app_list %}
     {% for app in app_list %}
@@ -68,17 +57,17 @@
 
 {% block content %}<div id="content-main">
 {% block object-tools %}
-{% if change %}{% if not is_popup %}
+{% if change %}{% if not is_popup %}{% if has_absolute_url %}
   <ul class="object-tools">
     {% block object-tools-items %}
-    <li>
+   <!--  <li>
         {% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
         <a href="{% add_preserved_filters history_url %}" class="historylink">{% trans "History" %}</a>
-    </li>
-    {% if has_absolute_url %}<li><a href="{{ absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a></li>{% endif%}
+    </li> -->
+    <li><a href="{{ absolute_url }}" class="viewsitelink">{% trans "View on site" %}</a></li>
     {% endblock %}
   </ul>
-{% endif %}{% endif %}
+{% endif %}{% endif %}{% endif%}
 {% endblock %}
 <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" novalidate>{% csrf_token %}{% block form_top %}{% endblock %}
 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
