@@ -35,20 +35,29 @@ class Darbaan(object):
 
 
 	@classmethod
-	def insta_fetch(self, token=None, count_limit = 20, last_id  = None):
+	def insta_fetch(self, token=None, count_limit = 20, last_id  = None , user_id=None):
 		last_media_id = last_id
 		loop_flag = True
 		posts = []
 		client_secret = getattr(settings, 'SOCIAL_AUTH').get('insta').get('client_secret')
 		client_id = getattr(settings, 'SOCIAL_AUTH').get('insta').get('client_id')
+		api = False
 		if token:
 			api = InstagramAPI(access_token=token, client_secret=client_secret)
+			print 'api token'
 		else:
 			api = InstagramAPI(client_id=client_id, client_secret=client_secret)
+			print 'api id'
+
+		if api:
+			print 'have api'
 			while loop_flag:
-				recent_media, next = api.user_recent_media(	user_id="1141033715",
+				print 'while'
+				print last_media_id
+				recent_media, next = api.user_recent_media(	user_id=user_id,
 															count = count_limit,
 															max_id = last_media_id)
+				print recent_media, next
 				for media in recent_media:
 					print media
 					last_media_id = media.id

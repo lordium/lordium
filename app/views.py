@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
 from django.template import RequestContext, loader
+
 from django.conf import settings
 import insta
 from insta import InstaMine
@@ -17,7 +19,6 @@ def index(request):
 	Show initial document to user
 	"""
 
-	print request.user
 	# user = Account.objects.all()
 	# if len(user) != 1:
 	# 	return HttpResponseRedirect('/login')
@@ -28,14 +29,12 @@ def index(request):
 	template = loader.get_template('dist/index.html')
 	return HttpResponse(template.render(context))
 
+@login_required(login_url='/')
 def fetch(request):
-	print 'here'
-	#TODO: Check token here
-	#get username
 
-	last_id = request.GET.get('last_id', None)
-	action = request.GET.get('fetch', False) or 'fetch' #remove after or
-	username = 'arslanrafique'
+	last_id = request.POST.get('last_id', None)
+	action = request.POST.get('fetch', False) or 'fetch' #remove after or
+
 	if request.user.is_authenticated():
 		if action == 'fetch':
 			if request.user:

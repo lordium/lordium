@@ -170,7 +170,7 @@ class DBManager(object):
 	@classmethod
 	def db_last_id(self, account):
 		try:
-			latest = models.Post.objects.filter(account=account).latest('id').id
+			latest = models.Post.objects.filter(account=account).latest('id').media_id
 		except:
 			latest = False
 		return latest
@@ -268,7 +268,7 @@ class FetchManager(object):
 	This manager is responsible for fetching data from vendors
 	"""
 	@classmethod
-	def fm_fetch_posts(self, vendor='insta', username = None, last_id=None):
+	def fm_fetch_posts(self, vendor='insta', username = None, user_id = None,last_id=None):
 		"""
 		This function will fetch posts from vendors
 		"""
@@ -276,7 +276,7 @@ class FetchManager(object):
 			account = models.Account.objects.get(username=username)
 			if account:
 				token = account.insta_token
-				return Darbaan.insta_fetch(token=token, last_id=last_id)
+				return Darbaan.insta_fetch(token=token, user_id = user_id, last_id=last_id)
 		return False
 
 class ResponseManager(object):
@@ -375,15 +375,20 @@ class Provider(LoginManager, DBManager, FetchManager, ResponseManager):
 	def fetch_update_posts(self, vendor='insta', username=None, last_id = None):
 		#TODO: get last data id from database
 		#Get the accounts for dirty/new
+		is_complete = False
 		dirty_accounts = self.db_get_dirty_accounts()
+		print dirty_accounts
 		if dirty_accounts and len(dirty_accounts) > 0:
 			for account in dirty_accounts:
 				last_id = self.db_last_id(account) or None
-				posts = self.fm_fetch_posts(vendor=vendor, username=account.username, last_id=last_id)
+				posts = self.fm_fetch_posts(vendor=vendor, username=account.username, user_id=account.insta_id ,last_id=last_id)
+				print posts
 				if posts and self.db_create_posts(posts, account):
 					account.fetch_status = 3
 					account.save()
-					return self.simple_response({'status': 'success', 'fetch_status': 'completed'})
+					is_complete = True
+			if is_complete:
+				return self.simple_response({'status': 'success', 'fetch_status': 'completed'})
 		return self.simple_response({'status': 'failed', 'fetch_status': 'not_completed'})
 
 	@classmethod

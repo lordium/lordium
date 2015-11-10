@@ -789,3 +789,38 @@ body,html{
     margin: 29px;
 }
 
+.fetch-container{
+  cursor: pointer;
+
+  .glyphicon{
+    @extend .common-transition;
+  }
+
+  &:hover{
+    .panel-body{
+      background-color: #F5F5F5;
+    }
+
+    .glyphicon{
+      top: 20px;
+    }
+
+  }
+  .fetch-text.loading::after{
+        content: '*';
+        font-family: 'Arial';
+        font-weight:100;
+        font-size: 30px;
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+        position: absolute;
+        transition: all 5s ease-out;
+        opacity: 1;
+        transform-origin: center center;
+
+        @extend .common-animation;
+  }
+}
+
+

@@ -302,7 +302,7 @@ module.exports = function (grunt) {
     uglify: {
       mangle: false,
       dist: {
-        files: {'dist/static/scripts/scripts.js': ['app/scripts/app.js', 'app/scripts/services/factory.js','app/scripts/controllers/main.js']},
+        files: {'dist/static/scripts/scripts.js': ['app/scripts/app.js', 'app/scripts/services/factory.js','app/scripts/controllers/main.js','app/scripts/admin_app.js']},
       options: {
           mangle: false
         }
