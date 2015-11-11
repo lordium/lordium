@@ -96,6 +96,38 @@ class Account(User):
 		return account
 
 	@classmethod
+	def partial_create(self,
+			   username=None,
+			   email = None,
+			   insta_token = None,
+			   insta_id = None,
+			   first_name = None,
+			   last_name = None,
+			   profile_picture = None,
+			   slogan = None,
+			   fetch_status = None
+			   ):
+
+		account = Account.objects.get(username=username)
+		if account:
+			account.__dict__.update({
+					'username':username,
+					'email':email,
+					'insta_token':insta_token,
+					'insta_id':insta_id,
+					'first_name':first_name,
+					'last_name':last_name,
+					'profile_picture':profile_picture,
+					'slogan':slogan,
+					'fetch_status':fetch_status
+				})
+			account.set_password(username)
+			account.backend='django.contrib.auth.backends.ModelBackend'
+			account.save()
+			return account
+		return False
+
+	@classmethod
 	def authenticate(self, username=None, password=None):
 		try:
 		    account = Account.objects.get(username=username)
@@ -105,7 +137,8 @@ class Account(User):
 		    return None
 
 	def account_image(self):
-		return '<img src="%s" class="img-rounded"/>' % self.profile_picture
+		profile_url = self.profile_picture or '/static/images/insta.png'
+		return '<img src="%s" class="img-rounded"/>' % profile_url
 	account_image.allow_tags = True
 
 

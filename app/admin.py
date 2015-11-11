@@ -21,7 +21,7 @@ class PostAdmin(admin.ModelAdmin):
 	list_per_page = 20
 
 	# actions_selection_counter = False
-	list_display_links = None
+	# list_display_links = None
 
 	max_num = 0
 
