@@ -82,6 +82,7 @@
 		  };
 
 		  super_container.get_server = function(get_url, data, success_track, failure_track){
+		  	console.log('get_server:CALLED');
 	 		return $http({
 	           method: 'GET',
 	           url: get_url,
@@ -91,6 +92,7 @@
 	           params: data
 		       })
 		       .success(function (data) {
+		       		console.log('get_server:SUCCESS');
 		       		success_track(data);
 		       })
 		       .error(function (data, status) {
@@ -151,6 +153,7 @@
 		  	//get posts
 		  	console.log('Poke called!')
 		  	var data = {'last_id': super_container.last_index}
+		  	console.log(data);
 	  		super_container.get_server('/update/',
 	  									data,
 	  									super_container.update_tunnels,

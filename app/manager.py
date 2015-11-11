@@ -63,18 +63,22 @@ class LoginManager(object):
 						#TODO: add session/cookies here
 						# print request.session['access_token']
 						# print fetch_status
+						new_flag= False
 						account_status = 'new_account'
 						if fetch_status == 1:
 							account_status = 'new_account'
+							if DBManager.db_update_account(user_info, request = request):
+								new_flag = True
 						elif fetch_status == 2:
 							account_status = 'fetching'
 						elif fetch_status == 3:
 							account_status = 'fetch_completed'
 						print 'above auth'
+						if fetch_status == 1 and new_flag != True:
+							return ResponseManager.redirect('/')
 						u_account = authenticate(username=username, password=username) #;)
 						print u_account, username
 						db_login(request, u_account)
-
 						return ResponseManager.redirect('/') #simple_response({'login_status': True, 'account_status': account_status})
 					else:
 						if DBManager.db_create_account(user_info, request = request):
@@ -84,7 +88,7 @@ class LoginManager(object):
 							# print u
 							# u.set_password(username)
 							# u.save()
-
+							print "Account Created"
 							u_account = authenticate(username=username, password=username) #;)
 							print u_account
 							db_login(request, u_account)
@@ -121,7 +125,7 @@ class DBManager(object):
 			account = False
 		if account:
 			if account.fetch_status == 0:
-				account_status.fetch_status = 1
+				account.fetch_status = 1
 				account.save()
 			return account.fetch_status
 		return False
@@ -145,7 +149,7 @@ class DBManager(object):
 		 }
 		"""
 
-		## should create only first account, will all permissions
+		## should create only first account, with all permissions
 		if len(models.Account.objects.all()) == 0:
 			if request:
 				print "username is", user_info.get('username')
@@ -164,6 +168,41 @@ class DBManager(object):
 				account.is_superuser = True
 				account.save()
 				return True
+		return False
+
+
+	@classmethod
+	def db_update_account(self, user_info, request = None,  **kwargs):
+		"""
+		This function will update account and write it to
+		database
+		"""
+		"""
+		Below is what insta will give
+		{
+		u'username': u'arslanrafique',
+		u'bio': u'Engineer, <3 Stockholm!',
+		u'website': u'',
+		u'profile_picture': u'https://scontent.cdninstagram.com/hphotos-xpf1/t51.2885-19/924761_778256512251267_1485306869_a.jpg',
+		u'full_name': u'Arslan Rafique',
+		u'id': u'1141033715'
+		 }
+		"""
+
+		## should create only first account, will all permissions
+		# account = models.Account.objects.get(username=username)
+		# if account:
+		account = models.Account.partial_create(username = user_info.get('username'),
+											slogan = user_info.get('bio', ''),
+											profile_picture = user_info.get('profile_picture'),
+											first_name = user_info.get('full_name'),
+											last_name=" ",
+											email="example@example.com",
+											insta_id = user_info.get('id'),
+											insta_token = request.session['access_token'],
+											fetch_status = 1)
+		if account:
+			return account
 		return False
 
 
@@ -226,10 +265,11 @@ class DBManager(object):
 		"""
 		final_result = False
 		# posts = models.Post.objects.all()
+		print last_id
 		if last_id:
-			posts = models.Post.objects.filter(id__gt=last_id).order_by('id')[:2]
+			posts = models.Post.objects.filter(id__lt=last_id).order_by('-date_published')[:2]
 		else:
-			posts = models.Post.objects.order_by('id')[:2]
+			posts = models.Post.objects.order_by('-date_published')[:2]
 		if posts and len(posts) > 0:
 			return posts
 		return final_result
@@ -319,8 +359,8 @@ class Provider(LoginManager, DBManager, FetchManager, ResponseManager):
 					lucky_image = accounts[0].profile_picture
 					brand_account = accounts[0]
 					if request and request.user.is_authenticated():
-						brand_info = accounts[0].username #TODO: use session here
-
+						brand_info = request.user.username #TODO: use session here
+			print brand_info, brand_account
 			return self.make_posts(posts, lucky_image, brand_info, brand_account)
 		else:
 			accounts = models.Account.objects.all()

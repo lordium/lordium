@@ -75,7 +75,7 @@ class Darbaan(object):
 									'account': None
 								})
 				loop_flag = len(recent_media) > 0
-		return posts
+		return list(reversed(posts))
 
 
 	@classmethod
