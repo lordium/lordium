@@ -30,7 +30,7 @@
 {% if result.form.non_field_errors %}
     <tr><td colspan="{{ result|length }}">{{ result.form.non_field_errors }}</td></tr>
 {% endif %}
-<tr class="row1 col-xs-12 col-sm-6 col-md-4 col-lg-4 panel">{% for item in result %}{{ item }}{% endfor %}</tr>
+<tr class="row1 col-xs-12 col-sm-6 col-md-4 col-lg-4 thumbnail">{% for item in result %}{{ item }}{% endfor %}</tr>
 {% endfor %}
 </tbody>
 </table>

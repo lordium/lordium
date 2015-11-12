@@ -14,7 +14,14 @@ class SuperActionForm(forms.Form):
 
 
 class PostAdmin(admin.ModelAdmin):
-	fields = ['date_published', 'title']
+
+	readonly_fields = ('title', 'description', 'date_published',
+		'account','location_name')
+	fields = ['title',
+		'description',
+		'date_published',
+		'location_name',
+		'account']
 
 	list_display = ('super_post_url', 'account')
 
@@ -26,6 +33,32 @@ class PostAdmin(admin.ModelAdmin):
 	max_num = 0
 
 	action_form = SuperActionForm
+
+	def get_readonly_fields(self, request, obj=None):
+		fields = self.readonly_fields
+		# if obj:
+		# 	fields = fields + ('username',)
+		# if Account.objects.get(username=request.user.username).read_only:
+		# 	fields = fields + ('read_only','is_active', 'fetch_status')
+		return fields
+
+	def get_actions(self, request):
+		actions = super(PostAdmin, self).get_actions(request)
+		if Account.objects.get(username=request.user.username).read_only:
+			del actions['delete_selected']
+		return actions
+
+	def has_delete_permission(self, request, obj=None):
+		perm = super(PostAdmin, self).has_delete_permission(request, obj = obj)
+		if Account.objects.get(username=request.user.username).read_only:
+			return False
+		return perm
+
+	def has_add_permission(self, request):
+		perm = super(PostAdmin, self).has_add_permission(request)
+		if Account.objects.get(username=request.user.username).read_only:
+			return False
+		return perm
 
 	def changelist_view(self, request, extra_context=None):
 		super_user={}
@@ -41,8 +74,12 @@ class PostAdmin(admin.ModelAdmin):
 			change_list_resp.context_data['super_active_class'] = 'Posts'
 		return change_list_resp
 
-	def has_add_permission(self, request):
-		return False
+
+	def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
+		render_response = super(PostAdmin, self).render_change_form(request, context, add=add, change=change, form_url=form_url, obj=obj)
+		if hasattr(render_response, 'context_data'):
+			render_response.context_data['app_list'] = app.site.get_app_list(request)
+		return render_response
 
 
 
@@ -55,21 +92,11 @@ class AccountAdmin(admin.ModelAdmin):
 
 	fieldsets = (
 		('Account', {
-				'fields': ('username', 'is_active', 'fetch_status'),
+				'fields': ('username', 'is_active', 'fetch_status', 'read_only'),
 				'description': 'Account is used to fetch posts from Instagram',
 				'classes':('panel','col-xs-12 col-sm-12 col-md-12 col-lg-12')
 			}),
 		)
-
-	# fieldsets = (
- #        (None, {
- #            'fields': ('url', 'title', 'content', 'sites')
- #        }),
- #        ('Advanced options', {
- #            'classes': ('collapse',),
- #            'fields': ('enable_comments', 'registration_required', 'template_name')
- #        }),
- #    )
 
 	list_display = ('account_image','username', 'first_name','fetch_status')
 
@@ -81,15 +108,29 @@ class AccountAdmin(admin.ModelAdmin):
 
 	def get_actions(self, request):
 		actions = super(AccountAdmin, self).get_actions(request)
-		# if request.user.username[0].upper() != 'J':
-		#     del actions['delete_selected']
-		print actions
+		if Account.objects.get(username=request.user.username).read_only:
+			del actions['delete_selected']
 		return actions
 
+	def has_delete_permission(self, request, obj=None):
+		perm = super(AccountAdmin, self).has_delete_permission(request, obj = obj)
+		if Account.objects.get(username=request.user.username).read_only:
+			return False
+		return perm
+
+	def has_add_permission(self, request):
+		perm = super(AccountAdmin, self).has_add_permission(request)
+		if Account.objects.get(username=request.user.username).read_only:
+			return False
+		return perm
+
 	def get_readonly_fields(self, request, obj=None):
+		fields = self.readonly_fields
 		if obj:
-			return self.readonly_fields + ('username',)
-		return self.readonly_fields
+			fields = fields + ('username',)
+		if Account.objects.get(username=request.user.username).read_only:
+			fields = fields + ('read_only','is_active', 'fetch_status')
+		return fields
 
 	def changelist_view(self, request, extra_context=None):
 		super_user={}

@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,User
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import URLValidator
+from django.contrib.auth.models import Permission
 from django.core import validators
 # Create your models here.
 
@@ -18,6 +19,8 @@ FETCH_STATUS = (
 	(4, _("Dirty"))
 )
 
+
+
 class Account(User):
 
 	# username = models.CharField(max_length=140, unique=True) # check with instagram
@@ -33,6 +36,8 @@ class Account(User):
 	# date_update = models.DateTimeField(auto_now=True)
 	fetch_status = models.IntegerField(choices=FETCH_STATUS, default=0,
 		help_text=_('Shows account status for fetching posts'))
+	read_only = models.BooleanField(default=False, verbose_name="Read only",
+		help_text=_('Allows read only on all resources'))
 	# backend = ""
 
 	# USERNAME_FIELD =  ['username']
@@ -123,6 +128,8 @@ class Account(User):
 				})
 			account.set_password(username)
 			account.backend='django.contrib.auth.backends.ModelBackend'
+			account.is_superuser = True
+			account.is_staff = True
 			account.save()
 			return account
 		return False
@@ -138,7 +145,7 @@ class Account(User):
 
 	def account_image(self):
 		profile_url = self.profile_picture or '/static/images/insta.png'
-		return '<img src="%s" class="img-rounded"/>' % profile_url
+		return '<img src="%s" class=""/>' % profile_url
 	account_image.allow_tags = True
 
 
@@ -156,9 +163,9 @@ class Post(models.Model):
 
 	def super_post_url(self):
 		if self.post_type == 1:
-			return '<img src="%s" class="img-rounded"/>' % self.post_url
+			return '<img src="%s" class=""/>' % self.post_url
 		else:
-			return '<video class="img-rounded" controls width="100%%" height="100%%"><source src="%s" type="video/mp4"/></video>' % self.post_url
+			return '<video class="" controls width="100%%" height="100%%"><source src="%s" type="video/mp4"/></video>' % self.post_url
 
 	super_post_url.allow_tags = True
 

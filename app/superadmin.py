@@ -7,9 +7,15 @@ from django.template.response import TemplateResponse
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse, NoReverseMatch
-from app.models import Account
+from app.models import Account, Post
 
 # from django.contrib.admin.templatetags.admin_list
+
+def dashboard_front_data():
+	accounts = len(Account.objects.all())
+	posts = len(Post.objects.all())
+
+	return {'accounts':accounts , 'posts': posts, 'date_fetched':'10.10.2016'}
 
 class SuperAdmin(AdminSite):
 	# @never_cache
@@ -22,8 +28,7 @@ class SuperAdmin(AdminSite):
 		# print request.user.profile_picture
 		print 'picture above'
 		if not request.user.is_authenticated() or \
-			not request.user.is_staff or \
-			not request.user.is_active:
+			not request.user.is_staff:
 			return HttpResponseRedirect('/login')
 
 		return super(SuperAdmin, self).login(request, extra_context=extra_context)
@@ -43,6 +48,7 @@ class SuperAdmin(AdminSite):
 		if super_user:
 			index_response.context_data['super_user'] = super_user
 		index_response.context_data['active_dashboard_class'] = 'active'
+		index_response.context_data['dashboard_front_data'] = dashboard_front_data()
 
 		return index_response
 
