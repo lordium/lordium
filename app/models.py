@@ -19,6 +19,43 @@ FETCH_STATUS = (
 	(4, _("Dirty"))
 )
 
+class GlobalConf(models.Model):
+	"""
+	Singleton global app Configuration
+	"""
+
+	instagram_app_id = models.CharField(max_length=140,verbose_name="App id",
+		help_text=_('Instagram app id (Client id)'))
+	instagram_app_secret = models.CharField(max_length=140,verbose_name="App Secret",
+		help_text=_('Instagram app secret (Client Secret)'))
+	google_analytics = models.TextField(verbose_name="Google Analytics",
+		help_text=_('Google analytics script'), null=True)
+	total_posts = models.IntegerField(verbose_name="Total Posts", default=0)
+	total_accounts = models.IntegerField(verbose_name="Total Accounts", default=0)
+	last_fetched = models.DateTimeField(verbose_name="Last Fetched", null=True)
+	website_url = models.CharField(max_length=140, verbose_name="Website URL", null=True)
+	insta_connected = models.BooleanField(verbose_name="App connected", default=False)
+
+	class Meta:
+		verbose_name = "Setting"
+
+	def delete(self, *args, **kwargs):
+		pass
+
+	def save(self, *args, **kwargs):
+		self.pk = 1
+		super(GlobalConf, self).save(*args, **kwargs)
+
+	@classmethod
+	def get_config(self, instagram_app_id=None, instagram_app_secret=None,
+		website_url=None):
+		config = self.objects.get_or_create(instagram_app_id=instagram_app_id,
+			instagram_app_secret=instagram_app_secret, website_url=website_url)
+		return config
+
+
+
+
 
 
 class Account(User):
@@ -174,6 +211,10 @@ class Post(models.Model):
 	@classmethod
 	def post_bulk_create(self, posts):
 		Post.objects.bulk_create(posts)
+		total_posts = len(Post.objects.all())
+		config = GlobalConf.objects.get()
+		config.total_posts = total_posts
+		config.save()
 		return True
 
 	@classmethod

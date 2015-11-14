@@ -28,19 +28,25 @@ class Darbaan(object):
 		return user_info
 
 	@classmethod
-	def insta_redirect(self):
-		redirect_url = getattr(settings, 'SOCIAL_HOOKS', None)
-		redirect_url = redirect_url.get('insta', None)
-		return HttpResponseRedirect(redirect_url.get('insta_url','/'))
+	def insta_redirect(self, app_id=None, red_url=None):
+
+		# redirect_url = getattr(settings, 'SOCIAL_HOOKS', None)
+		# redirect_url = redirect_url.get('insta', None)
+		red_url = red_url + '/redirect_url/'
+		redirect_url = 'https://api.instagram.com/oauth/authorize/?client_id=%s&redirect_uri=%s&response_type=code'
+		redirect_url = redirect_url%(app_id, red_url)
+		return HttpResponseRedirect(redirect_url)
 
 
 	@classmethod
-	def insta_fetch(self, token=None, count_limit = 20, last_id  = None , user_id=None):
+	def insta_fetch(self, app_id, app_secret, token=None, count_limit = 20, last_id  = None , user_id=None):
 		last_media_id = last_id
 		loop_flag = True
 		posts = []
-		client_secret = getattr(settings, 'SOCIAL_AUTH').get('insta').get('client_secret')
-		client_id = getattr(settings, 'SOCIAL_AUTH').get('insta').get('client_id')
+		# client_secret = getattr(settings, 'SOCIAL_AUTH').get('insta').get('client_secret')
+		# client_id = getattr(settings, 'SOCIAL_AUTH').get('insta').get('client_id')
+		client_secret = app_secret
+		client_id = app_id
 		api = False
 		if token:
 			api = InstagramAPI(access_token=token, client_secret=client_secret)

@@ -140,6 +140,16 @@
 
 	  		}
 	  	}
+	  }).directive('configForm', function(){
+	  	return {
+	  		'restrict': 'A',
+	  		link: function(scope, element, attrs){
+	  			element.bind('click', function(){
+	  				scope.super_container.app_setup();
+	  				console.log('app called');
+	  			})
+	  		}
+	  	}
 	  });
 
 	  // var menu_tempate = '<ul class="nav navbar-nav navbar-right">'+

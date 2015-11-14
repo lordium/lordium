@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as db_login
 from django.contrib.auth import logout as db_logout
 from django.http import HttpResponse, HttpResponseRedirect
+from datetime import datetime
 
 from darbaan.darbaan import Darbaan
 
@@ -44,13 +45,17 @@ class LoginManager(object):
 			return ResponseManager.redirect('/')
 
 		code = request.GET.get('code', False)
+		print code
+		print 'above is code'
 
 		if not request:
 			return False
 
 		if vendor and vendor == 'insta':
 			if not code:
-				return Darbaan.insta_redirect() #
+				conf = DBManager.get_config()
+
+				return Darbaan.insta_redirect(app_id=conf.instagram_app_id, red_url=conf.website_url) #
 			else:
 				_api = Darbaan(request)
 				user_info = _api.insta_login(code)
@@ -167,6 +172,9 @@ class DBManager(object):
 				account.is_staff = True
 				account.is_superuser = True
 				account.save()
+				config = models.GlobalConf.objects.get()
+				config.total_accounts +=1
+				config.save()
 				return True
 		return False
 
@@ -252,6 +260,27 @@ class DBManager(object):
 		return models.Post.post_bulk_create(db_posts)
 
 	@classmethod
+	def db_init_app(self, app_id, secret, web_url):
+		config = models.GlobalConf.get_config(instagram_app_id=app_id, instagram_app_secret=secret,
+			website_url=web_url)
+
+		if config:
+			return config
+		return False
+
+	@classmethod
+	def activate_app(self):
+		conf = models.GlobalConf.objects.get()
+		if not conf.insta_connected:
+			conf.insta_connected = True
+			conf.save()
+
+	@classmethod
+	def get_config(self):
+		conf = models.GlobalConf.objects.get()
+		return conf
+
+	@classmethod
 	def get_token(self):
 		"""
 		This function will return user token for fetching
@@ -316,7 +345,9 @@ class FetchManager(object):
 			account = models.Account.objects.get(username=username)
 			if account:
 				token = account.insta_token
-				return Darbaan.insta_fetch(token=token, user_id = user_id, last_id=last_id)
+				conf = DBManager.get_config()
+				return Darbaan.insta_fetch(conf.instagram_app_id, conf.instagram_app_secret,
+					token=token, user_id = user_id, last_id=last_id)
 		return False
 
 class ResponseManager(object):
@@ -428,12 +459,18 @@ class Provider(LoginManager, DBManager, FetchManager, ResponseManager):
 					account.save()
 					is_complete = True
 			if is_complete:
+				config = models.GlobalConf.objects.get()
+				config.last_fetched = datetime.now()
+				config.save()
 				return self.simple_response({'status': 'success', 'fetch_status': 'completed'})
 		return self.simple_response({'status': 'failed', 'fetch_status': 'not_completed'})
 
 	@classmethod
 	def troll(self):
 		return self.simple_response({'status': 'failed', 'fetch_status': 'not_completed'})
+
+
+
 
 
 

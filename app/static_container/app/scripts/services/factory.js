@@ -14,6 +14,11 @@
 	angular.module('staticContainerApp')
 		.factory('SuperFactory', ['$http', '$q', '$timeout', function($http, $q, $timeout){
 		  var super_container = {}; // will contain all objects,
+		  super_container.init_config = {
+		  							'client_id': undefined,
+		  							'client_secret': undefined,
+		  							'website_url': undefined};
+
 		  super_container.brand_detail = {'name': false};
 		  super_container.brand_image='/static/images/insta.png';
 		  super_container.single_post = {
@@ -74,7 +79,7 @@
 	           data: post_data
 		       })
 		       .success(function (data) {
-		       		success_track(data, 'real');
+		       		success_track(data);
 		       })
 		       .error(function (data, status) {
 		       		failure_track(data);
@@ -315,6 +320,14 @@
 		  	super_container.get_server('/login/',
 		  							   {'mesg': 'letmein'},
 		  							    super_container.login_success_track,
+		  							    super_container.common_failure_track
+		  							    );
+		  }
+
+		  super_container.app_setup = function(){
+		  	super_container.get_server('/login/',
+		  							   super_container.init_config,
+		  							    console.log,
 		  							    super_container.common_failure_track
 		  							    );
 		  }

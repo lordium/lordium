@@ -1,1 +1,59 @@
-<h1>{{ sometext }}</h1>
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="/static/styles/main.css">
+  </head>
+  <body class="container">
+    <div class="row app-detail-inpage">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div>
+        <form action="/init_app/" method="post">
+            {% csrf_token %}
+          <div class="jumbotron">
+            <h1>Hey! you are just seconds away!</h1>
+            <p>Please follow below steps to complete setup
+              <ul class="list-group">
+                <li class="list-group-item">
+                  Go to <a href="https://instagram.com/developer">Instagram Developer Site</a>
+                  <span class="badge pull-left">1</span>
+                </li>
+                <li class="list-group-item">
+                  Create/Register your instagram app
+                  <span class="badge pull-left">2</span>
+                </li>
+                <li class="list-group-item">
+                  Add Client id below
+                  <span class="badge pull-left">3</span>
+                </li>
+                <li class="list-group-item with-input">
+                {{ form.client_id }}
+                </li>
+                <li class="list-group-item">
+                   Add Client Secret below
+                  <span class="badge pull-left">4</span>
+                </li>
+                <li class="list-group-item with-input">
+                    {{ form.client_secret }}
+                </li>
+                <li class="list-group-item">
+                   Add Website URL below
+                  <span class="badge pull-left">5</span>
+                </li>
+                <li class="list-group-item with-input">
+                    {{ form.website_url }}
+                </li>
+
+              </ul>
+            </p>
+            <p><input class="btn btn-default btn-lg" href="#" role="button" type="submit" value="Lets go"/></p>
+          </div>
+        </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

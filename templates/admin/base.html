@@ -33,6 +33,12 @@
                 <!-- <img src='{{ super_user.profile_picture }}'> -->
               </div>
             </a>
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#user-tools" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
           </div>
           {% if user.is_active and user.is_staff %}
           <div class="collapse navbar-collapse" id="user-tools">
@@ -42,14 +48,14 @@
                 <li class="">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% firstof user.get_short_name user.get_username %}<span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                    <li><a href="/dashboard">Dashboard</a></li>
+                    <!-- <li><a href="/dashboard">Dashboard</a></li> -->
 
                     {% url 'django-admindocs-docroot' as docsroot %}
                     {% if docsroot %}
                         <li role="separator" class="divider"></li>
                         <li><a href="{{ docsroot }}">{% trans 'Help' %}</a></li>
                     {% endif %}
-                    <li role="separator" class="divider"></li>
+                    <!-- <li role="separator" class="divider"></li> -->
                     <li><a href="/logout/">Logout</a></li>
                     </ul>
                 </li>

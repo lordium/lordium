@@ -7,15 +7,24 @@ from django.template.response import TemplateResponse
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse, NoReverseMatch
-from app.models import Account, Post
+from app.models import Account, Post, GlobalConf
 
 # from django.contrib.admin.templatetags.admin_list
 
 def dashboard_front_data():
-	accounts = len(Account.objects.all())
-	posts = len(Post.objects.all())
+	try:
+		config = GlobalConf.objects.get()
+		accounts = config.total_accounts or '0'
+		posts = config.total_posts or '0'
+		date_fetched = config.last_fetched or '0-0-0'
+	except:
+		accounts = '0'
+		posts = '0'
+		date_fetched = '0-0-0'
 
-	return {'accounts':accounts , 'posts': posts, 'date_fetched':'10.10.2016'}
+
+
+	return {'accounts':accounts , 'posts': posts, 'date_fetched': date_fetched}
 
 class SuperAdmin(AdminSite):
 	# @never_cache

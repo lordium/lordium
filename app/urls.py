@@ -33,5 +33,7 @@ urlpatterns = [
 
 	url(r'awesome/', views.user_post, name = 'user_post'),
 
+	url(r'init_app/', views.initiate_app, name="initiate_app"),
+
 ]
 
