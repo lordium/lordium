@@ -37,7 +37,8 @@ class SuperAdmin(AdminSite):
 		# print request.user.profile_picture
 		print 'picture above'
 		if not request.user.is_authenticated() or \
-			not request.user.is_staff:
+			not request.user.is_staff or \
+			not request.user.is_active:
 			return HttpResponseRedirect('/login')
 
 		return super(SuperAdmin, self).login(request, extra_context=extra_context)
