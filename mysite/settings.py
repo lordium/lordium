@@ -7,6 +7,13 @@ https://docs.djangoproject.com/en/1.7/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.7/ref/settings/
 """
+from datetime import timedelta
+#for celery
+import djcelery
+djcelery.setup_loader()
+BROKER_URL = 'django://'
+
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
@@ -47,7 +54,10 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app',
-    'darbaan'
+    'darbaan',
+    'djcelery',
+    'kombu.transport.django',
+    'tasker'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -129,4 +139,15 @@ SOCIAL_HOOKS = {
 
 
 REDIRECT_URI = 'http://localhost:8000/redirect_url/'
+
+
+CELERY_IMPORTS = ("app.tasks",)
+
+CELERYBEAT_SCHEDULE = {
+    'add-every-30-seconds': {
+        'task': 'app.tasks.fetch_posts',
+        'schedule': timedelta(seconds=30),
+        'args': (16, 16)
+    },
+}
 
