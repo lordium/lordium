@@ -76,7 +76,7 @@
     <div class="alert alert-warning alert-dismissible main-alert" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         {% for message in messages %}
-        <strong>Warning!</strong> {{ message|capfirst }}
+        {{ message|capfirst }}
         {% endfor %}
     </div>
     {% endif %}

@@ -247,6 +247,10 @@ textarea{
   @extend .form-control;
   @extend .no-round-borders;
 }
+
+.alert{
+  @extend .no-round-borders;
+}
 ///Bootstrap end
 
 //// Admin fix
@@ -259,6 +263,7 @@ ul.errorlist{
   li{
     @extend .alert;
     @extend .alert-danger;
+    @extend .no-round-borders;
   }
 }
 
@@ -470,7 +475,8 @@ body,html{
         }
         thead{
           display: block;
-          border: none !important;;
+          border: none !important;
+          margin: 10px;
         }
 
         th{
@@ -673,6 +679,16 @@ body,html{
         .cancel, .save{
           margin: 0.3em;
         }
+
+        .save{
+          background-color: rgb(240, 248, 255);
+        }
+
+        .deletelink-box{
+          a {
+            background-color: rgba(255, 0, 0, 0.22);
+          }
+        }
       }
       /*#content-main{
         .object-tools{
@@ -697,7 +713,7 @@ body,html{
 
         .help{
           padding: 0px !important;
-          margin: 0px !important;
+          margin: 10px !important;
           color: $common-font-color;
         }
 
@@ -708,7 +724,7 @@ body,html{
         }
 
         input {
-            margin: 20px;
+            margin: 20px 10px;
         }
 
 
@@ -717,6 +733,8 @@ body,html{
           div::after{
             content:"Instagram username, used to fetch posts";
             color: $common-font-color;
+            margin: 18px 10px 9px 10px;
+            display:block;
           }
         }
 

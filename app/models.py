@@ -186,6 +186,13 @@ class Account(User):
 	account_image.allow_tags = True
 
 
+	def delete(self):
+		super(Account, self).delete()
+		conf = GlobalConf.objects.get()
+		conf.total_accounts -= 1
+		conf.save()
+
+
 class Post(models.Model):
 	media_id = models.CharField(max_length=200, null=True)
 	title = models.CharField(max_length=200, null=True)
@@ -212,9 +219,12 @@ class Post(models.Model):
 	def post_bulk_create(self, posts):
 		Post.objects.bulk_create(posts)
 		total_posts = len(Post.objects.all())
-		config = GlobalConf.objects.get()
-		config.total_posts = total_posts
-		config.save()
+		try:
+			config = GlobalConf.objects.get()
+			config.total_posts = total_posts
+			config.save()
+		except:
+			pass
 		return True
 
 	@classmethod

@@ -21,6 +21,8 @@ def index(request):
 	"""
 	#
 
+	if not pd.get_config():
+		return HttpResponseRedirect('/init_app')
 
 	context = RequestContext(request, {
 									# 'sometext': settings.STATIC_URL,
@@ -30,7 +32,8 @@ def index(request):
 	return HttpResponse(template.render(context))
 
 def initiate_app(request):
-	print request
+	if pd.get_config():
+		return HttpResponseRedirect('/')
 	if request.POST:
 		website_url = request.POST.get('website_url')
 		client_id = request.POST.get('client_id')

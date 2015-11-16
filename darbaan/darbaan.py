@@ -17,11 +17,10 @@ class Darbaan(object):
 		if not code:
 			return self.insta_redirect()
 
-		config = getattr(settings, 'SOCIAL_AUTH', None)
-		if config:
-			config = config.get('insta', None)
-			config['redirect_uri'] = self.redirect_url
-
+		config = {}
+		config['client_id'] = kwargs.get('app_id')
+		config['client_secret'] = kwargs.get('app_secret')
+		config['redirect_uri'] = kwargs.get('website_url') + '/redirect_url/'
 		unauthenticated_insta = InstagramAPI(**config)
 		access_token, user_info = unauthenticated_insta.exchange_code_for_access_token(code)
 		self.request.session['access_token'] = access_token
@@ -29,9 +28,6 @@ class Darbaan(object):
 
 	@classmethod
 	def insta_redirect(self, app_id=None, red_url=None):
-
-		# redirect_url = getattr(settings, 'SOCIAL_HOOKS', None)
-		# redirect_url = redirect_url.get('insta', None)
 		red_url = red_url + '/redirect_url/'
 		redirect_url = 'https://api.instagram.com/oauth/authorize/?client_id=%s&redirect_uri=%s&response_type=code'
 		redirect_url = redirect_url%(app_id, red_url)

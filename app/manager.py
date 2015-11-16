@@ -58,7 +58,13 @@ class LoginManager(object):
 				return Darbaan.insta_redirect(app_id=conf.instagram_app_id, red_url=conf.website_url) #
 			else:
 				_api = Darbaan(request)
-				user_info = _api.insta_login(code)
+				conf = DBManager.get_config()
+
+				if not conf:
+					return ResponseManager.redirect('/')
+
+				user_info = _api.insta_login(code, app_id=conf.instagram_app_id,
+					app_secret = conf.instagram_app_secret, website_url=conf.website_url)
 				if user_info:
 					fetch_status = DBManager.check_account(username=user_info.get('username'))
 					username = user_info.get('username')
@@ -448,7 +454,9 @@ class Provider(LoginManager, DBManager, FetchManager, ResponseManager):
 		#Get the accounts for dirty/new
 		is_complete = False
 		dirty_accounts = self.db_get_dirty_accounts()
-		print dirty_accounts
+		config = models.GlobalConf.objects.get()
+		config.last_fetched = datetime.now()
+		config.save()
 		if dirty_accounts and len(dirty_accounts) > 0:
 			for account in dirty_accounts:
 				last_id = self.db_last_id(account) or None
@@ -459,9 +467,6 @@ class Provider(LoginManager, DBManager, FetchManager, ResponseManager):
 					account.save()
 					is_complete = True
 			if is_complete:
-				config = models.GlobalConf.objects.get()
-				config.last_fetched = datetime.now()
-				config.save()
 				return self.simple_response({'status': 'success', 'fetch_status': 'completed'})
 		return self.simple_response({'status': 'failed', 'fetch_status': 'not_completed'})
 

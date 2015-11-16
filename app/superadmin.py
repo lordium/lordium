@@ -8,15 +8,29 @@ from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse, NoReverseMatch
 from app.models import Account, Post, GlobalConf
+from datetime import datetime
 
 # from django.contrib.admin.templatetags.admin_list
+def make_time(f_time):
+	if not f_time:
+		return False
+	today = datetime.now().date()
+	if f_time.date() == today:
+		return "Today"
+
+	delta = today - f_time.date()
+	if delta.days > 1:
+		return str(delta.days) + ' days ago'
+	else:
+		return str(delta.days) + ' day ago'
+	return f_time.date
 
 def dashboard_front_data():
 	try:
 		config = GlobalConf.objects.get()
 		accounts = config.total_accounts or '0'
 		posts = config.total_posts or '0'
-		date_fetched = config.last_fetched or '0-0-0'
+		date_fetched = make_time(config.last_fetched) or '0-0-0'
 	except:
 		accounts = '0'
 		posts = '0'
