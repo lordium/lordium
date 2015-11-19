@@ -681,12 +681,15 @@ body,html{
         }
 
         .save{
-          background-color: rgb(240, 248, 255);
+          border-color: #0A0921;
+        }
+        .cancel{
+
         }
 
         .deletelink-box{
           a {
-            background-color: rgba(255, 0, 0, 0.22);
+            border-color: #FF8C00;
           }
         }
       }

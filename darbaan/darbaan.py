@@ -5,6 +5,8 @@ from instagram.client import InstagramAPI
 from django.contrib.auth import authenticate
 from django.http import HttpResponse, HttpResponseRedirect
 
+INSTA_REDIRECT_URI = 'https://api.instagram.com/oauth/authorize/?client_id=%s&redirect_uri=%s&response_type=code'
+
 class Darbaan(object):
 
 	def __init__(self, request, vendor='insta', **kwargs):
@@ -29,8 +31,8 @@ class Darbaan(object):
 	@classmethod
 	def insta_redirect(self, app_id=None, red_url=None):
 		red_url = red_url + '/redirect_url/'
-		redirect_url = 'https://api.instagram.com/oauth/authorize/?client_id=%s&redirect_uri=%s&response_type=code'
-		redirect_url = redirect_url%(app_id, red_url)
+		# redirect_url = 'https://api.instagram.com/oauth/authorize/?client_id=%s&redirect_uri=%s&response_type=code'
+		redirect_url = INSTA_REDIRECT_URI%(app_id, red_url)
 		return HttpResponseRedirect(redirect_url)
 
 

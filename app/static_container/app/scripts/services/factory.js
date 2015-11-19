@@ -43,12 +43,12 @@
 		  super_container.last_index = ''; // will contain ids of last post for each tunnel
 		  super_container.tunnels = [[],[],[]]; //three main tunnels
 		  super_container.tunnels_sizes = [0,0,0]; //keep the posts sizes for each tunnel
+		  super_container.single_tunnel_on = false;
 		  super_container.tunnels_mock = false;
 		  super_container.tunnel_swap = 0;
 
 
 		                            // will be end product of this factory
-
 		  super_container.get_posts = function(post_url){
 		  	post_url = '/get_update';
 	 		$http({
@@ -398,18 +398,23 @@
 		  			super_container.tunnels_mock = false;
 		  		}
 		  		angular.forEach(iposts.posts, function(post){
-		  				super_container.tunnels[super_container.tunnel_swap].push(post);
-		  				super_container.tunnel_swap +=1;
-		  				if(super_container.tunnel_swap > 2){
-		  					super_container.tunnel_swap = 0;
-		  				}
-		  				console.log('Tunnel Swap');
-		  				console.log(super_container.tunnel_swap);
+		  				if(super_container.single_tunnel_on == true){
+		  					super_container.tunnels[2].push(post);
+		  				} else{
+		  					super_container.tunnels[super_container.tunnel_swap].push(post);
+			  				super_container.tunnel_swap +=1;
+			  				if(super_container.tunnel_swap > 2){
+			  					super_container.tunnel_swap = 0;
+			  				}
+			  				console.log('Tunnel Swap');
+			  				console.log(super_container.tunnel_swap);
 
-		  				super_container.last_index = post.id;
-		  				console.log('Last Index');
-		  				console.log(super_container.last_index);
-		  				console.log('Flagger Config:' + String(super_container.flagger.config));
+			  				super_container.last_index = post.id;
+			  				console.log('Last Index');
+			  				console.log(super_container.last_index);
+			  				console.log('Flagger Config:' + String(super_container.flagger.config));
+		  				}
+
 		  		});
 		  	}
 
@@ -426,6 +431,27 @@
 		     	super_container.poke(); //TODO: End animation in this function
 		     }
 		  });
+
+		 $(window).resize(function(){
+		   var total_width = window.innerWidth;
+		   if(total_width < 767){
+		   		//make one tunnel here
+		   		super_container.single_tunnel_on = true;
+		   }
+		   else{
+		   		super_container.single_tunnel_on = false;
+		   }
+		 });
+
+		 var total_win_width = $(window).width();
+		 if(total_win_width < 767){
+		   		//make one tunnel here
+		   		super_container.single_tunnel_on = true;
+		  }
+		   else{
+		   		super_container.single_tunnel_on = false;
+		   }
+
 
 		  return super_container; // if everything is ok, send object else exception
 

@@ -16,7 +16,7 @@ FETCH_STATUS = (
 	(1, _("New")),
 	(2, _("Fetching")),
 	(3, _("Fetch Completed")),
-	(4, _("Dirty"))
+	(4, _("Need Fetch"))
 )
 
 class GlobalConf(models.Model):
@@ -54,10 +54,6 @@ class GlobalConf(models.Model):
 		return config
 
 
-
-
-
-
 class Account(User):
 
 	# username = models.CharField(max_length=140, unique=True) # check with instagram
@@ -65,16 +61,14 @@ class Account(User):
 
 	insta_id = models.CharField(max_length=140, unique=True, null=True)
 	insta_token = models.TextField("Token", null=True)
-	# first_name = models.CharField(max_length=40, null=True)
-	# last_name = models.CharField(max_length=40, null=True)
 	profile_picture = models.TextField(validators=[URLValidator()],null=True)
 	slogan = models.CharField(max_length=140, null=True)
-	# date_created = models.DateTimeField(auto_now_add=True)
-	# date_update = models.DateTimeField(auto_now=True)
 	fetch_status = models.IntegerField(choices=FETCH_STATUS, default=0,
 		help_text=_('Shows account status for fetching posts'))
 	read_only = models.BooleanField(default=False, verbose_name="Read only",
 		help_text=_('Allows read only on all resources'))
+	is_brand = models.BooleanField(default=False, verbose_name="Is Brand",
+		help_text=_('This account will be displayed on front page'))
 	# backend = ""
 
 	# USERNAME_FIELD =  ['username']

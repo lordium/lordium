@@ -1,20 +1,36 @@
-from django.contrib import admin
-
-# Register your models here.
-from .models import Post, Account, GlobalConf
 import app
+from django.contrib import admin
+from .models import Post, Account, GlobalConf
 from django.http import HttpResponse, HttpResponseRedirect
-
-from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-class SuperActionForm(forms.Form):
-    action = forms.ChoiceField(label='Actions')
-    select_across = forms.BooleanField(label='', required=False, initial=0,
-        widget=forms.HiddenInput({'class': 'select-across form-control'}))
+def delete_post(self, request, queryset):
+		for obj in queryset:
+			obj.delete()
 
+		if len(queryset) > 0:
+			try:
+				conf = GlobalConf.objects.get()
+				conf.total_posts = conf.total_posts - len(queryset)
+				conf.save()
+			except:
+				pass
+
+def delete_account(self, request, queryset):
+		for obj in queryset:
+			obj.delete()
+
+		if len(queryset) > 0:
+			try:
+				conf = GlobalConf.objects.get()
+				conf.total_accounts = conf.total_accounts - len(queryset)
+				conf.save()
+			except:
+				pass
 
 class PostAdmin(admin.ModelAdmin):
+
+	actions = [delete_post]
 
 	readonly_fields = ('title', 'description', 'date_published',
 		'account','location_name')
@@ -33,20 +49,14 @@ class PostAdmin(admin.ModelAdmin):
 
 	max_num = 0
 
-	action_form = SuperActionForm
-
 	def get_readonly_fields(self, request, obj=None):
 		fields = self.readonly_fields
-		# if obj:
-		# 	fields = fields + ('username',)
-		# if Account.objects.get(username=request.user.username).read_only:
-		# 	fields = fields + ('read_only','is_active', 'fetch_status')
 		return fields
 
 	def get_actions(self, request):
 		actions = super(PostAdmin, self).get_actions(request)
 		if Account.objects.get(username=request.user.username).read_only:
-			del actions['delete_selected']
+			del actions['delete_post']
 		return actions
 
 	def has_delete_permission(self, request, obj=None):
@@ -80,7 +90,7 @@ class PostAdmin(admin.ModelAdmin):
 			render_response.context_data['super_active_class'] = 'Posts'
 		return render_response
 
-
+	delete_post.short_description = "Delete posts"
 
 
 class AccountAdmin(admin.ModelAdmin):
@@ -89,9 +99,12 @@ class AccountAdmin(admin.ModelAdmin):
 
 	# fields = ('username','is_active','fetch_status')
 
+	actions = [delete_account]
+
 	fieldsets = (
 		('Account', {
-				'fields': ('username', 'is_active', 'fetch_status', 'read_only'),
+				'fields': ('username', 'is_active',
+					'fetch_status', 'read_only','is_brand'),
 				'description': 'Account is used to fetch posts from Instagram',
 				'classes':('panel','col-xs-12 col-sm-12 col-md-12 col-lg-12')
 			}),
@@ -101,14 +114,10 @@ class AccountAdmin(admin.ModelAdmin):
 
 	list_per_page = 20
 
-	# def __init__(self, *args, **kwargs):
-	# 	# self.the_app_list = app.site.index().context_data.get('app_list')
-	# 	return super(AccountAdmin, self).__init__(*args, **kwargs)
-
 	def get_actions(self, request):
 		actions = super(AccountAdmin, self).get_actions(request)
 		if Account.objects.get(username=request.user.username).read_only:
-			del actions['delete_selected']
+			del actions['delete_account']
 		return actions
 
 	def has_delete_permission(self, request, obj=None):
@@ -152,8 +161,13 @@ class AccountAdmin(admin.ModelAdmin):
 			render_response.context_data['super_active_class'] = 'Accounts'
 		return render_response
 
+	delete_account.short_description = "Delete accounts"
+
 
 class ConfAdmin(admin.ModelAdmin):
+
+	# actions = [delete_selected_admin]
+
 	fieldsets = (
 		('Settings', {
 				'fields': ('instagram_app_id','instagram_app_secret',
@@ -197,8 +211,6 @@ class ConfAdmin(admin.ModelAdmin):
 			render_response.context_data['super_active_class'] = 'Settings'
 		return render_response
 
-
-# GlobalConf.get_config()
 app.site.register(GlobalConf, ConfAdmin)
 app.site.register(Post, PostAdmin)
 app.site.register(Account, AccountAdmin)

@@ -105,11 +105,12 @@
 	        ///////////////////////
 
 
-	        //var response = {'brand_post': brand_post,'success': true, 'data_type': 'posts', 'account_status': 'fetch_completed', 'posts': posts, 'lucky_image':'https://pbs.twimg.com/profile_images/632135627773906945/qT290uCE_400x400.jpg', 'brand_info': 'The Arslan Rafique'};
+	        var response = {'success': true, 'data_type': 'posts', 'account_status': 'fetch_completed', 'posts': posts};
+	        // ar response = {'brand_post': brand_post,'success': true, 'data_type': 'posts', 'account_status': 'fetch_completed', 'posts': posts, 'lucky_image':'https://pbs.twimg.com/profile_images/632135627773906945/qT290uCE_400x400.jpg', 'brand_info': 'The Arslan Rafique'};
 	        // var response = {'success': true, 'data_type': 'no_posts', 'account_status': 'new_account'};
 	        // var response = {'success': true, 'data_type': 'no_posts', 'account_status': 'fetching'};
 	        // var response = {'success': true, 'data_type': 'no_posts', 'account_status': 'fetch_completed', 'lucky_image':'/images/insta.png'};
-	         var response = {'success': false, 'data_type': 'no_posts', 'account_status': 'no_account'};
+	         // var response = {'success': false, 'data_type': 'no_posts', 'account_status': 'no_account'};
 
 
 	        return [200, angular.fromJson(response), {}];

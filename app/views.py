@@ -10,24 +10,27 @@ from models import Account
 from manager import Provider as pd
 from forms import InitForm
 
-
 import json
 
-def index(request):
-	# print request
-	# print request.user
+def index(request, post_id=None, post_title=None):
 	"""
 	Show initial document to user
 	"""
 	#
+	req_context = {}
+	config = pd.get_config()
+	print config.google_analytics
 
-	if not pd.get_config():
+	if not config:
 		return HttpResponseRedirect('/init_app')
 
-	context = RequestContext(request, {
-									# 'sometext': settings.STATIC_URL,
-									# 'instagram_url': '/redirect_url'
-									})
+	req_context['google_analytics'] = config.google_analytics
+
+	if post_id and isinstance(post_id,int) and post_id > 0:
+		post_data = pd.db_get_single(post_id=post_id)
+		req_context['direct_post'] = post_data
+
+	context = RequestContext(request, req_context)
 	template = loader.get_template('dist/index.html')
 	return HttpResponse(template.render(context))
 
@@ -81,10 +84,9 @@ def login(request):
 def logout(request):
 	return pd.logout(request)
 
-def user_post(request):
-	post_id = request.Get.get('post_id')
-	if not post_id:
-		return HttpResponseRedirect('/')
+def user_post(request, post_id=None, post_title=None):
+	if post_id:
+		return HttpResponse('Post is here');
 	return pd.logout(request)
 
 

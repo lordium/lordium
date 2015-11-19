@@ -135,7 +135,8 @@
 	  		'restrict': 'A',
 	  		link: function(scope,element, attrs){
 	  			scope.$watch('im_post.img_url', function(){
-	  				attrs.$set('src', scope.im_post.img_url);
+	  				if(typeof scope.im_post != 'undefined')
+	  					attrs.$set('src', scope.im_post.img_url);
 	  			})
 
 	  		}

@@ -31,9 +31,10 @@ urlpatterns = [
 	##allow user to fetch data
 	url(r'^fetch/', views.fetch, name = 'fetch'),
 
-	url(r'awesome/', views.user_post, name = 'user_post'),
+	url(r'^(?P<post_id>\d+)/', views.user_post, name = 'user_post'),
 
-	url(r'init_app/', views.initiate_app, name="initiate_app"),
+	url(r'^(?P<post_id>\d+)/(?P<post_title>\w+)', views.user_post, name = 'user_post'),
 
+	url(r'^init_app/', views.initiate_app, name="initiate_app"),
 ]
 

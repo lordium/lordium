@@ -150,3 +150,4 @@ class SuperAdmin(AdminSite):
 
 
 site = SuperAdmin()
+site.disable_action('delete_selected')

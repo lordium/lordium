@@ -172,14 +172,15 @@ class DBManager(object):
 												email="example@example.com",
 												insta_id = user_info.get('id'),
 												insta_token = request.session['access_token'],
-												fetch_status = 1)
+												fetch_status = 1,
+												is_brand=True)
 
 			if account:
 				account.is_staff = True
 				account.is_superuser = True
 				account.save()
 				config = models.GlobalConf.objects.get()
-				config.total_accounts +=1
+				config.total_accounts = 1
 				config.save()
 				return True
 		return False
@@ -310,6 +311,26 @@ class DBManager(object):
 		return final_result
 
 
+	@classmethod
+	def db_get_single(self, post_id=None):
+		try:
+			single_post = models.Account.objects.get(id=post_id)
+			if single_post:
+				post_data = {
+					'img_url': single_post.post_url,
+					'title': single_post.title,
+					'tags': single_post.post_tags,
+					'description': single_post.description,
+					'location': single_post.location,
+					'location_link': '',
+					'post_type': single_post.post_type,
+					'class': ''}
+				return post_data
+		except:
+			pass
+		return False
+
+
 
 class CacheManager(object):
 	"""
@@ -386,28 +407,34 @@ class Provider(LoginManager, DBManager, FetchManager, ResponseManager):
 		"""
 
 		posts = self.db_get_posts(last_id = last_id)
+		account = False
 		if posts:
 			lucky_image = False
 			brand_info = False
 			brand_account = False
 			if not last_id:
-				accounts = models.Account.objects.all()
-				if accounts and len(accounts) > 0:
-					lucky_image = accounts[0].profile_picture
-					brand_account = accounts[0]
-					if request and request.user.is_authenticated():
-						brand_info = request.user.username #TODO: use session here
-			print brand_info, brand_account
+				try:
+					account = models.Account.objects.get(is_brand=True)
+				except:
+					pass
+				if account:
+					lucky_image = account.profile_picture
+					brand_account = account
+				if request and request.user.is_authenticated():
+					brand_info = request.user.username
+
 			return self.make_posts(posts, lucky_image, brand_info, brand_account)
 		else:
-			accounts = models.Account.objects.all()
-			#using account[0], first user will be king!
-			if accounts and len(accounts) > 0:
-				if accounts[0].fetch_status == 1: #1 => NEW
+			try:
+				account = models.Account.objects.get(is_brand=True)
+			except:
+				pass
+			if account:
+				if account.fetch_status == 1: #1 => NEW
 					return self.make_dict(True, 'no_posts', 'new_account')
-				elif accounts[0].fetch_status == 2: #2 => Fetching
+				elif account.fetch_status == 2: #2 => Fetching
 				 	return self.make_dict(True, 'no_posts', 'fetching')
-				elif accounts[0].fetch_status == 3: #3 => Fetch Completed
+				elif account.fetch_status == 3: #3 => Fetch Completed
 					return self.make_dict(True, 'no_posts', 'fetch_completed')
 			else:
 				return self.make_dict(False, 'no_posts', 'no_account')
