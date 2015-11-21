@@ -83,7 +83,7 @@
     </div>
 
     {% if direct_post %}
-    <div class="container">
+    <div class="container direct-post" ng-init="sc.last_index={{ direct_post.id }}">
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 post-container">
        <div class="thumbnail {{ direct_post.class }}" >
@@ -91,15 +91,23 @@
          <video  ng-show="{{direct_post.post_type}} == '2'"  controls width="100%" height="100%"><source ng-src="" fix-vid-bug type="video/mp4"/></video>
 
          <div class="caption">
-          <div class="tags-container" >
-            <span ng-repeat="label in {{direct_post.tags}}" >{$ label $}</span>
+          {% if direct_post.tags %}
+          <div class="tags-container">
+            <span ng-repeat="label in {{direct_post.tags}}.split(',')" >{$ label $}</span>
           </div>
-           <h3 ng-show="{{direct_post.title}}">{{ direct_post.title }} </h3>
-           <p ng-show="{{direct_post.description}}" class="post-description">{{ direct_post.description }}</p>
-           <p class="location-container" ng-show="{{direct_post.location}}">
+          {% endif %}
+           {% if direct_post.title%}
+           <h3>{{ direct_post.title }} </h3>
+           {% endif %}
+           {% if direct_post.description %}
+           <p class="post-description">{{ direct_post.description }}</p>
+           {% endif %}
+           {% if direct_post.location %}
+           <p class="location-container">
               <span class="glyphicon glyphicon-map-marker"></span>
-              <span >{$ direct_post.location $}</span>
+              <span >{{ direct_post.location }}</span>
             </p>
+           {% endif %}
          </div>
        </div>
       </div>
@@ -107,20 +115,21 @@
     </div>
     {% endif %}
     <div class="row">
-      <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 post-container" ng-repeat="tunnel in super_container.tunnels" ng-cloak>
+      <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 post-container" ng-repeat="tunnel in sc.tunnels" ng-cloak>
         <!-- Brand post-->
-         <div class="thumbnail {$ super_container.brand_post.class $}" ng-show="$index==0 && super_container.brand_post.img_url">
-         <img ng-hide="im_post.post_type == '2'" ng-src="{$ super_container.brand_post.img_url $}" alt="">
+         <div class="thumbnail {$ sc.brand_post.class $}" ng-show="$index==0 && sc.brand_post.img_url">
+         <img ng-hide="im_post.post_type == '2'" ng-src="{$ sc.brand_post.img_url $}" alt="">
          <div class="caption">
-           <p class="post-description">{$ super_container.brand_post.description $}</p>
+           <p class="post-description">{$ sc.brand_post.description $}</p>
            <!-- <p class="location-container" ng-show="im_post.location">
               <span class="glyphicon glyphicon-map-marker"></span>
-              <span >{$ super_container.brand_post.location $}</span>
+              <span >{$ sc.brand_post.location $}</span>
             </p> -->
          </div>
        </div>
         <!-- Brand post end-->
-       <div class="thumbnail {$ im_post.class $}" ng-repeat="im_post in tunnel|filter:search" >
+       <div class="thumbnail front-post{$ im_post.class $}" ng-repeat="im_post in tunnel|filter:search" >
+        <a href="/{$ im_post.id $}">
          <img ng-hide="im_post.post_type == '2'" ng-src="{$ im_post.img_url $}" alt="">
          <video  ng-show="im_post.post_type == '2'"  controls width="100%" height="100%"><source ng-src="" fix-vid-bug type="video/mp4"/></video>
 
@@ -128,13 +137,14 @@
           <div class="tags-container" >
             <span ng-repeat="label in im_post.tags.split(',')" >{$ label $}</span>
           </div>
-           <h3 ng-click="update_tunnel()" ng-show="im_post.title">{$ im_post.title $} </h3>
+           <h3 ng-show="im_post.title">{$ im_post.title $} </h3>
            <p ng-show="im_post.description" class="post-description">{$ im_post.description $}</p>
            <p class="location-container" ng-show="im_post.location">
               <span class="glyphicon glyphicon-map-marker"></span>
               <span >{$ im_post.location $}</span>
             </p>
          </div>
+       </a>
        </div>
       </div>
     </div>
@@ -170,7 +180,7 @@
     <script src="/scripts/services/factory.js"></script>
     <script src="/scripts/controllers/main.js"></script>
     <script src="/scripts/test/mock.js"></script>
-     <script src="/scripts/admin_app.js"></script>
+    <script src="/scripts/admin_app.js"></script>
     <!-- endbuild -->
 
 

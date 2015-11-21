@@ -24,6 +24,7 @@ def delete_account(self, request, queryset):
 			try:
 				conf = GlobalConf.objects.get()
 				conf.total_accounts = conf.total_accounts - len(queryset)
+				conf.total_posts = len(Post.objects.all())
 				conf.save()
 			except:
 				pass

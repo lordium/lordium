@@ -108,7 +108,8 @@ class Account(User):
 			   last_name = None,
 			   profile_picture = None,
 			   slogan = None,
-			   fetch_status = None
+			   fetch_status = None,
+			   is_brand=False
 			   ):
 
 		account = Account(
@@ -120,7 +121,8 @@ class Account(User):
 						last_name = last_name,
 						profile_picture = profile_picture,
 						slogan = slogan,
-						fetch_status = fetch_status)
+						fetch_status = fetch_status,
+						is_brand=is_brand)
 		account.set_password(username)
 		account.backend='django.contrib.auth.backends.ModelBackend'
 

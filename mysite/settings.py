@@ -137,6 +137,8 @@ STATICFILES_DIRS =(
 #     }
 # }
 
+POSTS_PER_REQUEST = 5
+
 
 # REDIRECT_URI = 'http://localhost:8000/redirect_url/'
 

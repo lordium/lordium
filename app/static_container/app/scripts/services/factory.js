@@ -13,43 +13,44 @@
 	}
 	angular.module('staticContainerApp')
 		.factory('SuperFactory', ['$http', '$q', '$timeout', function($http, $q, $timeout){
-		  var super_container = {}; // will contain all objects,
-		  super_container.init_config = {
+		  var sc = {}; // will contain all objects,
+		  sc.init_config = {
 		  							'client_id': undefined,
 		  							'client_secret': undefined,
 		  							'website_url': undefined};
 
-		  super_container.brand_detail = {'name': false};
-		  super_container.brand_image='/static/images/insta.png';
-		  super_container.single_post = {
+		  sc.brand_detail = {'name': false};
+		  sc.brand_image='/static/images/insta.png';
+		  sc.single_post = {
 		  	'imgage_url': 'http://i.imgur.com/1taT5sV.jpg',
 		    'title': 'This is title',
 		    'tags': ['awesome', 'amazing', 'cool'],
 		    'description': 'lorem ipsum sadf adfll e hfasdl klek i asdf asdf akjsdhf',
 		    'location': 'Stockholm, Sweden',
 		    'location_link': ''};
-		  super_container.brand_post = {},
-		  super_container.inpage_messages = {
+		  sc.brand_post = {},
+		  sc.inpage_messages = {
 		  									'1': 'Gathering your awesome moments',
 		  									'2': 'Login failed',
 		  									'3': 'Something bad happened'}
-		  super_container.flagger = {'config': false,
+		  sc.flagger = {'config': false,
 		  							 'login': false,
 		  							 'mesg': false,
 		  							 'update': false };
-		  super_container.left_tunnel = []; // will show posts on left column
-		  super_container.middle_tunnel = []; // will show posts on middle column
-		  super_container.right_tunnel = []; // will show posts on right column
-		  super_container.last_index = ''; // will contain ids of last post for each tunnel
-		  super_container.tunnels = [[],[],[]]; //three main tunnels
-		  super_container.tunnels_sizes = [0,0,0]; //keep the posts sizes for each tunnel
-		  super_container.single_tunnel_on = false;
-		  super_container.tunnels_mock = false;
-		  super_container.tunnel_swap = 0;
+		  sc.left_tunnel = []; // will show posts on left column
+		  sc.middle_tunnel = []; // will show posts on middle column
+		  sc.right_tunnel = []; // will show posts on right column
+		  sc.last_index = ''; // will contain ids of last post for each tunnel
+		  sc.tunnels = [[],[],[]]; //three main tunnels
+		  // sc.tunnels = []; //three main tunnels
+		  sc.tunnels_sizes = [0,0,0]; //keep the posts sizes for each tunnel
+		  sc.single_tunnel_on = false;
+		  sc.tunnels_mock = false;
+		  sc.tunnel_swap = 0;
 
 
 		                            // will be end product of this factory
-		  super_container.get_posts = function(post_url){
+		  sc.get_posts = function(post_url){
 		  	post_url = '/get_update';
 	 		$http({
 	           method: 'GET',
@@ -57,7 +58,7 @@
 	           headers: {
 	               'Content-Type': undefined
 	           },
-	           data: {'index': super_container.last_index}
+	           data: {'index': sc.last_index}
 		       })
 		       .success(function (data) {
 		       		//here I got the new posts
@@ -69,7 +70,7 @@
 		       });
 		  };
 
-		  super_container.post_server = function(post_url,post_data, success_track, failure_track){
+		  sc.post_server = function(post_url,post_data, success_track, failure_track){
 	 		return $http({
 	           method: 'POST',
 	           url: post_url,
@@ -86,7 +87,7 @@
 		       });
 		  };
 
-		  super_container.get_server = function(get_url, data, success_track, failure_track){
+		  sc.get_server = function(get_url, data, success_track, failure_track){
 		  	console.log('get_server:CALLED');
 	 		return $http({
 	           method: 'GET',
@@ -105,69 +106,69 @@
 		       });
 		  }
 
-		  super_container.fetch_success = function(data){
+		  sc.fetch_success = function(data){
 		  	console.log(data.status);
 		  	if(data.status == 'success'){
 		  		if(data.fetch_status == 'completed'){
-	  				super_container.flagger.mesg = false;
-	  				super_container.flagger.config = true;
-	  				super_container.flagger.update = true;
-	  				super_container.poke();
+	  				sc.flagger.mesg = false;
+	  				sc.flagger.config = true;
+	  				sc.flagger.update = true;
+	  				sc.poke();
 
 		  		}
 		  	}
 		  	if(data.status == 'failed'){
 		  		if(data.fetch_status == 'not_completed'){
 		  			//prompt for login if not able to fetch, easiest way for now
-	  				super_container.flagger.mesg = false;
-	  				super_container.flagger.config = false;
-	  				super_container.flagger.update = false;
-	  				super_container.flagger.login = true;
+	  				sc.flagger.mesg = false;
+	  				sc.flagger.config = false;
+	  				sc.flagger.update = false;
+	  				sc.flagger.login = true;
 
-	  				// super_container.poke();
+	  				// sc.poke();
 
 		  		}
 		  	}
 		  }
 
-		  super_container.fetch_status = function(){
+		  sc.fetch_status = function(){
 		  	//make calls to server using timeout and so on
 		  	var data = {};
 		  	var check_fetching_process = $timeout(function(){
-		  											super_container.get_server( '/login_status',
+		  											sc.get_server( '/login_status',
 		  																		data,
-		  																		super_container.fetch_success,
-		  																		super_container.common_failure_track
+		  																		sc.fetch_success,
+		  																		sc.common_failure_track
 		  																		);
 		  													}, 2000);
 		  }
 
-		  super_container.login_success_track = function(data){
-		  	super_container.response_manager(data);
+		  sc.login_success_track = function(data){
+		  	sc.response_manager(data);
 		  }
 
-		  super_container.common_failure_track = function(data, error){
+		  sc.common_failure_track = function(data, error){
 		  	console.log('Something Went wrong...');
 		  	console.log(error);
 		  }
 
-		  super_container.poke = function(){
+		  sc.poke = function(){
 		  	//1- get data from server
 		  	//2- show suitable response
 
 		  	//get posts
 		  	console.log('Poke called!')
-		  	var data = {'last_id': super_container.last_index}
+		  	var data = {'last_id': sc.last_index}
 		  	console.log(data);
-	  		super_container.get_server('/update/',
+	  		sc.get_server('/update/',
 	  									data,
-	  									super_container.update_tunnels,
-	  									super_container.common_failure_track); //will return promise
+	  									sc.update_tunnels,
+	  									sc.common_failure_track); //will return promise
 
 
 		  }
 
-		  super_container.update_response_filter = function(data){
+		  sc.update_response_filter = function(data){
 		  	var result = false;
 		  	var data = data; // parse if needed
 		  	/*""" Filter the data and send predefined responses
@@ -241,7 +242,7 @@
 		  	return result
 		  }
 
-		  super_container.response_manager = function(data){
+		  sc.response_manager = function(data){
 		  	//TODO: check, if not posts then perform suitable action
 
 		  	//first check the negative responses
@@ -257,58 +258,58 @@
 				}
 		  	}
 
-		  	var result = super_container.update_response_filter(data); //parse, if needed
+		  	var result = sc.update_response_filter(data); //parse, if needed
 		  	console.log('response filter result');
 		  	console.log(result);
 
 		  	if(result !== false){
 		  		if(result == 'no_account'){ //show login
-		  			super_container.flagger.config=false;
-		  			super_container.flagger.login = true;
-		  			super_container.flagger.update = false;
-		  			super_container.flagger.mesg = false;
+		  			sc.flagger.config=false;
+		  			sc.flagger.login = true;
+		  			sc.flagger.update = false;
+		  			sc.flagger.mesg = false;
 		  		}
 		  		else if(result == 'new_account'){
-		  			super_container.flagger.config=true;
-		  			super_container.flagger.login = false;
-		  			super_container.flagger.update = false;
-		  			super_container.flagger.mesg = true;
+		  			sc.flagger.config=true;
+		  			sc.flagger.login = false;
+		  			sc.flagger.update = false;
+		  			sc.flagger.mesg = true;
 		  			//ping server to initiate fetching
 		  			//TODO: write ping here
-		  			super_container.initiate_fetch();
+		  			sc.initiate_fetch();
 		  		}
 		  		else if(result == 'fetching'){
-		  			super_container.flagger.config=true;
-		  			super_container.flagger.login = false;
-		  			super_container.flagger.update = false;
-		  			super_container.flagger.mesg = true;
+		  			sc.flagger.config=true;
+		  			sc.flagger.login = false;
+		  			sc.flagger.update = false;
+		  			sc.flagger.mesg = true;
 		  		}
 		  		else if(result == 'no_posts'){
-		  			super_container.flagger.config=true;
-		  			super_container.flagger.login = false;
-		  			super_container.flagger.update = false;
-		  			super_container.flagger.mesg = false;
+		  			sc.flagger.config=true;
+		  			sc.flagger.login = false;
+		  			sc.flagger.update = false;
+		  			sc.flagger.mesg = false;
 		  		}
 		  		else if(result == 'exception'){
 		  			//TODO: check exception here
 		  		}
 		  		else if(result == 'creation_failed'){
-		  			super_container.flagger.config=false;
-		  			super_container.flagger.login = true;
-		  			super_container.flagger.update = false;
-		  			super_container.flagger.mesg = false;
+		  			sc.flagger.config=false;
+		  			sc.flagger.login = true;
+		  			sc.flagger.update = false;
+		  			sc.flagger.mesg = false;
 		  		}
 		  		else if( result == 'login_failed'){
-		  			super_container.flagger.config=true;
-		  			super_container.flagger.login = true;
-		  			super_container.flagger.update = false;
-		  			super_container.flagger.mesg = false;
+		  			sc.flagger.config=true;
+		  			sc.flagger.login = true;
+		  			sc.flagger.update = false;
+		  			sc.flagger.mesg = false;
 		  		}
 		  		else{ //if there are posts
-		  			super_container.flagger.config=true;
-		  			super_container.flagger.login = false;
-		  			super_container.flagger.update = true;
-		  			super_container.flagger.mesg = false;
+		  			sc.flagger.config=true;
+		  			sc.flagger.login = false;
+		  			sc.flagger.update = true;
+		  			sc.flagger.mesg = false;
 		  		}
 
 		  	} else {
@@ -316,31 +317,31 @@
 		  	}
 		  };
 
-		  super_container.login = function(){
-		  	super_container.get_server('/login/',
+		  sc.login = function(){
+		  	sc.get_server('/login/',
 		  							   {'mesg': 'letmein'},
-		  							    super_container.login_success_track,
-		  							    super_container.common_failure_track
+		  							    sc.login_success_track,
+		  							    sc.common_failure_track
 		  							    );
 		  }
 
-		  super_container.app_setup = function(){
-		  	super_container.get_server('/login/',
-		  							   super_container.init_config,
+		  sc.app_setup = function(){
+		  	sc.get_server('/login/',
+		  							   sc.init_config,
 		  							    console.log,
-		  							    super_container.common_failure_track
+		  							    sc.common_failure_track
 		  							    );
 		  }
 
-		  super_container.initiate_fetch = function(){
-		  	super_container.get_server('/fetch',
+		  sc.initiate_fetch = function(){
+		  	sc.get_server('/fetch',
 		  							   {'fetch': 'fetch'},
-		  							    super_container.fetch_success,
-		  							    super_container.common_failure_track
+		  							    sc.fetch_success,
+		  							    sc.common_failure_track
 		  							    );
 		  }
 
-		  super_container.posts_mocks = function(){
+		  sc.posts_mocks = function(){
 	  	  	var all_posts = [];
 	  	  	for(var i=0; i< 5; i++){
 	  	  		var mock_post = {
@@ -358,102 +359,142 @@
 	  	  	return {'posts': all_posts}
 		  }
 
-		  super_container.init = function(){
+		  sc.init = function(){
 
 		  	//file the frame with mocks
 		  	// check width and setup tunnels process
 
-		  	super_container.update_tunnels(super_container.posts_mocks(), 'dum');
-		  	super_container.tunnels_mock = true;
-		  	super_container.poke(); // call for initial images
+		  	sc.update_tunnels(sc.posts_mocks(), 'dum');
+		  	sc.tunnels_mock = true;
+		  	sc.poke(); // call for initial images
 
 		  }
 
-		  super_container.update_tunnels = function(posts, utype){
+		  sc.update_tunnels = function(posts, utype){
 
 		  	if(posts.brand_post){
-		  		super_container.brand_post = posts.brand_post;
-		  		console.log(super_container.brand_post);
+		  		sc.brand_post = posts.brand_post;
+		  		console.log(sc.brand_post);
 		  	}
 		  	if(posts.brand_info){
-		  		super_container.brand_detail.name = posts.brand_info;
+		  		sc.brand_detail.name = posts.brand_info;
 		  	}
 
 		  	if(posts.lucky_image){
-		  		super_container.brand_image = posts.lucky_image;
+		  		sc.brand_image = posts.lucky_image;
 		  		console.log('lucky_image');
-		  		console.log(super_container.brand_image);
+		  		console.log(sc.brand_image);
 		  	}
 		  	console.log('Update Tunnels Called');
 		  	console.log(posts);
 		  	var iposts = posts;
 		  	if(utype !='dum'){
-		  		super_container.response_manager(iposts);
+		  		sc.response_manager(iposts);
 		  	}
 
-		  	if(utype=='dum' || super_container.flagger.update){
+		  	if(utype=='dum' || sc.flagger.update){
 
-		  		if(super_container.tunnels_mock == true){
-		  			super_container.flush_tunnels();
-		  			super_container.tunnels_mock = false;
+		  		if(sc.tunnels_mock == true){
+		  			sc.flush_tunnels();
+		  			sc.tunnels_mock = false;
 		  		}
 		  		angular.forEach(iposts.posts, function(post){
-		  				if(super_container.single_tunnel_on == true){
-		  					super_container.tunnels[2].push(post);
+		  				if(sc.single_tunnel_on == true){
+		  					sc.tunnels[0].push(post);
 		  				} else{
-		  					super_container.tunnels[super_container.tunnel_swap].push(post);
-			  				super_container.tunnel_swap +=1;
-			  				if(super_container.tunnel_swap > 2){
-			  					super_container.tunnel_swap = 0;
-			  				}
-			  				console.log('Tunnel Swap');
-			  				console.log(super_container.tunnel_swap);
+			  					sc.tunnels[sc.tunnel_swap].push(post);
+				  				sc.tunnel_swap +=1;
+				  				if(sc.tunnel_swap > 2){
+				  					sc.tunnel_swap = 0;
+				  				}
 
-			  				super_container.last_index = post.id;
-			  				console.log('Last Index');
-			  				console.log(super_container.last_index);
-			  				console.log('Flagger Config:' + String(super_container.flagger.config));
-		  				}
+			  				}
+
+			  				// console.log('Tunnel Swap');
+			  				// console.log(sc.tunnel_swap);
+
+			  				sc.last_index = post.id;
+			  				// console.log('Last Index');
+			  				// console.log(sc.last_index);
+			  				// console.log('Flagger Config:' + String(sc.flagger.config));
+
 
 		  		});
 		  	}
 
 		  }
 
-		  super_container.flush_tunnels = function(){
-		  	super_container.tunnels = [[],[],[]];
+		  sc.flush_tunnels = function(){
+
+		  	if(sc.single_tunnel_on == true){
+		  		sc.tunnels = [[]];
+		  	}
+		  	else{
+		  		sc.tunnels = [[],[],[]];
+		  	}
+
 		  }
 
+		  sc.shrink_tunnels = function(){
+		  	var posts = [];
+		  	posts = posts.concat(sc.tunnels[0]);
+		  	posts = posts.concat(sc.tunnels[1]);
+		  	posts = posts.concat(sc.tunnels[2]);
+		  	sc.tunnels = [posts];
+		  }
+
+		  sc.expand_tunnels = function(){
+		  	var no = sc.tunnels[0].length;
+		  	var posts = [];
+		  	var flag = 0;
+		  	if(no > 0){
+		  		posts = sc.tunnels[0];
+		  		sc.tunnels = [[],[],[]];
+		  		for(var i = 0; i < no; i++){
+		  			sc.tunnels[flag].push(posts[i]);
+		  			flag += 1;
+		  			if(flag > 2){
+		  				flag = 0;
+		  			}
+		  		}
+		  	}
+		  }
 
 		 $(window).scroll(function() {
 		     if($(window).scrollTop() + $(window).height() == $(document).height()) {
-		     	//TODO: Start animation here
-		     	super_container.poke(); //TODO: End animation in this function
+		     	sc.poke();
 		     }
 		  });
 
 		 $(window).resize(function(){
 		   var total_width = window.innerWidth;
 		   if(total_width < 767){
-		   		//make one tunnel here
-		   		super_container.single_tunnel_on = true;
+		   		if(sc.single_tunnel_on != true){
+		   			sc.single_tunnel_on = true;
+		   			sc.shrink_tunnels();
+		   		}
+
 		   }
 		   else{
-		   		super_container.single_tunnel_on = false;
+		   		if(sc.single_tunnel_on != false){
+		   			sc.single_tunnel_on = false;
+		   			sc.expand_tunnels();
+		   		}
 		   }
 		 });
 
 		 var total_win_width = $(window).width();
 		 if(total_win_width < 767){
-		   		//make one tunnel here
-		   		super_container.single_tunnel_on = true;
+		   		sc.single_tunnel_on = true;
+		   		sc.shrink_tunnels();
 		  }
 		   else{
-		   		super_container.single_tunnel_on = false;
+		   		sc.single_tunnel_on = false;
+		   		sc.expand_tunnels();
 		   }
 
 
-		  return super_container; // if everything is ok, send object else exception
+		  return sc; // if everything is ok, send object else exception
 
 
 		}]);

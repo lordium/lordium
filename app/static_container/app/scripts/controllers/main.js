@@ -10,8 +10,8 @@
 	 */
 	angular.module('staticContainerApp')
 	  .controller('MakhoolCtrl', ['$scope','SuperFactory', function ($scope, SuperFactory) {
-	  	$scope.super_container = SuperFactory; // returns the object
-	  	$scope.super_container.init();
+	  	$scope.sc = SuperFactory; // returns the object
+	  	$scope.sc.init();
 	  	$scope.test = "asdfasd";
 
 	  	$scope.update_tunnel = function(){
@@ -25,10 +25,10 @@
 					    'location': 'Stockholm, Sweden',
 					    'location_link': ''
 					};
-	  		$scope.super_container.tunnels[0].push(single_post);
+	  		$scope.sc.tunnels[0].push(single_post);
 
-	  		$scope.super_container.get_posts('');
-	  		$scope.super_container.poke();
+	  		$scope.sc.get_posts('');
+	  		$scope.sc.poke();
 	  	}
 
 	  }])
@@ -54,11 +54,11 @@
 	  		link: function(scope, element, attrs){
 	  			//redirect user to login page/instagram
 	  			element.on('click', function(){
-	  				scope.super_container.login();
+	  				scope.sc.login();
 	  			});
 
-	  			scope.$watch('super_container.flagger.login', function(){
-	  				if(scope.super_container.flagger.login == true){
+	  			scope.$watch('sc.flagger.login', function(){
+	  				if(scope.sc.flagger.login == true){
 	  					element.removeClass('finish-him');
 	  				}
 	  				else{
@@ -74,11 +74,11 @@
 	  		link: function(scope, element, attrs){
 	  			//redirect user to login page/instagram
 	  			element.on('click', function(){
-	  				scope.super_container.login();
+	  				scope.sc.login();
 	  			});
 
-	  			scope.$watch('super_container.flagger.mesg', function(){
-	  				if(scope.super_container.flagger.mesg == true){
+	  			scope.$watch('sc.flagger.mesg', function(){
+	  				if(scope.sc.flagger.mesg == true){
 	  					element.removeClass('finish-him');
 	  				}
 	  				else{
@@ -92,8 +92,8 @@
 	  	return {
 	  		restrict: 'A',
 	  		link: function(scope, element, attrs){
-				scope.$watch('super_container.brand_image', function(){
-					attrs.$set('src', scope.super_container.brand_image);
+				scope.$watch('sc.brand_image', function(){
+					attrs.$set('src', scope.sc.brand_image);
 				});
 	  		}
 	  	}
@@ -104,22 +104,22 @@
 	  		// template: menu_tempate,
 	  		link: function(scope, element, attrs){
 	  			scope.brand_name = false;
-	  			scope.$watch('super_container.brand_detail.name', function(){
-	  				if(scope.super_container.brand_detail.name !== false){
-	  					scope.brand_name = scope.super_container.brand_detail.name;
+	  			scope.$watch('sc.brand_detail.name', function(){
+	  				if(scope.sc.brand_detail.name !== false){
+	  					scope.brand_name = scope.sc.brand_detail.name;
 	  				}
 				});
 
-	  			if(scope.super_container.flagger.config == false){
+	  			if(scope.sc.flagger.config == false){
 	  				element.addClass('finish-him');
 	  			}
 	  			else{
 	  				element.removeClass('finish-him');
 	  			}
 
-	  			scope.$watch('super_container.flagger.config', function(){
+	  			scope.$watch('sc.flagger.config', function(){
 
-	  				if(scope.super_container.flagger.config == false){
+	  				if(scope.sc.flagger.config == false){
 	  					element.addClass('finish-him');
 	  				}
 	  				else{
@@ -146,7 +146,7 @@
 	  		'restrict': 'A',
 	  		link: function(scope, element, attrs){
 	  			element.bind('click', function(){
-	  				scope.super_container.app_setup();
+	  				scope.sc.app_setup();
 	  				console.log('app called');
 	  			})
 	  		}

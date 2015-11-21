@@ -832,8 +832,16 @@ body,html{
         }
       }
 
-      .thumbnail{
+      .thumbnail.front-post, .thumbnail.direct-post{
         padding: 0px;
+
+        a:hover{
+          text-decoration:none;
+        }
+
+        img{
+          width: 100%;
+        }
 
         .caption{
 

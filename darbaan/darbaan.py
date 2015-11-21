@@ -5,7 +5,8 @@ from instagram.client import InstagramAPI
 from django.contrib.auth import authenticate
 from django.http import HttpResponse, HttpResponseRedirect
 
-INSTA_REDIRECT_URI = 'https://api.instagram.com/oauth/authorize/?client_id=%s&redirect_uri=%s&response_type=code'
+INSTA_REDIRECT_URI = 'https://api.instagram.com/oauth/authorize/?client_id=%s\
+&redirect_uri=%s&response_type=code'
 
 class Darbaan(object):
 
@@ -13,7 +14,6 @@ class Darbaan(object):
 		self.redirect_url = getattr(settings, 'REDIRECT_URI', None)
 		self.success_url = '/'
 		self.request = request
-
 
 	def insta_login(self, code, **kwargs):
 		if not code:
@@ -104,13 +104,18 @@ class Darbaan(object):
 			tags = str(tags)
 			tags = tags[1:-1].split()
 			final_tags = ''
+			sep = ','
+			tags_len = len(tags)
+			flag = True
 			for tag in tags:
 				if tag != 'Tag:':
-					final_tags+=',' + tag.split(',')[0]
-			print 'final tags'
-			print final_tags
+					if flag:
+						sep = ''
+						flag = False
+					else:
+						sep = ','
+					final_tags+=sep + tag.split(',')[0]
 			return final_tags
-
 		return ''
 
 	@classmethod
@@ -121,13 +126,14 @@ class Darbaan(object):
 			data =  re.findall(r'(?=.*?\".*?\")(.*?)"(.*)"', comment)[0][1]
 			title = ''
 			description = data
-			headMatch = re.match(r'(.*)--(.*)--(.*)', data)
+			headMatch = re.match(r'(.*?)-(.*?)-(.*?)', data) #? => non greedy
 			if headMatch:
 				total_breaks = headMatch.groups()
 				total_breaks_len = len(total_breaks)
 				if total_breaks_len == 3:
 					# if headMatch.group(1) == '':
 					title = headMatch.group(2)
+				description = description.replace('-'+title+'-',' ')
 			return title, description
 		else:
 			return '', ''

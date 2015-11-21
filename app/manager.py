@@ -8,6 +8,7 @@ from django.contrib.auth import login as db_login
 from django.contrib.auth import logout as db_logout
 from django.http import HttpResponse, HttpResponseRedirect
 from datetime import datetime
+from django.conf import settings
 
 from darbaan.darbaan import Darbaan
 
@@ -231,6 +232,9 @@ class DBManager(object):
 
 	@classmethod
 	def db_get_dirty_accounts(self):
+		## if there is no post, everything is dirty
+		if len(models.Post.objects.all()) < 1:
+			return models.Account.objects.all()
 		return models.Account.objects.filter(Q(fetch_status=1)|Q(fetch_status=4))
 
 	@classmethod
@@ -300,12 +304,15 @@ class DBManager(object):
 		This function will fetch posts from database
 		"""
 		final_result = False
-		# posts = models.Post.objects.all()
-		print last_id
-		if last_id:
-			posts = models.Post.objects.filter(id__lt=last_id).order_by('-date_published')[:2]
+		posts_limit = getattr(settings, 'POSTS_PER_REQUEST')
+		if isinstance(posts_limit, int):
+			posts_per_req = posts_limit
 		else:
-			posts = models.Post.objects.order_by('-date_published')[:2]
+			posts_per_req = 4
+		if last_id:
+			posts = models.Post.objects.filter(id__lt=last_id).order_by('-date_published')[:posts_per_req]
+		else:
+			posts = models.Post.objects.order_by('-date_published')[:posts_per_req]
 		if posts and len(posts) > 0:
 			return posts
 		return final_result
@@ -314,17 +321,19 @@ class DBManager(object):
 	@classmethod
 	def db_get_single(self, post_id=None):
 		try:
-			single_post = models.Account.objects.get(id=post_id)
+			single_post = models.Post.objects.get(id=post_id)
 			if single_post:
 				post_data = {
+					'id': single_post.id,
 					'img_url': single_post.post_url,
 					'title': single_post.title,
-					'tags': single_post.post_tags,
+					'tags': "'" + str(single_post.post_tags) + "'",
 					'description': single_post.description,
-					'location': single_post.location,
+					'location': single_post.location_name,
 					'location_link': '',
 					'post_type': single_post.post_type,
-					'class': ''}
+					'class': 'direct-post'}
+				print "Post tags", single_post.post_tags.split(',')
 				return post_data
 		except:
 			pass
@@ -425,19 +434,22 @@ class Provider(LoginManager, DBManager, FetchManager, ResponseManager):
 
 			return self.make_posts(posts, lucky_image, brand_info, brand_account)
 		else:
+			if request and request.user.is_authenticated():
+				brand_info = request.user.username
 			try:
-				account = models.Account.objects.get(is_brand=True)
+				conf = models.GlobalConf.objects.get()
 			except:
 				pass
-			if account:
-				if account.fetch_status == 1: #1 => NEW
-					return self.make_dict(True, 'no_posts', 'new_account')
-				elif account.fetch_status == 2: #2 => Fetching
-				 	return self.make_dict(True, 'no_posts', 'fetching')
-				elif account.fetch_status == 3: #3 => Fetch Completed
+
+			if conf:
+				if conf.total_accounts > 0 and conf.total_posts > 0:
 					return self.make_dict(True, 'no_posts', 'fetch_completed')
-			else:
-				return self.make_dict(False, 'no_posts', 'no_account')
+
+				if conf.total_accounts > 0 and conf.total_posts == 0:
+					return self.make_dict(True, 'no_posts', 'new_account')
+
+				if conf.total_accounts == 0:
+					return self.make_dict(False, 'no_posts', 'no_account')
 
 
 	@classmethod
