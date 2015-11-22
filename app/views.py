@@ -19,12 +19,11 @@ def index(request, post_id=None, post_title=None):
 	#
 	req_context = {}
 	config = pd.get_config()
-	print config.google_analytics
-
-	if not config:
+	print config.insta_connected
+	if not config or config.insta_connected == False:
 		return HttpResponseRedirect('/init_app')
 
-	req_context['google_analytics'] = config.google_analytics
+	req_context['google_analytics'] = config.google_analytics or ''
 
 	if post_id and post_id > 0:
 		post_data = pd.db_get_single(post_id=post_id)
@@ -36,7 +35,8 @@ def index(request, post_id=None, post_title=None):
 	return HttpResponse(template.render(context))
 
 def initiate_app(request):
-	if pd.get_config():
+	conf = pd.get_config()
+	if conf and conf.insta_connected == True:
 		return HttpResponseRedirect('/')
 	if request.POST:
 		website_url = request.POST.get('website_url')
@@ -55,28 +55,32 @@ def initiate_app(request):
 
 @login_required(login_url='/')
 def fetch(request):
-
-	last_id = request.POST.get('last_id', None)
-	action = request.POST.get('fetch', False) or 'fetch' #remove after or
-
-	if hasattr(request,'user') and request.user.is_authenticated():
-		if action == 'fetch':
-			if request.user:
-				return pd.fetch_update_posts(username = request.user, last_id = last_id)
-	return pd.troll()
+	if request.method =="GET":
+		last_id = request.GET.get('last_id', None)
+		action = request.GET.get('fetch', False) or 'fetch' #remove after or
+		if action!= 'fetch':
+			return HttpResponseRedirect('/')
+		if hasattr(request,'user') and request.user.is_authenticated():
+			if action == 'fetch':
+				if request.user:
+					return pd.fetch_update_posts(username = request.user, last_id = last_id)
+	return HttpResponseRedirect('/')
 
 def update(request):
-	last_id = request.GET.get('last_id', None)
-	resp = pd.get_posts(last_id = last_id, request = request)
-	# print request.user.is_authenticated()
-	# print resp
-	if resp:
-		return resp
+	if request.method == "GET":
+		flag = request.GET.get('flag', False)
+		if not flag:
+			return HttpResponseRedirect('/')
+		last_id = request.GET.get('last_id', None)
+		resp = pd.get_posts(last_id = last_id, request = request)
+		if resp:
+			return resp
+	return HttpResponseRedirect('/')
 
 def login(request):
 	code = request.GET.get('code', False)
-	client_id = request.GET.get('client_id2', False)
-	if code and client_id: #app config request
+	# client_id = request.GET.get('client_id2', False)
+	if code: #app config request
 		pd.activate_app()
 	resp = pd.login(request = request)
 	return resp

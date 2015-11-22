@@ -48,22 +48,15 @@ class Darbaan(object):
 		api = False
 		if token:
 			api = InstagramAPI(access_token=token, client_secret=client_secret)
-			print 'api token'
 		else:
 			api = InstagramAPI(client_id=client_id, client_secret=client_secret)
-			print 'api id'
 
 		if api:
-			print 'have api'
 			while loop_flag:
-				print 'while'
-				print last_media_id
 				recent_media, next = api.user_recent_media(	user_id=user_id,
 															count = count_limit,
 															max_id = last_media_id)
-				print recent_media, next
 				for media in recent_media:
-					print media
 					last_media_id = media.id
 					title, description = self.insta_get_title_description(media, 'caption')
 					posts.append({ 	'media_id': media.id,

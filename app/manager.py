@@ -46,8 +46,6 @@ class LoginManager(object):
 			return ResponseManager.redirect('/')
 
 		code = request.GET.get('code', False)
-		print code
-		print 'above is code'
 
 		if not request:
 			return False
@@ -56,7 +54,8 @@ class LoginManager(object):
 			if not code:
 				conf = DBManager.get_config()
 
-				return Darbaan.insta_redirect(app_id=conf.instagram_app_id, red_url=conf.website_url) #
+				return Darbaan.insta_redirect(app_id=conf.instagram_app_id,
+				red_url=conf.website_url) #
 			else:
 				_api = Darbaan(request)
 				conf = DBManager.get_config()
@@ -64,52 +63,49 @@ class LoginManager(object):
 				if not conf:
 					return ResponseManager.redirect('/')
 
-				user_info = _api.insta_login(code, app_id=conf.instagram_app_id,
-					app_secret = conf.instagram_app_secret, website_url=conf.website_url)
+				user_info = _api.insta_login(code,
+					app_id=conf.instagram_app_id,
+					app_secret = conf.instagram_app_secret,
+					website_url=conf.website_url)
 				if user_info:
-					fetch_status = DBManager.check_account(username=user_info.get('username'))
+					fetch_status = DBManager.check_account(
+						username=user_info.get('username'))
 					username = user_info.get('username')
 
 
 					if fetch_status:
 						#TODO: add session/cookies here
-						# print request.session['access_token']
-						# print fetch_status
+
 						new_flag= False
 						account_status = 'new_account'
 						if fetch_status == 1:
 							account_status = 'new_account'
-							if DBManager.db_update_account(user_info, request = request):
+							if DBManager.db_update_account(user_info,
+								request = request):
 								new_flag = True
 						elif fetch_status == 2:
 							account_status = 'fetching'
 						elif fetch_status == 3:
 							account_status = 'fetch_completed'
-						print 'above auth'
+
 						if fetch_status == 1 and new_flag != True:
 							return ResponseManager.redirect('/')
-						u_account = authenticate(username=username, password=username) #;)
-						print u_account, username
-						db_login(request, u_account)
-						return ResponseManager.redirect('/') #simple_response({'login_status': True, 'account_status': account_status})
-					else:
-						if DBManager.db_create_account(user_info, request = request):
-							#TODO: add session.cookies here
+						u_account = authenticate(username=username,
+						password=username) #;)
 
-							# u = models.Account.objects.get(username = username)
-							# print u
-							# u.set_password(username)
-							# u.save()
-							print "Account Created"
-							u_account = authenticate(username=username, password=username) #;)
-							print u_account
+						db_login(request, u_account)
+						return ResponseManager.redirect('/')
+					else:
+						if DBManager.db_create_account(user_info,
+							request = request):
+
+							u_account = authenticate(username=username,
+							password=username) #;)
 							db_login(request, u_account)
-							return ResponseManager.redirect('/')# ({'login_status': True, 'account_status': 'new_account'})
+							return ResponseManager.redirect('/')
 						else:
-							return ResponseManager.redirect('/')#
-							# return ResponseManager.simple_response({'login_status': False, 'account_status': 'creation_failed'})
-				return ResponseManager.redirect('/')#
-				# return ResponseManager.simple_response({'login_status': False, 'account_status': 'permission_failed'})
+							return ResponseManager.redirect('/')
+				return ResponseManager.redirect('/')
 
 
 	@classmethod
@@ -149,32 +145,20 @@ class DBManager(object):
 		This function will create account and write it to
 		database
 		"""
-		"""
-		Below is what insta will give
-		{
-		u'username': u'arslanrafique',
-		u'bio': u'Engineer, <3 Stockholm!',
-		u'website': u'',
-		u'profile_picture': u'https://scontent.cdninstagram.com/hphotos-xpf1/t51.2885-19/924761_778256512251267_1485306869_a.jpg',
-		u'full_name': u'Arslan Rafique',
-		u'id': u'1141033715'
-		 }
-		"""
 
-		## should create only first account, with all permissions
 		if len(models.Account.objects.all()) == 0:
 			if request:
-				print "username is", user_info.get('username')
-				account = models.Account.create(username = user_info.get('username'),
-												slogan = user_info.get('bio', ''),
-												profile_picture = user_info.get('profile_picture'),
-												first_name = user_info.get('full_name'),
-												last_name=" ",
-												email="example@example.com",
-												insta_id = user_info.get('id'),
-												insta_token = request.session['access_token'],
-												fetch_status = 1,
-												is_brand=True)
+				account = models.Account.create(
+					username = user_info.get('username'),
+					slogan = user_info.get('bio', ''),
+					profile_picture = user_info.get('profile_picture'),
+					first_name = user_info.get('full_name'),
+					last_name=" ",
+					email="example@example.com",
+					insta_id = user_info.get('id'),
+					insta_token = request.session['access_token'],
+					fetch_status = 1,
+					is_brand=True)
 
 			if account:
 				account.is_staff = True
@@ -193,30 +177,20 @@ class DBManager(object):
 		This function will update account and write it to
 		database
 		"""
-		"""
-		Below is what insta will give
-		{
-		u'username': u'arslanrafique',
-		u'bio': u'Engineer, <3 Stockholm!',
-		u'website': u'',
-		u'profile_picture': u'https://scontent.cdninstagram.com/hphotos-xpf1/t51.2885-19/924761_778256512251267_1485306869_a.jpg',
-		u'full_name': u'Arslan Rafique',
-		u'id': u'1141033715'
-		 }
-		"""
 
 		## should create only first account, will all permissions
 		# account = models.Account.objects.get(username=username)
 		# if account:
-		account = models.Account.partial_create(username = user_info.get('username'),
-											slogan = user_info.get('bio', ''),
-											profile_picture = user_info.get('profile_picture'),
-											first_name = user_info.get('full_name'),
-											last_name=" ",
-											email="example@example.com",
-											insta_id = user_info.get('id'),
-											insta_token = request.session['access_token'],
-											fetch_status = 1)
+		account = models.Account.partial_create(
+			username = user_info.get('username'),
+			slogan = user_info.get('bio', ''),
+			profile_picture = user_info.get('profile_picture'),
+			first_name = user_info.get('full_name'),
+			last_name=" ",
+			email="example@example.com",
+			insta_id = user_info.get('id'),
+			insta_token = request.session['access_token'],
+			fetch_status = 1)
 		if account:
 			return account
 		return False
@@ -225,7 +199,8 @@ class DBManager(object):
 	@classmethod
 	def db_last_id(self, account):
 		try:
-			latest = models.Post.objects.filter(account=account).latest('id').media_id
+			latest = models.Post.objects.filter(
+				account=account).latest('id').media_id
 		except:
 			latest = False
 		return latest
@@ -235,7 +210,8 @@ class DBManager(object):
 		## if there is no post, everything is dirty
 		if len(models.Post.objects.all()) < 1:
 			return models.Account.objects.all()
-		return models.Account.objects.filter(Q(fetch_status=1)|Q(fetch_status=4))
+		return models.Account.objects.filter(
+			Q(fetch_status=1)|Q(fetch_status=4))
 
 	@classmethod
 	def delete_account(self):
@@ -272,7 +248,8 @@ class DBManager(object):
 
 	@classmethod
 	def db_init_app(self, app_id, secret, web_url):
-		config = models.GlobalConf.get_config(instagram_app_id=app_id, instagram_app_secret=secret,
+		config = models.GlobalConf.get_config(instagram_app_id=app_id,
+			instagram_app_secret=secret,
 			website_url=web_url)
 
 		if config:
@@ -288,7 +265,12 @@ class DBManager(object):
 
 	@classmethod
 	def get_config(self):
-		conf = models.GlobalConf.objects.get()
+		conf = False
+		try:
+			conf = models.GlobalConf.objects.get()
+		except:
+			pass
+
 		return conf
 
 	@classmethod
@@ -310,9 +292,11 @@ class DBManager(object):
 		else:
 			posts_per_req = 4
 		if last_id:
-			posts = models.Post.objects.filter(id__lt=last_id).order_by('-date_published')[:posts_per_req]
+			posts = models.Post.objects.filter(
+				id__lt=last_id).order_by('-date_published')[:posts_per_req]
 		else:
-			posts = models.Post.objects.order_by('-date_published')[:posts_per_req]
+			posts = models.Post.objects.order_by(
+				'-date_published')[:posts_per_req]
 		if posts and len(posts) > 0:
 			return posts
 		return final_result
@@ -333,7 +317,6 @@ class DBManager(object):
 					'location_link': '',
 					'post_type': single_post.post_type,
 					'class': 'direct-post'}
-				print "Post tags", single_post.post_tags.split(',')
 				return post_data
 		except:
 			pass
@@ -373,7 +356,8 @@ class FetchManager(object):
 	This manager is responsible for fetching data from vendors
 	"""
 	@classmethod
-	def fm_fetch_posts(self, vendor='insta', username = None, user_id = None,last_id=None):
+	def fm_fetch_posts(self, vendor='insta', username = None,
+		user_id = None,last_id=None):
 		"""
 		This function will fetch posts from vendors
 		"""
@@ -382,7 +366,8 @@ class FetchManager(object):
 			if account:
 				token = account.insta_token
 				conf = DBManager.get_config()
-				return Darbaan.insta_fetch(conf.instagram_app_id, conf.instagram_app_secret,
+				return Darbaan.insta_fetch(conf.instagram_app_id,
+					conf.instagram_app_secret,
 					token=token, user_id = user_id, last_id=last_id)
 		return False
 
@@ -414,7 +399,6 @@ class Provider(LoginManager, DBManager, FetchManager, ResponseManager):
 		"""
 		get posts, if not, check account,
 		"""
-
 		posts = self.db_get_posts(last_id = last_id)
 		account = False
 		if posts:
@@ -422,17 +406,24 @@ class Provider(LoginManager, DBManager, FetchManager, ResponseManager):
 			brand_info = False
 			brand_account = False
 			if not last_id:
-				try:
-					account = models.Account.objects.get(is_brand=True)
-				except:
-					pass
-				if account:
+
+				account = models.Account.objects.filter(is_brand=True)
+				if len(account) > 0:
+					account = account[0]
 					lucky_image = account.profile_picture
 					brand_account = account
+				else:
+					account = models.Account.objects.all()
+					if len(account) > 0:
+						account = account[0]
+						lucky_image = account.profile_picture
+						brand_account = account
+
 				if request and request.user.is_authenticated():
 					brand_info = request.user.username
 
-			return self.make_posts(posts, lucky_image, brand_info, brand_account)
+			return self.make_posts(posts, lucky_image, brand_info,
+				brand_account)
 		else:
 			if request and request.user.is_authenticated():
 				brand_info = request.user.username
@@ -491,7 +482,6 @@ class Provider(LoginManager, DBManager, FetchManager, ResponseManager):
 	def fetch_update_posts(self, vendor='insta', username=None, last_id = None):
 		#TODO: get last data id from database
 		#Get the accounts for dirty/new
-		is_complete = False
 		dirty_accounts = self.db_get_dirty_accounts()
 		config = models.GlobalConf.objects.get()
 		config.last_fetched = datetime.now()
@@ -499,19 +489,19 @@ class Provider(LoginManager, DBManager, FetchManager, ResponseManager):
 		if dirty_accounts and len(dirty_accounts) > 0:
 			for account in dirty_accounts:
 				last_id = self.db_last_id(account) or None
-				posts = self.fm_fetch_posts(vendor=vendor, username=account.username, user_id=account.insta_id ,last_id=last_id)
-				print posts
+				posts = self.fm_fetch_posts(vendor=vendor,
+					username=account.username, user_id=account.insta_id,
+					last_id=last_id)
 				if posts and self.db_create_posts(posts, account):
 					account.fetch_status = 3
 					account.save()
-					is_complete = True
-			if is_complete:
-				return self.simple_response({'status': 'success', 'fetch_status': 'completed'})
-		return self.simple_response({'status': 'failed', 'fetch_status': 'not_completed'})
+		return self.simple_response({'status': 'success',
+			'fetch_status': 'completed'})
 
 	@classmethod
 	def troll(self):
-		return self.simple_response({'status': 'failed', 'fetch_status': 'not_completed'})
+		return self.simple_response({'status': 'failed',
+			'fetch_status': 'not_completed'})
 
 
 

@@ -49,8 +49,19 @@ class GlobalConf(models.Model):
 	@classmethod
 	def get_config(self, instagram_app_id=None, instagram_app_secret=None,
 		website_url=None):
-		config = self.objects.get_or_create(instagram_app_id=instagram_app_id,
+		try:
+			config = self.objects.get()
+		except:
+			pass
+		if not config:
+			config = self(instagram_app_id=instagram_app_id,
 			instagram_app_secret=instagram_app_secret, website_url=website_url)
+			config.save()
+		elif config.insta_connected == False:
+			config.instagram_app_id = instagram_app_id
+			config.instagram_app_secret = instagram_app_secret
+			config.website_url = website_url
+			config.save()
 		return config
 
 
@@ -245,6 +256,12 @@ class Post(models.Model):
 	@classmethod
 	def verify_fields():
 		pass
+
+	def delete(self):
+		super(Post, self).delete()
+		conf = GlobalConf.objects.get()
+		conf.total_posts -= 1
+		conf.save()
 
 
 

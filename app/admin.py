@@ -5,25 +5,19 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.translation import ugettext_lazy as _
 
 def delete_post(self, request, queryset):
+		t_posts = len(queryset)
 		for obj in queryset:
 			obj.delete()
-
-		if len(queryset) > 0:
-			try:
-				conf = GlobalConf.objects.get()
-				conf.total_posts = conf.total_posts - len(queryset)
-				conf.save()
-			except:
-				pass
 
 def delete_account(self, request, queryset):
+		t_accounts = len(queryset)
 		for obj in queryset:
 			obj.delete()
 
 		if len(queryset) > 0:
 			try:
 				conf = GlobalConf.objects.get()
-				conf.total_accounts = conf.total_accounts - len(queryset)
+				# conf.total_accounts = conf.total_accounts - t_accounts
 				conf.total_posts = len(Post.objects.all())
 				conf.save()
 			except:

@@ -12,63 +12,28 @@
 		return this[prop]!== undefined;
 	}
 	angular.module('staticContainerApp')
-		.factory('SuperFactory', ['$http', '$q', '$timeout', function($http, $q, $timeout){
-		  var sc = {}; // will contain all objects,
-		  sc.init_config = {
-		  							'client_id': undefined,
-		  							'client_secret': undefined,
-		  							'website_url': undefined};
+		.factory('SuperFactory', ['$http', '$q', '$timeout', function(
+			$http, $q, $timeout){
 
+		  var sc = {}; // namespace,
 		  sc.brand_detail = {'name': false};
 		  sc.brand_image='/static/images/insta.png';
-		  sc.single_post = {
-		  	'imgage_url': 'http://i.imgur.com/1taT5sV.jpg',
-		    'title': 'This is title',
-		    'tags': ['awesome', 'amazing', 'cool'],
-		    'description': 'lorem ipsum sadf adfll e hfasdl klek i asdf asdf akjsdhf',
-		    'location': 'Stockholm, Sweden',
-		    'location_link': ''};
 		  sc.brand_post = {},
 		  sc.inpage_messages = {
-		  									'1': 'Gathering your awesome moments',
-		  									'2': 'Login failed',
-		  									'3': 'Something bad happened'}
+								'1': 'Gathering your awesome moments',
+								'2': 'Login failed',
+								'3': 'Something bad happened'};
+
 		  sc.flagger = {'config': false,
-		  							 'login': false,
-		  							 'mesg': false,
-		  							 'update': false };
-		  sc.left_tunnel = []; // will show posts on left column
-		  sc.middle_tunnel = []; // will show posts on middle column
-		  sc.right_tunnel = []; // will show posts on right column
-		  sc.last_index = ''; // will contain ids of last post for each tunnel
+						 'login': false,
+						 'mesg': false,
+						 'update': false };
+
+		  sc.last_index = ''; // contains id of last post
 		  sc.tunnels = [[],[],[]]; //three main tunnels
-		  // sc.tunnels = []; //three main tunnels
-		  sc.tunnels_sizes = [0,0,0]; //keep the posts sizes for each tunnel
-		  sc.single_tunnel_on = false;
+		  sc.single_tunnel_on = false; // flag for screen size
 		  sc.tunnels_mock = false;
-		  sc.tunnel_swap = 0;
-
-
-		                            // will be end product of this factory
-		  sc.get_posts = function(post_url){
-		  	post_url = '/get_update';
-	 		$http({
-	           method: 'GET',
-	           url: post_url,
-	           headers: {
-	               'Content-Type': undefined
-	           },
-	           data: {'index': sc.last_index}
-		       })
-		       .success(function (data) {
-		       		//here I got the new posts
-		       		console.log(data);
-		       })
-		       .error(function (data, status) {
-		       		//these is something wrong
-		       		console.log(data);
-		       });
-		  };
+		  sc.tunnel_swap = 0; // tunnels swaper => 0,1,2
 
 		  sc.post_server = function(post_url,post_data, success_track, failure_track){
 	 		return $http({
@@ -88,7 +53,6 @@
 		  };
 
 		  sc.get_server = function(get_url, data, success_track, failure_track){
-		  	console.log('get_server:CALLED');
 	 		return $http({
 	           method: 'GET',
 	           url: get_url,
@@ -98,7 +62,6 @@
 	           params: data
 		       })
 		       .success(function (data) {
-		       		console.log('get_server:SUCCESS');
 		       		success_track(data);
 		       })
 		       .error(function (data, status) {
@@ -107,7 +70,6 @@
 		  }
 
 		  sc.fetch_success = function(data){
-		  	console.log(data.status);
 		  	if(data.status == 'success'){
 		  		if(data.fetch_status == 'completed'){
 	  				sc.flagger.mesg = false;
@@ -119,28 +81,12 @@
 		  	}
 		  	if(data.status == 'failed'){
 		  		if(data.fetch_status == 'not_completed'){
-		  			//prompt for login if not able to fetch, easiest way for now
 	  				sc.flagger.mesg = false;
 	  				sc.flagger.config = false;
 	  				sc.flagger.update = false;
 	  				sc.flagger.login = true;
-
-	  				// sc.poke();
-
 		  		}
 		  	}
-		  }
-
-		  sc.fetch_status = function(){
-		  	//make calls to server using timeout and so on
-		  	var data = {};
-		  	var check_fetching_process = $timeout(function(){
-		  											sc.get_server( '/login_status',
-		  																		data,
-		  																		sc.fetch_success,
-		  																		sc.common_failure_track
-		  																		);
-		  													}, 2000);
 		  }
 
 		  sc.login_success_track = function(data){
@@ -153,34 +99,18 @@
 		  }
 
 		  sc.poke = function(){
-		  	//1- get data from server
-		  	//2- show suitable response
 
-		  	//get posts
-		  	console.log('Poke called!')
-		  	var data = {'last_id': sc.last_index}
-		  	console.log(data);
+		  	var data = {'last_id': sc.last_index, 'flag':'update'}
 	  		sc.get_server('/update/',
 	  									data,
 	  									sc.update_tunnels,
-	  									sc.common_failure_track); //will return promise
-
+	  									sc.common_failure_track);
 
 		  }
 
 		  sc.update_response_filter = function(data){
 		  	var result = false;
-		  	var data = data; // parse if needed
-		  	/*""" Filter the data and send predefined responses
-		  	0: if account is not setup (show login)
-		  	1: account setup but not fetched yet
-		  	2: account setup and fetching (show message)
-		  	3: account setup but no posts (show bottom message)
-		  	4: there are posts
-		  	5: exception (show bottom meessage/error)
-		  	"""*/
-		  	console.log("update response filter");
-		  	console.log(data.hasOwnProperty('account_status'));
+		  	var data = data;
 
 		  	function checkStatus(data){
 		  		// alert(data);
@@ -213,20 +143,16 @@
 			  	}
 		  	}
 
-		  	// alert('sdf');
-
 		  	if(data.hasOwnProperty('success') && data.success == true){
 		  		if(data.hasOwnProperty('account_status')){
 		  			return checkStatus(data)
 		  		}
-
 		  	}
 
 		  	if(data.hasOwnProperty('success') && data.success == false){
 		  		if(data.hasOwnProperty('account_status')){
 		  			return checkStatus(data)
 		  		}
-
 		  	}
 
 
@@ -243,10 +169,7 @@
 		  }
 
 		  sc.response_manager = function(data){
-		  	//TODO: check, if not posts then perform suitable action
 
-		  	//first check the negative responses
-		  	//check positive responses below
 		  	function extractPosts(data){
 				if(data.hasOwnProperty('data_type')){
 					if(data.data_type == 'posts'){
@@ -259,8 +182,6 @@
 		  	}
 
 		  	var result = sc.update_response_filter(data); //parse, if needed
-		  	console.log('response filter result');
-		  	console.log(result);
 
 		  	if(result !== false){
 		  		if(result == 'no_account'){ //show login
@@ -276,7 +197,11 @@
 		  			sc.flagger.mesg = true;
 		  			//ping server to initiate fetching
 		  			//TODO: write ping here
+
 		  			sc.initiate_fetch();
+
+
+
 		  		}
 		  		else if(result == 'fetching'){
 		  			sc.flagger.config=true;
@@ -313,28 +238,25 @@
 		  		}
 
 		  	} else {
-		  		alert('ERROR....');
+		  		console.log('Check log, something wrong with server!');
 		  	}
 		  };
 
 		  sc.login = function(){
 		  	sc.get_server('/login/',
-		  							   {'mesg': 'letmein'},
-		  							    sc.login_success_track,
-		  							    sc.common_failure_track
-		  							    );
+	  							   {'mesg': 'letmein'},
+	  							    sc.login_success_track,
+	  							    sc.common_failure_track
+	  							    );
 		  }
 
-		  sc.app_setup = function(){
-		  	sc.get_server('/login/',
-		  							   sc.init_config,
-		  							    console.log,
-		  							    sc.common_failure_track
-		  							    );
+		  sc.login_redirect = function(){
+		  	window.location.replace("/login/");
+		  	window.location.href = "/login/";
 		  }
 
 		  sc.initiate_fetch = function(){
-		  	sc.get_server('/fetch',
+		  	sc.get_server('/fetch/',
 		  							   {'fetch': 'fetch'},
 		  							    sc.fetch_success,
 		  							    sc.common_failure_track
@@ -345,7 +267,7 @@
 	  	  	var all_posts = [];
 	  	  	for(var i=0; i< 5; i++){
 	  	  		var mock_post = {
-	  					  	'img_url': '',//'http://i.imgur.com/1taT5sV.jpg',
+	  					  	'img_url': '',
 	  					    'title': 'Your awesome title' + String(i),
 	  					    'tags': ['awesome', 'amazing', 'cool'],
 	  					    'description': 'Breach your limits and show the world all you got! ' + String(i),
@@ -374,7 +296,6 @@
 
 		  	if(posts.brand_post){
 		  		sc.brand_post = posts.brand_post;
-		  		console.log(sc.brand_post);
 		  	}
 		  	if(posts.brand_info){
 		  		sc.brand_detail.name = posts.brand_info;
@@ -382,11 +303,8 @@
 
 		  	if(posts.lucky_image){
 		  		sc.brand_image = posts.lucky_image;
-		  		console.log('lucky_image');
-		  		console.log(sc.brand_image);
+
 		  	}
-		  	console.log('Update Tunnels Called');
-		  	console.log(posts);
 		  	var iposts = posts;
 		  	if(utype !='dum'){
 		  		sc.response_manager(iposts);
@@ -407,18 +325,10 @@
 				  				if(sc.tunnel_swap > 2){
 				  					sc.tunnel_swap = 0;
 				  				}
-
 			  				}
 
-			  				// console.log('Tunnel Swap');
-			  				// console.log(sc.tunnel_swap);
-
+			  				// id of last post
 			  				sc.last_index = post.id;
-			  				// console.log('Last Index');
-			  				// console.log(sc.last_index);
-			  				// console.log('Flagger Config:' + String(sc.flagger.config));
-
-
 		  		});
 		  	}
 
@@ -464,6 +374,27 @@
 		     if($(window).scrollTop() + $(window).height() == $(document).height()) {
 		     	sc.poke();
 		     }
+
+		     var brand_hide_flag = false;
+
+		     if($(window).scrollTop() > 30){
+		     	if(brand_hide_flag == false){
+		     		brand_hide_flag = true;
+		     	}
+		     }
+		     else{
+		     	if(brand_hide_flag == true){
+		     		brand_hide_flag = false;
+		     	}
+		     }
+
+		     if(brand_hide_flag == false){
+		     	$('.navbar-fixed-top-custom').removeClass('scrolled-down');
+		     	$('.thumbnail.super_brand_section').slideDown('fast');
+		     }else{
+		     	$('.thumbnail.super_brand_section').slideUp('slow');
+		     	$('.navbar-fixed-top-custom').addClass('scrolled-down');
+		     }
 		  });
 
 		 $(window).resize(function(){
@@ -493,9 +424,7 @@
 		   		sc.expand_tunnels();
 		   }
 
-
-		  return sc; // if everything is ok, send object else exception
-
+		  return sc;
 
 		}]);
 })();
