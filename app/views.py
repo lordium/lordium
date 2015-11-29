@@ -24,11 +24,12 @@ def index(request, post_id=None, post_title=None):
 		return HttpResponseRedirect('/init_app')
 
 	req_context['google_analytics'] = config.google_analytics or ''
+	req_context['description'] = config.description or ''
+	req_context['title'] = config.title or ''
 
 	if post_id and post_id > 0:
 		post_data = pd.db_get_single(post_id=post_id)
 		req_context['direct_post'] = post_data
-		print "GOT THE POST", post_data
 
 	context = RequestContext(request, req_context)
 	template = loader.get_template('dist/index.html')

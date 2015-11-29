@@ -98,7 +98,7 @@ class AccountAdmin(admin.ModelAdmin):
 
 	fieldsets = (
 		('Account', {
-				'fields': ('username', 'is_active',
+				'fields': ('username', 'slogan', 'is_active',
 					'fetch_status', 'read_only','is_brand'),
 				'description': 'Account is used to fetch posts from Instagram',
 				'classes':('panel','col-xs-12 col-sm-12 col-md-12 col-lg-12')
@@ -165,9 +165,9 @@ class ConfAdmin(admin.ModelAdmin):
 
 	fieldsets = (
 		('Settings', {
-				'fields': ('instagram_app_id','instagram_app_secret',
-					'google_analytics'),
-				'description': 'Add your apps detail',
+				'fields': ('instagram_app_id','instagram_app_secret', 'title',
+					 'description', 'google_analytics'),
+				'description': 'Add your app detail',
 				'classes':('panel','col-xs-12 col-sm-12 col-md-12 col-lg-12')
 			}),
 		)

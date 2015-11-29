@@ -2,10 +2,10 @@
 <html ng-app="staticContainerApp">
   <head>
     <meta charset="utf-8">
-    <title></title>
-    <meta name="description" content="">
+    <title>{{title}}</title>
+    <meta name="description" content="{{description}}">
     <meta name="viewport" content="width=device-width">
-    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <link id="favicon" rel="icon" type="image/jpg" href="">
     <!-- build:css(.) /static/styles/vendor.css -->
     <!-- bower:css -->
     <!-- endbower -->
@@ -15,11 +15,6 @@
     <!-- endbuild -->
   </head>
   <body ng-controller="MakhoolCtrl">
-    <!--[if lte IE 8]>
-      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
-
-    <!-- Add your site or application content here -->
   <div class="container-fluid">
     {% if direct_post %}
     <nav class="navbar navbar-default navbar-fixed-top-custom navbar-fixed-top direct-post-page " >
@@ -196,12 +191,7 @@
     </div> -->
     <div class="mini-bottom-top-director"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></div>
   </div>
-
-
-
-    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
-     {{ google_analytics|safe }}
-
+    {{ google_analytics|safe }}
     <!-- build:js(.) /static/scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>

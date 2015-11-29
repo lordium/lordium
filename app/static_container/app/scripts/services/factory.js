@@ -313,6 +313,7 @@
 
 		  	if(posts.brand_post){
 		  		sc.brand_post = posts.brand_post;
+		  		$("#favicon").attr("href",sc.brand_post.img_url);
 		  	}
 		  	if(posts.brand_info){
 		  		sc.brand_detail.name = posts.brand_info;

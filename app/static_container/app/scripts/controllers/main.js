@@ -13,7 +13,6 @@
 	  .controller('MakhoolCtrl', ['$scope','SuperFactory', function ($scope, SuperFactory) {
 	  	$scope.sc = SuperFactory; // returns the object
 	  	$scope.sc.init();
-
 	  	$scope.update_tunnel = function(){
 	  		var dt = new Date();
 

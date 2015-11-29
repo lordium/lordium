@@ -35,6 +35,13 @@ class GlobalConf(models.Model):
 	last_fetched = models.DateTimeField(verbose_name="Last Fetched", null=True)
 	website_url = models.CharField(max_length=140, verbose_name="Website URL", null=True)
 	insta_connected = models.BooleanField(verbose_name="App connected", default=False)
+	description = models.TextField(verbose_name="Brand description",
+		help_text=_('Please describe your brand, this will be used by \
+			search engines'),
+		 null=True)
+	title = models.CharField(max_length=140, verbose_name="Brand slogan",
+		help_text=_('Please write your brand slogan'),
+		 null=True)
 
 	class Meta:
 		verbose_name = "Setting"
