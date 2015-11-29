@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext, loader
+from django.views.decorators.csrf import csrf_exempt
 
 from django.conf import settings
 import insta
@@ -16,7 +17,6 @@ def index(request, post_id=None, post_title=None):
 	"""
 	Show initial document to user
 	"""
-	#
 	req_context = {}
 	config = pd.get_config()
 	print config.insta_connected
@@ -55,9 +55,9 @@ def initiate_app(request):
 
 @login_required(login_url='/')
 def fetch(request):
-	if request.method =="GET":
-		last_id = request.GET.get('last_id', None)
-		action = request.GET.get('fetch', False) or 'fetch' #remove after or
+	if request.method =="POST":
+		last_id = request.POST.get('last_id', None)
+		action = request.POST.get('fetch', False) or 'fetch' #remove after or
 		if action!= 'fetch':
 			return HttpResponseRedirect('/')
 		if hasattr(request,'user') and request.user.is_authenticated():
@@ -66,21 +66,22 @@ def fetch(request):
 					return pd.fetch_update_posts(username = request.user, last_id = last_id)
 	return HttpResponseRedirect('/')
 
-
+@csrf_exempt
 def update(request):
-	if request.method == "GET":
-		flag = request.GET.get('flag', False)
-		if not flag:
-			return HttpResponseRedirect('/')
-		last_id = request.GET.get('last_id', None)
-		resp = pd.get_posts(last_id = last_id, request = request)
-		if resp:
-			return resp
+	if request.method == "POST":
+		if request.body:
+			data = json.loads(request.body)
+			flag =  data.get('flag')
+			if not flag:
+				return HttpResponseRedirect('/')
+			last_id = data.get('last_id', None)
+			resp = pd.get_posts(last_id = last_id, request = request)
+			if resp:
+				return resp
 	return HttpResponseRedirect('/')
 
 def login(request):
 	code = request.GET.get('code', False)
-	# client_id = request.GET.get('client_id2', False)
 	if code: #app config request
 		pd.activate_app()
 	resp = pd.login(request = request)

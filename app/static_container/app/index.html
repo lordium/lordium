@@ -172,7 +172,7 @@
        {% endif %}
         <!-- Brand post end-->
        <div class="thumbnail front-post {$ im_post.class $}" ng-repeat="im_post in tunnel|filter:search" >
-        <a href="/{$ im_post.id $}">
+        <a href="{$ im_post.dir_url $}">
          <img ng-hide="im_post.post_type == '2'" ng-src="{$ im_post.img_url $}" alt="">
          <video  ng-show="im_post.post_type == '2'"  controls width="100%" height="100%"><source ng-src="" fix-vid-bug type="video/mp4"/></video>
 
