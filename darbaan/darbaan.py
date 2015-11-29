@@ -46,6 +46,22 @@ class Darbaan(object):
 		client_secret = app_secret
 		client_id = app_id
 		api = False
+		initiate = False
+		api_args = {}
+		if not last_media_id:
+			api_args = {'user_id': user_id,
+						'count': count_limit,
+						'max_id': None
+						}
+			initiate = True
+		else:
+			api_args = {'user_id': user_id,
+						'count': count_limit,
+						'min_id': last_media_id
+						}
+
+		swap_args = None
+
 		if token:
 			api = InstagramAPI(access_token=token, client_secret=client_secret)
 		else:
@@ -53,11 +69,24 @@ class Darbaan(object):
 
 		if api:
 			while loop_flag:
-				recent_media, next = api.user_recent_media(	user_id=user_id,
-															count = count_limit,
-															max_id = last_media_id)
+				recent_media = []
+				swap_args = api_args
+				try:
+					recent_media, next = api.user_recent_media(**swap_args)
+				except Exception, e:
+					loop_flag = False
+					recent_media = []
+					print e
 				for media in recent_media:
-					last_media_id = media.id
+					if initiate:
+						api_args['max_id'] = recent_media[-1]
+					else:
+						if not api_args['min_id'] == recent_media[-1]:
+							api_args['min_id'] = recent_media[-1]
+						else:
+							recent_media = []
+							loop_flag = False
+							break
 					title, description = self.insta_get_title_description(media, 'caption')
 					posts.append({ 	'media_id': media.id,
 									'title':title,
@@ -71,7 +100,13 @@ class Darbaan(object):
 										self.verify_property(media, 'location').name,
 									'account': None
 								})
-				loop_flag = len(recent_media) > 0
+
+				print loop_flag
+				if loop_flag:
+					loop_flag = len(recent_media) > 0
+				else:
+					break
+
 		return list(reversed(posts))
 
 
@@ -116,7 +151,7 @@ class Darbaan(object):
 		comment = self.verify_property(media, comment)
 		if comment:
 			comment = str(comment)
-			data =  re.findall(r'(?=.*?\".*?\")(.*?)"(.*)"', comment)[0][1]
+			data =  re.findall(r'(?=.*?\".*?\")(.*?)"(.*)"', comment, re.DOTALL)[0][1]
 			title = ''
 			description = data
 			headMatch = re.match(r'(.*?)-(.*?)-(.*?)', data) #? => non greedy

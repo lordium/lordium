@@ -8,6 +8,7 @@ from .manager import Provider as pd
 @shared_task
 def fetch_posts(*args, **kwargs):
 	pd.fetch_update_posts()
+	print "fetch done"
 
 @shared_task
 def add(x, y):

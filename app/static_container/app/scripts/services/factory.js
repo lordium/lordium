@@ -328,7 +328,7 @@
 			  				}
 
 			  				// id of last post
-			  				sc.last_index = post.id;
+			  				sc.last_index = post.date_published;
 		  		});
 		  	}
 

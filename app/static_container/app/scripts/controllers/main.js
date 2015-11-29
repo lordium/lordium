@@ -13,7 +13,6 @@
 	  .controller('MakhoolCtrl', ['$scope','SuperFactory', function ($scope, SuperFactory) {
 	  	$scope.sc = SuperFactory; // returns the object
 	  	$scope.sc.init();
-	  	$scope.test = "asdfasd";
 
 	  	$scope.update_tunnel = function(){
 	  		var dt = new Date();
@@ -36,15 +35,6 @@
 	  .directive('letmeIn', function(){
 	  	return {
 	  		restrict: 'A',
-	  		template: ""+
-	  			'<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">'+
-			    "<div>"+
-			      "<h1 ng-cloak>Login from Instagram</h1>"+
-			      "<div>"+
-			      '<a href="/login"><img src="/static/images/insta.png"/></a>'+
-			      '</div>'+
-			    "</div>"+
-			  "</div>",
 	  		link: function(scope, element, attrs){
 	  			element.on('click', function(){
 	  				scope.sc.login();
@@ -54,10 +44,11 @@
 	  				if(scope.sc.flagger.login == true){
 
 	  					element.removeClass('finish-him');
-	  					element.html();
+	  					element.html(login_template);
 	  				}
 	  				else{
 	  					element.addClass('finish-him');
+	  					element.html('');
 	  				}
 	  			});
 	  		}
@@ -66,23 +57,19 @@
 	  .directive('messageInpage', function(){
 	  	return {
 	  		restrict: 'A',
-	  		template: '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">'+
-        				'<div>'+
-          					'<h1 ng-cloak>Gathering your amazing moments</h1>'+
-        				'</div>'+
-      					'</div>',
 	  		link: function(scope, element, attrs){
 	  			//redirect user to login page/instagram
 	  			element.on('click', function(){
 	  				scope.sc.login();
 	  			});
-
 	  			scope.$watch('sc.flagger.mesg', function(){
 	  				if(scope.sc.flagger.mesg == true){
 	  					element.removeClass('finish-him');
+	  					element.html(msg_remplate);
 	  				}
 	  				else{
 	  					element.addClass('finish-him');
+	  					element.html('');
 	  				}
 	  			});
 	  		}
@@ -140,4 +127,20 @@
 	  		}
 	  	}
 	  });
+
+	var login_template = ""+
+	  			'<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">'+
+			    "<div>"+
+			      "<h1>Login from Instagram</h1>"+
+			      "<div>"+
+			      '<a href="/login"><img src="/static/images/insta.png"/></a>'+
+			      '</div>'+
+			    "</div>"+
+			  "</div>";
+
+	var msg_remplate= '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">'+
+        				'<div>'+
+          					'<h1>Gathering your amazing moments</h1>'+
+        				'</div>'+
+      					'</div>';
 })();

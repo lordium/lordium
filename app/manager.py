@@ -9,7 +9,6 @@ from django.contrib.auth import logout as db_logout
 from django.http import HttpResponse, HttpResponseRedirect
 from datetime import datetime
 from django.conf import settings
-
 from darbaan.darbaan import Darbaan
 
 
@@ -292,8 +291,13 @@ class DBManager(object):
 		else:
 			posts_per_req = 4
 		if last_id:
-			posts = models.Post.objects.filter(
-				id__lt=last_id).order_by('-date_published')[:posts_per_req]
+			last_id = datetime.strptime(last_id, '%Y-%m-%d %H:%M:%S+00:00')
+			try:
+				posts = models.Post.objects.filter(
+					date_published__lt=last_id).order_by(
+					'-date_published')[:posts_per_req]
+			except Exception, e:
+				print "Couldn't do it: %s" % e
 		else:
 			posts = models.Post.objects.order_by(
 				'-date_published')[:posts_per_req]
@@ -471,7 +475,8 @@ class Provider(LoginManager, DBManager, FetchManager, ResponseManager):
 									 'description': post.description or None,
 									 'location': post.location_name or None,
 									 'post_type': post.post_type or None,
-									 'tags': post.post_tags or None
+									 'tags': post.post_tags or None,
+									 'date_published': str(post.date_published)
 									})
 
 

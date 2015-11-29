@@ -258,6 +258,11 @@ textarea{
 .alert{
   @extend .no-round-borders;
 }
+
+.navbar-nav{
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
 ///Bootstrap end
 
 //// Admin fix
@@ -288,6 +293,7 @@ ul.errorlist{
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
+
 //// Angular End
 
 .finish-him{
@@ -323,7 +329,7 @@ body,html{
   height: 40px;
   line-height: 1;
   font-family: monospace;
-  font-size: 30px;
+  font-size: 12px;
   /* background-color: RED; */
   bottom: 26px;
   right: 27px;
@@ -364,6 +370,20 @@ body,html{
     border-color: #ffffff;
 
     .navbar-brand{
+      display: block;
+    }
+  }
+
+  &.direct-post-page {
+    @media screen and (min-width: 766px) {
+    display: block;
+    }
+
+    background-color: #ffffff;
+    border-color: #ffffff;
+
+    .navbar-brand{
+      padding: 13px 15px;
       display: block;
     }
   }
@@ -643,8 +663,9 @@ body,html{
 
 .data-container{
   @media screen and (max-width: 766px) {
-    margin-top: 69px;
+    margin-top: 15px;
   }
+
   padding-top: 60px;
   padding-bottom: 100px;
   //Add box sizing
@@ -976,7 +997,19 @@ body,html{
     }
   }
 
+
   .direct-post{
+
+    &.container{
+      @media screen and (max-width: 766px) {
+        /*margin-top: -15px;*/
+      }
+
+      .post-container{
+        padding: 0px;
+      }
+    }
+
     .row{
       padding-bottom: 45px;
     }
@@ -993,7 +1026,10 @@ body,html{
       @extend .common-transition;
 
       h1{
-        font-weight: 100;
+        font-weight: lighter;
+        @media screen and (max-width: 766px) {
+        font-size: 24px;
+        }
       }
 
       a{
@@ -1016,7 +1052,10 @@ body,html{
       @extend .common-transition;
 
       h1{
-        font-weight: 100;
+        font-weight: lighter;
+        @media screen and (max-width: 766px) {
+        font-size: 24px;
+        }
       }
 
       h1::after{
@@ -1047,6 +1086,27 @@ body,html{
         display: none;
       }
         margin-top: -45px;
+        padding: 14px !important;
+        text-align: center;
+        img{
+          @extend .round-borders-brand;
+          height: 120px;
+          width: auto;
+        }
+        .post-description{
+          margin:0px;
+        }
+        .caption{
+          color: #666666;
+        }
+      }
+
+      .super_brand_section_direct{
+
+      @media screen and (max-width: 766px) {
+        margin-top: -5px;
+      }
+        /*margin-top: -45px;*/
         padding: 14px !important;
         text-align: center;
         img{

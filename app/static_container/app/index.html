@@ -21,10 +21,14 @@
 
     <!-- Add your site or application content here -->
   <div class="container-fluid">
+    {% if direct_post %}
+    <nav class="navbar navbar-default navbar-fixed-top-custom navbar-fixed-top direct-post-page " >
+    {% else %}
     <nav class="navbar navbar-default navbar-fixed-top-custom navbar-fixed-top" >
+    {% endif%}
       <div class="container-fluid">
         <div class="navbar-header">
-          <a class="navbar-brand" href="#">
+          <a class="navbar-brand" href="/">
             <div class='brand-container'>
               <img class="img-circle" ng-src="{$ sc.brand_post.img_url $}" alt="">
             </div>
@@ -113,9 +117,12 @@
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 post-container">
        <div class="thumbnail {{ direct_post.class }}" >
-         <img ng-hide="{{direct_post.post_type}} == '2'" ng-src="{{ direct_post.img_url }}" alt="">
-         <video  ng-show="{{direct_post.post_type}} == '2'"  controls width="100%" height="100%"><source ng-src="" fix-vid-bug type="video/mp4"/></video>
-
+        {% if direct_post.post_type == 1 %}
+         <img src="{{ direct_post.img_url }}" alt="">
+         {% endif %}
+         {% if direct_post.post_type == 2 %}
+         <video controls width="100%" height="100%"><source src="{{ direct_post.img_url }}"type="video/mp4"/></video>
+         {% endif %}
          <div class="caption">
           {% if direct_post.tags %}
           <div class="tags-container">
@@ -137,12 +144,24 @@
          </div>
        </div>
       </div>
+       {% if direct_post %}
+       <!-- Brand post-->
+       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 post-container">
+        <div class="thumbnail super_brand_section_direct " ng-show="sc.brand_post.img_url">
+          <img ng-hide="im_post.post_type == '2'" ng-src="{$ sc.brand_post.img_url $}" alt="">
+          <div class="caption">
+            <p class="post-description">{$ sc.brand_post.description $}</p>
+          </div>
+        </div>
+      </div>
+      {% endif %}
     </div>
     </div>
     {% endif %}
 
     <div class="row">
       <div ng-cloak class="col-xs-12 col-sm-4 col-md-4 col-lg-4 post-container" ng-repeat="tunnel in sc.tunnels" ng-cloak>
+        {% if not direct_post %}
         <!-- Brand post-->
          <div class="thumbnail {$ sc.brand_post.class $}" ng-show="$index==0 && sc.brand_post.img_url">
          <img ng-hide="im_post.post_type == '2'" ng-src="{$ sc.brand_post.img_url $}" alt="">
@@ -150,6 +169,7 @@
            <p class="post-description">{$ sc.brand_post.description $}</p>
          </div>
        </div>
+       {% endif %}
         <!-- Brand post end-->
        <div class="thumbnail front-post {$ im_post.class $}" ng-repeat="im_post in tunnel|filter:search" >
         <a href="/{$ im_post.id $}">
@@ -174,7 +194,7 @@
     <!-- <div class="bottom-animation">
       Loader
     </div> -->
-    <div class="mini-bottom-top-director">^</div>
+    <div class="mini-bottom-top-director"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></div>
   </div>
 
 

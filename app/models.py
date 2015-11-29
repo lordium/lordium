@@ -141,6 +141,10 @@ class Account(User):
 			account.is_superuser = True
 			account.is_staff = True
 
+			conf = GlobalConf.objects.get()
+			conf.total_accounts += 1
+			conf.save()
+
 		account.save()
 		return account
 
@@ -175,6 +179,11 @@ class Account(User):
 			account.is_superuser = True
 			account.is_staff = True
 			account.save()
+
+			conf = GlobalConf.objects.get()
+			conf.total_accounts += 1
+			conf.save()
+
 			return account
 		return False
 

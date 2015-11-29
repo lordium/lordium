@@ -66,6 +66,7 @@ def fetch(request):
 					return pd.fetch_update_posts(username = request.user, last_id = last_id)
 	return HttpResponseRedirect('/')
 
+
 def update(request):
 	if request.method == "GET":
 		flag = request.GET.get('flag', False)
