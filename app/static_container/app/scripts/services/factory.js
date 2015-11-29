@@ -52,6 +52,23 @@
 		       });
 		  };
 
+		  sc.post_server_url = function(post_url,post_data, success_track, failure_track){
+	 		return $http({
+	           method: 'POST',
+	           url: post_url,
+	           headers: {
+	               'Content-Type': 'application/x-www-form-urlencoded'
+	           },
+	           data: post_data
+		       })
+		       .success(function (data) {
+		       		success_track(data);
+		       })
+		       .error(function (data, status) {
+		       		failure_track(data);
+		       });
+		  };
+
 		  sc.get_server = function(get_url, data, success_track, failure_track){
 	 		return $http({
 	           method: 'GET',
@@ -101,7 +118,7 @@
 		  sc.poke = function(){
 
 		  	var data = {'last_id': sc.last_index, 'flag':'update'}
-	  		sc.get_server('/update/',
+	  		sc.post_server_url('/update/',
 	  									data,
 	  									sc.update_tunnels,
 	  									sc.common_failure_track);
@@ -256,7 +273,7 @@
 		  }
 
 		  sc.initiate_fetch = function(){
-		  	sc.get_server('/fetch/',
+		  	sc.post_server('/fetch/',
 		  							   {'fetch': 'fetch'},
 		  							    sc.fetch_success,
 		  							    sc.common_failure_track
@@ -326,7 +343,6 @@
 				  					sc.tunnel_swap = 0;
 				  				}
 			  				}
-
 			  				// id of last post
 			  				sc.last_index = post.date_published;
 		  		});

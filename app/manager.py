@@ -472,16 +472,26 @@ class Provider(LoginManager, DBManager, FetchManager, ResponseManager):
 									 'type': post.post_type,
 									 'id': post.id,
 									 'img_url': post.post_url or None,
+									 'dir_url': self.make_url(post.id,
+									 	post.title),
 									 'description': post.description or None,
 									 'location': post.location_name or None,
 									 'post_type': post.post_type or None,
 									 'tags': post.post_tags or None,
-									 'date_published': str(post.date_published)
+									 'date_published': str(post.date_published),
 									})
 
 
 		posts_dict['posts'] = posts_container
 		return posts_dict
+
+	@classmethod
+	def make_url(self, url, title=None):
+		if title:
+			url = '/'+str(url)+'/'+ title.replace(' ', '-').lower()
+		else:
+			url = '/'+str(url)+'/'
+		return url
 
 	@classmethod
 	def fetch_update_posts(self, vendor='insta', username=None, last_id = None):

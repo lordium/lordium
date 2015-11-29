@@ -14,7 +14,7 @@
 					$('.fetch-text').html('Fetching');
 					$('.fetch-text').addClass('loading');
 					$http({
-						method: 'GET',
+						method: 'POST',
 						url: '/fetch/',
 						headers: {
 							'Content-Type': undefined
