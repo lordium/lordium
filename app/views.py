@@ -17,7 +17,6 @@ def index(request, post_id=None, post_title=None):
 	"""
 	req_context = {}
 	config = pd.get_config()
-	print config.insta_connected
 	if not config or config.insta_connected == False:
 		return HttpResponseRedirect('/init_app')
 
