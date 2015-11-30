@@ -5,8 +5,6 @@ from django.template import RequestContext, loader
 from django.views.decorators.csrf import csrf_exempt
 
 from django.conf import settings
-import insta
-from insta import InstaMine
 from models import Account
 from manager import Provider as pd
 from forms import InitForm
