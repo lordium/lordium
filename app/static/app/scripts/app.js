@@ -3,14 +3,14 @@
 
   /**
    * @ngdoc overview
-   * @name staticContainerApp
+   * @name lordiumApp
    * @description
-   * # staticContainerApp
+   * # lordiumApp
    *
    * Main module of the application.
    */
   angular
-    .module('staticContainerApp', [
+    .module('lordiumApp', [
       'ngAnimate',
       'ngAria',
       'ngCookies',

@@ -3,14 +3,14 @@
 
 	/**
 	 * @ngdoc function
-	 * @name staticContainerApp.controller:MainCtrl
+	 * @name lordiumApp.controller:MainCtrl
 	 * @description
 	 * # MainCtrl
-	 * Controller of the staticContainerApp
+	 * Controller of the lordiumApp
 	 */
 
-	angular.module('staticContainerApp')
-	  .controller('MakhoolCtrl', ['$scope','SuperFactory', function ($scope, SuperFactory) {
+	angular.module('lordiumApp')
+	  .controller('LordiumCtrl', ['$scope','SuperFactory', function ($scope, SuperFactory) {
 	  	$scope.sc = SuperFactory; // returns the object
 	  	$scope.sc.init();
 	  	$scope.update_tunnel = function(){

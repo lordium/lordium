@@ -3,7 +3,7 @@
 
 	/**
 	 * @ngdoc function
-	 * @name staticContainerApp.service:SnapWrapper
+	 * @name lordiumApp.service:SnapWrapper
 	 * @description
 	 * # AboutService
 	 * Factory for images
@@ -11,7 +11,7 @@
 	Object.prototype.hasOwnProperty = function(prop){
 		return this[prop]!== undefined;
 	}
-	angular.module('staticContainerApp')
+	angular.module('lordiumApp')
 		.factory('SuperFactory', ['$http', '$q', '$timeout', function(
 			$http, $q, $timeout){
 

@@ -125,7 +125,7 @@
 	      //...
 	    });
 
-	var super_app = angular.module('staticContainerApp');
+	var super_app = angular.module('lordiumApp');
 	super_app.requires[super_app.requires.length] = "superMock";
 
 })();

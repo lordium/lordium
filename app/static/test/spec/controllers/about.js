@@ -3,7 +3,7 @@
 describe('Controller: AboutCtrl', function () {
 
   // load the controller's module
-  beforeEach(module('staticContainerApp'));
+  beforeEach(module('lordiumApp'));
 
   var AboutCtrl,
     scope;

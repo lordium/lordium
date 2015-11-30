@@ -12,7 +12,7 @@ def after_install():
 
 def main(argv):
 	#site name
-	name = "mysite"
+	name = "lordium"
 	#os.path.realpath(__file__) it will get the file path
 	root_folder = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) # get the directory path
 

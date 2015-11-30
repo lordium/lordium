@@ -1,5 +1,5 @@
 """
-Django settings for mysite project.
+Django settings for lordium project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.7/topics/settings/
@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 from os.path import join
 TEMPLATE_DIRS = (
     join(BASE_DIR,  'templates'),
-    join(BASE_DIR,  'app/static_container'),
+    join(BASE_DIR,  'app/static'),
 )
 
 
@@ -76,9 +76,9 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-ROOT_URLCONF = 'mysite.urls'
+ROOT_URLCONF = 'lordium.urls'
 
-WSGI_APPLICATION = 'mysite.wsgi.application'
+WSGI_APPLICATION = 'lordium.wsgi.application'
 
 
 # Database
@@ -113,35 +113,17 @@ STATICFILES_DIRS = None
 
 # if DEBUG == True:
 #     STATICFILES_DIRS = (
-#         os.path.join(BASE_DIR, "app/static_container"),
+#         os.path.join(BASE_DIR, "app/static"),
 #         # '/var/www/static/',
 #     )
 # else:
 STATICFILES_DIRS =(
-    os.path.join(BASE_DIR, "app/static_container/dist/static"),
-    # os.path.join(BASE_DIR, "app/static_container/app/app/styles"),
-    # os.path.join(BASE_DIR, "app/static_container/app/app/images"),
+    os.path.join(BASE_DIR, "app/static/dist/static"),
+    # os.path.join(BASE_DIR, "app/static/app/app/styles"),
+    # os.path.join(BASE_DIR, "app/static/app/app/images"),
 )
 
-# SOCIAL_AUTH = {
-#     'insta': {
-#                 # 'client_id': '924d5f65c1ad45fa8e262ca99f966227',
-#                 # 'client_secret': 'f81039c72b98401da0402b05b0a16954',
-#                 }
-# }
-
-# SOCIAL_HOOKS = {
-#     'insta': {
-#         'access_url':'https://api.instagram.com/oauth/access_token',
-#         # 'insta_url': 'https://api.instagram.com/oauth/authorize/?client_id=924d5f65c1ad45fa8e262ca99f966227&redirect_uri=http://localhost:8000/redirect_url/&response_type=code'
-#     }
-# }
-
 POSTS_PER_REQUEST = 5
-
-
-# REDIRECT_URI = 'http://localhost:8000/redirect_url/'
-
 
 CELERY_IMPORTS = ("app.tasks",)
 
