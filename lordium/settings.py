@@ -119,8 +119,7 @@ STATICFILES_DIRS = None
 # else:
 STATICFILES_DIRS =(
     os.path.join(BASE_DIR, "app/static/dist/static"),
-    # os.path.join(BASE_DIR, "app/static/app/app/styles"),
-    # os.path.join(BASE_DIR, "app/static/app/app/images"),
+
 )
 
 POSTS_PER_REQUEST = 5
