@@ -1,6 +1,5 @@
 import json
 import confs
-import insta
 import models
 from django.db.models import Q
 from django.contrib.auth import authenticate
