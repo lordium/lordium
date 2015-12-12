@@ -4,6 +4,11 @@ from django.conf import settings
 from instagram.client import InstagramAPI
 from django.contrib.auth import authenticate
 from django.http import HttpResponse, HttpResponseRedirect
+# from logging import info as tellem
+from logging import warning as warnem
+
+def tellem(arg):
+	print arg
 
 INSTA_REDIRECT_URI = 'https://api.instagram.com/oauth/authorize/?client_id=%s\
 &redirect_uri=%s&response_type=code'
@@ -70,23 +75,23 @@ class Darbaan(object):
 		if api:
 			while loop_flag:
 				recent_media = []
-				swap_args = api_args
 				try:
-					recent_media, next = api.user_recent_media(**swap_args)
+					tellem('Data fetch Started...')
+					recent_media, next = api.user_recent_media(**api_args)
 				except Exception, e:
 					loop_flag = False
 					recent_media = []
-					print e
+					warnem(e)
+
 				for media in recent_media:
 					if initiate:
-						api_args['max_id'] = recent_media[-1]
+						api_args['max_id'] = media.id
 					else:
-						if not api_args['min_id'] == recent_media[-1]:
-							api_args['min_id'] = recent_media[-1]
-						else:
-							recent_media = []
-							loop_flag = False
-							break
+						## update the last value,
+						## so it passes last for getting
+						## poster after that
+						api_args['min_id'] = media.id
+
 					title, description = self.insta_get_title_description(media, 'caption')
 					posts.append({ 	'media_id': media.id,
 									'title':title,
@@ -101,12 +106,24 @@ class Darbaan(object):
 									'account': None
 								})
 
-				print loop_flag
+				# if len(recent_media) < 20:
+				if not initiate:
+					if api_args['min_id'] == last_media_id:
+						loop_flag = False
+						# delete last element
+						# its already there incase we have only 1 post
+						del posts[-1]
+						#finally, break look
+						break
+
+				if len(recent_media) < 20:
+					loop_flag = False
+					break
+
 				if loop_flag:
 					loop_flag = len(recent_media) > 0
 				else:
 					break
-
 		return list(reversed(posts))
 
 
