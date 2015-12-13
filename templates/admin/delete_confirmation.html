@@ -42,8 +42,8 @@
     <form action="" method="post" class="panel">{% csrf_token %}
     <div class="">
     <input type="hidden" name="post" value="yes" />
-    <a href="/dashboard" class="btn btn-default">Cancel</a>
-    <input type="submit" class=" btn btn-default" value="{% trans "Yes, I'm sure" %}" />
+    <a href="/dashboard" class="btn btn-default cancel">Cancel</a>
+    <input type="submit" class=" btn btn-default delete-btn" value="{% trans "Yes, I'm sure" %}" />
     </div>
     </form>
 {% endif %}

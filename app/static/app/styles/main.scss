@@ -174,7 +174,7 @@ $common-font-color: #777;
 input[type=text]{
   @extend .form-control;
   @extend .no-round-borders;
-  max-width: 80%;
+  //max-width: 80%;
 }
 
 textarea{
@@ -577,6 +577,7 @@ body,html{
           width: 400px;
           background-color: #ffffff;
           padding: 0px 10px;
+          float: right;
           opacity: 1;
         }
 
@@ -847,6 +848,13 @@ body,html{
         }
       }
 
+      .cancel{
+          border-color: #000000;
+        }
+      .delete-btn{
+        border-color: #FF8C00;
+      }
+
       .submit-row.panel{
         background: #ffffff !important;
 
@@ -855,10 +863,10 @@ body,html{
         }
 
         .save{
-          border-color: #0A0921;
+          border-color: #5F9EA0;
         }
         .cancel{
-
+          border-color: #000000;
         }
 
         .deletelink-box{
@@ -874,7 +882,7 @@ body,html{
       }*/
 
 
-      // for object page
+      /*// for object page*/
       .form-row.field-username{
         .help {
           display: none;
@@ -883,36 +891,75 @@ body,html{
 
       }
 
+      fieldset{
+        background-color: transparent;
+        h2, .description{
+          background-color: #fff;
+          margin:0px;
+          padding: 0px 13px;
+        }
+        h2{
+          padding-top: 20px;
+        }
+
+        padding: 0px;
+      }
+      .form-row + .form-row{
+        margin: 3px 0px 0px 0px;
+      }
       .form-row{
+        background-color: #fff;
+        padding: 10px;
+        width: 100%;
+
+        p{
+          margin: 0px;
+          float: left;
+          padding-top: 0px;
+          width: 100%;
+          img {
+            width: 100%;
+          }
+        }
         p:not(.help){
-          padding:10px;
+          padding: 10px 4px;
+          font-size: 16px;
         }
 
         .help{
           padding: 0px !important;
-          margin: 10px !important;
+          margin: 0px !important;
           color: $common-font-color;
         }
 
         label{
-          padding: 10px 10px 0px 10px;
+          padding: 10px 3px;
           font-weight: normal !important;
           color: $common-font-color !important;
+          display: block;
+          width: 100%;
+          font-size: 16px;
         }
 
         input {
-            margin: 20px 10px;
+            //margin: 20px 10px;
+            width: 99%;
+            display: block;
+            position: relative;
+            float: left;
+            margin: 10px 3px;
+
         }
 
 
 
         &.field-username{
-          div::after{
+          /*div::after{
             content:"Instagram username, used to fetch posts";
             color: $common-font-color;
             margin: 18px 10px 9px 10px;
             display:block;
-          }
+          }*/
         }
 
         select{
@@ -921,8 +968,16 @@ body,html{
       }
 
       textarea{
-        display: inline-block;
-        width:80%;
+        display: block;
+        width: 99%;
+        margin: 10px 3px;
+        position: relative;
+        float: left;
+      }
+
+      .jumbotron + form{
+        padding: 10px;
+        text-align: right;
       }
 
     }

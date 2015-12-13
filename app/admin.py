@@ -27,13 +27,16 @@ class PostAdmin(admin.ModelAdmin):
 
 	actions = [delete_post]
 
-	readonly_fields = ('title', 'description', 'date_published',
-		'account','location_name')
-	fields = ['title',
+	readonly_fields = ('date_published',
+		'account','super_post_url')
+	fields = [
+		'title',
 		'description',
 		'date_published',
 		'location_name',
-		'account']
+		'account',
+		'super_post_url'
+		]
 
 	list_display = ('super_post_url', 'account')
 
@@ -99,13 +102,13 @@ class AccountAdmin(admin.ModelAdmin):
 	fieldsets = (
 		('Account', {
 				'fields': ('username', 'slogan', 'is_active',
-					'fetch_status', 'read_only','is_brand'),
+					'read_only','is_brand'),
 				'description': 'Account is used to fetch posts from Instagram',
 				'classes':('panel','col-xs-12 col-sm-12 col-md-12 col-lg-12')
 			}),
 		)
 
-	list_display = ('account_image','username', 'first_name','fetch_status')
+	list_display = ('account_image','username', 'first_name')
 
 	list_per_page = 20
 

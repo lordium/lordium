@@ -224,8 +224,8 @@ class Post(models.Model):
 	post_url = models.TextField(validators=[URLValidator()],null=True)
 	description = models.TextField("Description",null=True)
 	post_tags = models.TextField("Tags",null=True)
-	location = models.TextField("Location Coordinates",null=True)
-	location_name = models.TextField("Location Name",null=True)
+	location = models.CharField("Location Coordinates", max_length=200,null=True)
+	location_name = models.CharField("Location Name", max_length=200,null=True)
 	account = models.ForeignKey(Account, null=True)
 
 	def super_post_url(self):
@@ -235,6 +235,7 @@ class Post(models.Model):
 			return '<video class="" controls width="100%%" height="100%%"><source src="%s" type="video/mp4"/></video>' % self.post_url
 
 	super_post_url.allow_tags = True
+	super_post_url.short_description = 'Post'
 
 
 

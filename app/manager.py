@@ -205,11 +205,14 @@ class DBManager(object):
 
 	@classmethod
 	def db_get_dirty_accounts(self):
+		## for now return all
+		return models.Account.objects.all()
+
 		## if there is no post, everything is dirty
-		if len(models.Post.objects.all()) < 1:
-			return models.Account.objects.all()
-		return models.Account.objects.filter(
-			Q(fetch_status=1)|Q(fetch_status=4))
+		# if len(models.Post.objects.all()) < 1:
+		# 	return models.Account.objects.all()
+		# return models.Account.objects.filter(
+		# 	Q(fetch_status=1)|Q(fetch_status=4))
 
 	@classmethod
 	def delete_account(self):
