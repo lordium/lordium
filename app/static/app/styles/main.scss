@@ -1143,13 +1143,29 @@ body,html{
             font-size: 12px;
             text-align: right;
             margin-bottom: 0px;
+            min-height: 16px;
+
             span {
 
             }
 
             .glyphicon{
               color: #999999;
+
+              &.glyphicon-share-alt {
+                font-size: 29px;
+                float: left;
+                margin-left: -9px;
+                margin-top: -4px;
+
+                &:hover{
+                  color: #E8E8E8;
+                }
+              }
+
             }
+
+
           }
         }
       }

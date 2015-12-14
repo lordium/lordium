@@ -167,22 +167,30 @@
        {% endif %}
         <!-- Brand post end-->
        <div class="thumbnail front-post {$ im_post.class $}" ng-repeat="im_post in tunnel|filter:search" >
-        <a href="{$ im_post.dir_url $}">
-         <img ng-hide="im_post.post_type == '2'" ng-src="{$ im_post.img_url $}" alt="">
-         <video  ng-show="im_post.post_type == '2'"  controls width="100%" height="100%"><source ng-src="" fix-vid-bug type="video/mp4"/></video>
-
+         <a href="{$ im_post.dir_url $}">
+           <img ng-hide="im_post.post_type == '2'" ng-src="{$ im_post.img_url $}" alt="">
+           <video  ng-show="im_post.post_type == '2'"  controls width="100%" height="100%"><source ng-src="" fix-vid-bug type="video/mp4"/></video>
+         </a>
          <div class="caption">
           <div class="tags-container" >
             <span ng-repeat="label in im_post.tags.split(',')" >{$ label $}</span>
           </div>
            <h3 ng-show="im_post.title">{$ im_post.title $} </h3>
            <p ng-show="im_post.description" class="post-description">{$ im_post.description $}</p>
-           <p class="location-container" ng-show="im_post.location">
-              <span class="glyphicon glyphicon-map-marker"></span>
-              <span >{$ im_post.location $}</span>
+           <p class="location-container" >
+              <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
+              <span class="glyphicon glyphicon-map-marker" ng-show="im_post.location"></span>
+              <span ng-show="im_post.location">{$ im_post.location $}</span>
+              <div class="post-share-container">
+                share options
+              </div>
             </p>
          </div>
-       </a>
+
+         <!--
+         <a href="https://twitter.com/share" class="twitter-share-button"{count} data-url="{$ im_post.dir_url $}" data-text="some text">Tweet</a>
+         <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')();</script>
+          -->
        </div>
       </div>
     </div>
