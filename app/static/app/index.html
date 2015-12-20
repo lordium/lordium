@@ -177,14 +177,23 @@
           </div>
            <h3 ng-show="im_post.title">{$ im_post.title $} </h3>
            <p ng-show="im_post.description" class="post-description">{$ im_post.description $}</p>
-           <p class="location-container" >
-              <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
-              <span class="glyphicon glyphicon-map-marker" ng-show="im_post.location"></span>
-              <span ng-show="im_post.location">{$ im_post.location $}</span>
-              <div class="post-share-container">
-                share options
+           <div class="location-container" >
+              <!-- <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> -->
+              <div class="social-share-con">
+                <ul class="social-icons">
+                  <li class="fb"><a><img src="static/images/share_facebook.png" /></a></li>
+                  <li class="tw"><a><img src="static/images/share_twitter.png" /></a></li>
+                  <li class="gp"><a><img src="static/images/share_google_plus.png" /></a></li>
+                  <li class="li"><a><img src="static/images/share_linkedin.png" /></a></li>
+
+
+                </ul>
               </div>
-            </p>
+              <div class="location_markers">
+                <span class="glyphicon glyphicon-map-marker" ng-show="im_post.location"></span>
+                <span ng-show="im_post.location">{$ im_post.location $}</span>
+              </div>
+            </div>
          </div>
 
          <!--

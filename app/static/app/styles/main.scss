@@ -1142,8 +1142,10 @@ body,html{
             color: #999999;
             font-size: 12px;
             text-align: right;
-            margin-bottom: 0px;
             min-height: 16px;
+            margin-bottom: 22px;
+            padding: 5px 0px;
+            line-height: 3;
 
             span {
 
@@ -1152,7 +1154,7 @@ body,html{
             .glyphicon{
               color: #999999;
 
-              &.glyphicon-share-alt {
+/*              &.glyphicon-share-alt {
                 font-size: 29px;
                 float: left;
                 margin-left: -9px;
@@ -1161,11 +1163,15 @@ body,html{
                 &:hover{
                   color: #E8E8E8;
                 }
-              }
+              }*/
 
             }
 
-
+            .location_markers{
+              position: relative;
+              display: inline-block;
+              float: right;
+            }
           }
         }
       }
@@ -1282,3 +1288,50 @@ body,html{
   }
 }
 /// init page end
+
+// social links
+.social-share-con{
+  display: inline-block;
+  position: relative;
+  float: left;
+
+  ul.social-icons{
+    display: inline-block;
+    padding:0px;
+    margin:0px;
+
+    li{
+      display: inline-block;
+      position: relative;
+      float: left;
+      width: 35px;
+      padding: 5px;
+      margin:  0px;
+
+      &.fb{
+        background-color: #3B579D;
+      }
+
+      &.tw{
+        background-color: #55acee;
+      }
+      &.gp{
+        background-color: #DC4E41;
+      }
+      &.li{
+        background-color: #0077B5;
+      }
+
+      img{
+        width: 20px;
+        height: auto;
+      }
+    }
+  }
+}
+
+.location_markers{
+  position: relative;
+  float: right;
+}
+// social links end
