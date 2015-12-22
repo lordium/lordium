@@ -130,12 +130,38 @@
            {% if direct_post.description %}
            <p class="post-description">{{ direct_post.description }}</p>
            {% endif %}
-           {% if direct_post.location %}
-           <p class="location-container">
-              <span class="glyphicon glyphicon-map-marker"></span>
-              <span >{{ direct_post.location }}</span>
-            </p>
-           {% endif %}
+           <div class="location-container" >
+              <!-- <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> -->
+              <div class="social-share-con">
+                <ul class="social-icons">
+                  <li class="fb">
+                    <a href="http://www.facebook.com/sharer.php?u={$ sc.current_location() $}" title="{{ direct_post.title }}" target="_blank">
+                      <img src="/static/images/share_facebook.png" />
+                    </a>
+                  </li>
+                  <li class="tw">
+                    <a href="http://twitter.com/share?url={$ sc.current_location() $}&amp;text={{ direct_post.title }}" title="Twitter share" target="_blank" ><img src="/static/images/share_twitter.png" />
+                    </a>
+                  </li>
+                  <li class="gp">
+                    <a href="https://plus.google.com/share?url={$ sc.current_location() $}" title="{{ direct_post.title }}" target="_blank" >
+                      <img src="/static/images/share_google_plus.png" />
+                    </a>
+                  </li>
+                  <li class="li">
+                    <a href="http://www.linkedin.com/shareArticle?mini=true&url={$ sc.current_location() $}" title="{{ direct_post.title }}" target="_blank">
+                      <img src="/static/images/share_linkedin.png" />
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              {% if direct_post.location %}
+              <div class="location_markers">
+                <span class="glyphicon glyphicon-map-marker" ng-show="im_post.location"></span>
+                <span ng-show="im_post.location">{$ im_post.location $}</span>
+              </div>
+              {% endif %}
+            </div>
          </div>
        </div>
       </div>
@@ -181,12 +207,26 @@
               <!-- <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> -->
               <div class="social-share-con">
                 <ul class="social-icons">
-                  <li class="fb"><a><img src="static/images/share_facebook.png" /></a></li>
-                  <li class="tw"><a><img src="static/images/share_twitter.png" /></a></li>
-                  <li class="gp"><a><img src="static/images/share_google_plus.png" /></a></li>
-                  <li class="li"><a><img src="static/images/share_linkedin.png" /></a></li>
-
-
+                  <li class="fb">
+                    <a href="http://www.facebook.com/sharer.php?u={$ sc.current_location(im_post.dir_url) $}" title="{$ im_post.title $}" target="_blank">
+                      <img src="/static/images/share_facebook.png" />
+                    </a>
+                  </li>
+                  <li class="tw">
+                    <a href="http://twitter.com/share?url={$ sc.current_location(im_post.dir_url) $}&amp;text={$ im_post.title $}" title="{$ im_post.title $}" target="_blank" >
+                      <img src="/static/images/share_twitter.png" />
+                    </a>
+                  </li>
+                  <li class="gp">
+                    <a href="https://plus.google.com/share?url={$ sc.current_location(im_post.dir_url) $}" title="{$ im_post.title $}" target="_blank" >
+                      <img src="/static/images/share_google_plus.png" />
+                    </a>
+                  </li>
+                  <li class="li">
+                    <a href="http://www.linkedin.com/shareArticle?mini=true&url={$ sc.current_location(im_post.dir_url) $}" title="{$ im_post.title $}" target="_blank">
+                      <img src="/static/images/share_linkedin.png" />
+                    </a>
+                  </li>
                 </ul>
               </div>
               <div class="location_markers">
@@ -195,11 +235,6 @@
               </div>
             </div>
          </div>
-
-         <!--
-         <a href="https://twitter.com/share" class="twitter-share-button"{count} data-url="{$ im_post.dir_url $}" data-text="some text">Tweet</a>
-         <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')();</script>
-          -->
        </div>
       </div>
     </div>

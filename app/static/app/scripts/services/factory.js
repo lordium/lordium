@@ -387,6 +387,18 @@
 		  	}
 		  }
 
+		  sc.current_location = function(location){
+	        var current = window.location.href;
+	        if(!location){
+	        	return current;
+	        }
+	        var pathAr = window.location.href.split( '/' );
+	        var protocol = pathAr[0];
+	        var host = pathAr[2];
+	        var url = protocol + '//' + host;
+	        return url + location;
+		  }
+
 		 $(window).scroll(function() {
 		     if($(window).scrollTop() + $(window).height() == $(document).height()) {
 		     	sc.poke();
