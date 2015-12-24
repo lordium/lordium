@@ -111,12 +111,12 @@
     <div class="container direct-post" ng-init="sc.last_index={{ direct_post.id }}">
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 post-container">
-       <div class="thumbnail {{ direct_post.class }}" >
+       <div class="thumbnail {{ direct_post.class }}" itemprop="liveBlogUpdate" itemscope itemtype="http://schema.org/BlogPosting">
         {% if direct_post.post_type == 1 %}
-         <img src="{{ direct_post.img_url }}" alt="">
+         <img itemprop="image" src="{{ direct_post.img_url }}" alt="">
          {% endif %}
          {% if direct_post.post_type == 2 %}
-         <video controls width="100%" height="100%"><source src="{{ direct_post.img_url }}"type="video/mp4"/></video>
+         <video itemprop="video" controls width="100%" height="100%"><source src="{{ direct_post.img_url }}"type="video/mp4"/></video>
          {% endif %}
          <div class="caption">
           {% if direct_post.tags %}
@@ -125,13 +125,12 @@
           </div>
           {% endif %}
            {% if direct_post.title%}
-           <h3>{{ direct_post.title }} </h3>
+           <h3 itemprop="headline">{{ direct_post.title }} </h3>
            {% endif %}
            {% if direct_post.description %}
            <p class="post-description">{{ direct_post.description }}</p>
            {% endif %}
            <div class="location-container" >
-              <!-- <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> -->
               <div class="social-share-con">
                 <ul class="social-icons">
                   <li class="fb">
@@ -156,9 +155,9 @@
                 </ul>
               </div>
               {% if direct_post.location %}
-              <div class="location_markers">
+              <div class="location_markers" itemscope itemtype="http://schema.org/Place">
                 <span class="glyphicon glyphicon-map-marker" ng-show="im_post.location"></span>
-                <span ng-show="im_post.location">{$ im_post.location $}</span>
+                <span ng-show="im_post.location" itemprop="name">{$ im_post.location $}</span>
               </div>
               {% endif %}
             </div>
@@ -192,17 +191,17 @@
        </div>
        {% endif %}
         <!-- Brand post end-->
-       <div class="thumbnail front-post {$ im_post.class $}" ng-repeat="im_post in tunnel|filter:search" >
+       <div class="thumbnail front-post {$ im_post.class $}" ng-repeat="im_post in tunnel|filter:search" itemscope itemtype="http://schema.org/BlogPosting">
          <a href="{$ im_post.dir_url $}">
-           <img ng-hide="im_post.post_type == '2'" ng-src="{$ im_post.img_url $}" alt="">
-           <video  ng-show="im_post.post_type == '2'"  controls width="100%" height="100%"><source ng-src="" fix-vid-bug type="video/mp4"/></video>
+           <img itemprop="image" ng-hide="im_post.post_type == '2'" ng-src="{$ im_post.img_url $}" alt="">
+           <video itemprop="video" itemscope itemtype="http://schema.org/VideoObject" ng-show="im_post.post_type == '2'"  controls width="100%" height="100%"><source ng-src="" fix-vid-bug type="video/mp4"/></video>
          </a>
          <div class="caption">
           <div class="tags-container" >
             <span ng-repeat="label in im_post.tags.split(',')" >{$ label $}</span>
           </div>
-           <h3 ng-show="im_post.title">{$ im_post.title $} </h3>
-           <p ng-show="im_post.description" class="post-description">{$ im_post.description $}</p>
+           <h3 ng-show="im_post.title" itemprop="headline">{$ im_post.title $} </h3>
+           <p ng-show="im_post.description" class="post-description" itemprop="articleBody">{$ im_post.description $}</p>
            <div class="location-container" >
               <!-- <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span> -->
               <div class="social-share-con">
@@ -229,9 +228,9 @@
                   </li>
                 </ul>
               </div>
-              <div class="location_markers">
+              <div class="location_markers" itemscope itemtype="http://schema.org/Place">
                 <span class="glyphicon glyphicon-map-marker" ng-show="im_post.location"></span>
-                <span ng-show="im_post.location">{$ im_post.location $}</span>
+                <span ng-show="im_post.location" itemprop="name">{$ im_post.location $}</span>
               </div>
             </div>
          </div>
