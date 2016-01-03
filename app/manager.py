@@ -83,9 +83,12 @@ class LoginManager(object):
 								new_flag = True
 						elif fetch_status == 2:
 							account_status = 'fetching'
+							DBManager.db_update_account_info(user_info,
+								request = request)
 						elif fetch_status == 3:
 							account_status = 'fetch_completed'
-
+							DBManager.db_update_account_info(user_info,
+								request = request)
 						if fetch_status == 1 and new_flag != True:
 							return ResponseManager.redirect('/')
 						u_account = authenticate(username=username,
@@ -189,6 +192,30 @@ class DBManager(object):
 			insta_id = user_info.get('id'),
 			insta_token = request.session['access_token'],
 			fetch_status = 1)
+		if account:
+			return account
+		return False
+
+	@classmethod
+	def db_update_account_info(self, user_info, request = None,  **kwargs):
+		"""
+		This function will update account and write it to
+		database
+		"""
+
+		## should create only first account, will all permissions
+		# account = models.Account.objects.get(username=username)
+		# if account:
+		account = models.Account.partial_update(
+			username = user_info.get('username'),
+			slogan = user_info.get('bio', ''),
+			profile_picture = user_info.get('profile_picture'),
+			first_name = user_info.get('full_name'),
+			last_name=" ",
+			email="example@example.com",
+			insta_id = user_info.get('id'),
+			insta_token = request.session['access_token']
+			)
 		if account:
 			return account
 		return False

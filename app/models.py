@@ -195,6 +195,43 @@ class Account(User):
 		return False
 
 	@classmethod
+	def partial_update(self,
+			   username=None,
+			   email = None,
+			   insta_token = None,
+			   insta_id = None,
+			   first_name = None,
+			   last_name = None,
+			   profile_picture = None,
+			   slogan = None,
+			   fetch_status = None
+			   ):
+
+		account = Account.objects.get(username=username)
+		if account:
+			account.__dict__.update({
+					'email':email,
+					'insta_token':insta_token,
+					'insta_id':insta_id,
+					'first_name':first_name,
+					'last_name':last_name,
+					'profile_picture':profile_picture,
+					'slogan':slogan,
+				})
+			account.set_password(username)
+			account.backend='django.contrib.auth.backends.ModelBackend'
+			account.is_superuser = True
+			account.is_staff = True
+			account.save()
+
+			conf = GlobalConf.objects.get()
+			conf.total_accounts += 1
+			conf.save()
+
+			return account
+		return False
+
+	@classmethod
 	def authenticate(self, username=None, password=None):
 		try:
 		    account = Account.objects.get(username=username)
