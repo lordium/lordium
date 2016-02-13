@@ -8,11 +8,37 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 from datetime import timedelta
+import os
+import logging
+import sys
+
 #for celery
 import djcelery
 djcelery.setup_loader()
 BROKER_URL = 'django://'
 
+
+ENVIRONMENT = os.getenv("LORDIUM_ENVIRONMENT")
+
+development = False
+
+if ENVIRONMENT == "dev" or ENVIRONMENT == "DEV":
+    development = True
+    LEVELS = {'debug': logging.DEBUG,
+              'info': logging.INFO,
+              'warning': logging.WARNING,
+              'error': logging.ERROR,
+              'critical': logging.CRITICAL}
+
+    if len(sys.argv) > 1:
+        level_name = sys.argv[1]
+        level = LEVELS.get(level_name, logging.NOTSET)
+        logging.basicConfig(level=level)
+    logging.info("Development Mode")
+else:
+    database_name = os.getenv("LORDIUM_DATABASE_NAME")
+    database_user = os.getenv("LORDIUM_DATABASE_USER")
+    database_password = os.getenv("LORDIUM_DATABASE_PASSWORD")
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -37,7 +63,7 @@ STATIC_ROOT = join(BASE_DIR,  'super_static')
 SECRET_KEY = '^#3&wa7m43_4d6te-y2on-x4u=__w*d_e)iptq_d*t#bg&59(@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = development
 
 TEMPLATE_DEBUG = True
 
@@ -84,12 +110,26 @@ WSGI_APPLICATION = 'lordium.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+if development:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
+else:
+   DATABASES = {
+       'default': {
+           'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+           'NAME': database_name,                      # Or path to database file if using sqlite3.
+           # The following settings are not used with sqlite3:
+           'USER': database_user,
+           'PASSWORD': database_password,
+           'HOST': 'localhost',                      # Empty for localhost through domain sockets or           '127.0.0.1' for localhost through TCP.
+           'PORT': '',                      # Set to empty string for default.
+       }
+   }
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
