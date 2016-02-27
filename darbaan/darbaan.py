@@ -69,8 +69,11 @@ class Darbaan(object):
 
 		if token:
 			api = InstagramAPI(access_token=token, client_secret=client_secret)
+			tellem('With Token')
+			tellem(api)
 		else:
 			api = InstagramAPI(client_id=client_id, client_secret=client_secret)
+			tellem('Without Token')
 
 		if api:
 			while loop_flag:
@@ -82,6 +85,10 @@ class Darbaan(object):
 					loop_flag = False
 					recent_media = []
 					warnem(e)
+					tellem('We are in exception')
+					tellem(e)
+					tellem(recent_media)
+					# tellem(next)
 
 				for media in recent_media:
 					if initiate:

@@ -56,6 +56,7 @@ class GlobalConf(models.Model):
 	@classmethod
 	def get_config(self, instagram_app_id=None, instagram_app_secret=None,
 		website_url=None):
+		config = False
 		try:
 			config = self.objects.get()
 		except:
@@ -224,9 +225,9 @@ class Account(User):
 			account.is_staff = True
 			account.save()
 
-			conf = GlobalConf.objects.get()
-			conf.total_accounts += 1
-			conf.save()
+			# conf = GlobalConf.objects.get()
+			# conf.total_accounts += 1
+			# conf.save()
 
 			return account
 		return False

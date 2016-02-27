@@ -52,7 +52,7 @@ TEMPLATE_DIRS = (
 )
 
 
-STATIC_ROOT = join(BASE_DIR,  'super_static')
+STATIC_ROOT = join(BASE_DIR,  'static')
 
 
 
