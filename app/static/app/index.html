@@ -2,7 +2,12 @@
 <html ng-app="lordiumApp">
   <head>
     <meta charset="utf-8">
-    <title>{{title}}</title>
+
+    {% if direct_post and direct_post.description %}
+      <title>{{title}}|{{ direct_post.description }}</title>
+    {% else %}
+      <title>{{title}}</title>
+    {% endif %}
     <meta name="description" content="{{description}}">
     <meta name="keywords" content="{{keywords}}">
     <meta name="viewport" content="width=device-width">
