@@ -36,5 +36,7 @@ urlpatterns = [
 	url(r'^(?P<post_id>\d+)/(?P<post_title>\w+)', views.index, name = 'user_post'),
 
 	url(r'^init_app/', views.initiate_app, name="initiate_app"),
+
+	url(r'^.*$', views.index, name = 'index'), #For Not Found
 ]
 
