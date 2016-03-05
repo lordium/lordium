@@ -5,6 +5,7 @@
 
     {% if direct_post and direct_post.description %}
       <title>{{title}}|{{ direct_post.description }}</title>
+      <meta property="og:image" content="{{ direct_post.img_url }}" />
     {% else %}
       <title>{{title}}</title>
     {% endif %}
