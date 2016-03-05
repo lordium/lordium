@@ -4,8 +4,10 @@
     <meta charset="utf-8">
     <title>{{title}}</title>
     <meta name="description" content="{{description}}">
+    <meta name="keywords" content="{{keywords}}">
     <meta name="viewport" content="width=device-width">
-    <link id="favicon" rel="icon" type="image/jpg" href="">
+    <meta property="og:title" content="{{ title }}" />
+    <meta property="og:description" content="{{ description }}" />
     <!-- build:css(.) /static/styles/vendor.css -->
     <!-- bower:css -->
     <!-- endbower -->
@@ -26,6 +28,7 @@
           <a class="navbar-brand" href="/">
             <div class='brand-container'>
               <img class="img-circle" ng-src="{$ sc.brand_post.img_url $}" alt="">
+
             </div>
           </a>
         </div>

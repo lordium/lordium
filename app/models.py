@@ -29,7 +29,9 @@ class GlobalConf(models.Model):
 	instagram_app_secret = models.CharField(max_length=140,verbose_name="App Secret",
 		help_text=_('Instagram app secret (Client Secret)'))
 	google_analytics = models.TextField(verbose_name="Google Analytics",
-		help_text=_('Google analytics script'), null=True)
+		help_text=_('Google analytics script'), blank=True)
+	keywords = models.TextField(verbose_name="Keywords",
+		help_text=_('Keywords for search engine'), blank=True)
 	total_posts = models.IntegerField(verbose_name="Total Posts", default=0)
 	total_accounts = models.IntegerField(verbose_name="Total Accounts", default=0)
 	last_fetched = models.DateTimeField(verbose_name="Last Fetched", null=True)

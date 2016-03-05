@@ -22,6 +22,7 @@ def index(request, post_id=None, post_title=None):
 
 	req_context['google_analytics'] = config.google_analytics or ''
 	req_context['description'] = config.description or ''
+	req_context['keywords'] = config.keywords or ''
 	req_context['title'] = config.title or ''
 
 	if post_id and post_id > 0:

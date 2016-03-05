@@ -506,7 +506,7 @@ class Provider(LoginManager, DBManager, FetchManager, ResponseManager):
 									 'description': post.description or None,
 									 'location': post.location_name or None,
 									 'post_type': post.post_type or None,
-									 'tags': post.post_tags or None,
+									 'tags': False, #post.post_tags or None,
 									 'date_published': str(post.date_published),
 									})
 
