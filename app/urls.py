@@ -37,6 +37,6 @@ urlpatterns = [
 
 	url(r'^init_app/', views.initiate_app, name="initiate_app"),
 
-	url(r'^.*$', views.index, name = 'index'), #For Not Found
+	# url(r'^.*$', views.index, name = 'index'), #For Not Found
 ]
 

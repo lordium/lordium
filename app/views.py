@@ -29,6 +29,10 @@ def index(request, post_id=None, post_title=None):
 		post_data = pd.db_get_single(request, post_id=post_id)
 		req_context['direct_post'] = post_data
 
+	req_context['direct_url'] = request.build_absolute_uri()
+	accounts = Account.objects.all()
+	if accounts:
+		req_context['brand_logo'] = accounts[0].profile_picture
 	context = RequestContext(request, req_context)
 	template = loader.get_template('dist/index.html')
 	return HttpResponse(template.render(context))

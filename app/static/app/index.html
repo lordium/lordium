@@ -11,11 +11,25 @@
       <meta property="og:description" content='{{ description }}|{{ direct_post.description }}' />
       <meta property="og:image" content='{{ direct_post.img_url }}'/>
       <meta name="description" content='{{ description }}|{{ direct_post.description }}'>
+
+      <!-- Update your html tag to include the itemscope and itemtype attributes. -->
+      <html itemscope itemtype="http://schema.org/Article">
+
+      <!-- Add the following three tags inside head. -->
+      <meta itemprop="name" content='{{ title }}|{{ direct_post.title }}'>
+      <meta itemprop="description" content='{{ description }}|{{ direct_post.description }}'>
+      <meta itemprop="image" content='{{ direct_post.img_url }}'>
     {% else %}
       <title>{{title}}</title>
+      <meta property="og:url" content="{{ direct_url }}" />
+      <meta property="og:type" content="website" />
       <meta property="og:title" content='{{ title }}' />
+      <meta property="og:image" content='{{ brand_logo }}'/>
       <meta property="og:description" content='{{ description }}' />
       <meta name="description" content='{{description}}'>
+      <meta itemprop="name" content='{{ title }}'>
+      <meta itemprop="description" content='{{ description }}'>
+      <meta itemprop="image" content='{{ brand_logo }}'>
     {% endif %}
     <meta name="keywords" content='{{keywords}}'>
     <meta name="viewport" content="width=device-width">
