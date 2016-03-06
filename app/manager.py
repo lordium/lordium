@@ -11,7 +11,6 @@ from django.conf import settings
 from darbaan.darbaan import Darbaan
 
 
-
 # Below is utility function section
 def response_wrapper(response_function):
 	def inner(*args, **kwargs):
@@ -336,7 +335,8 @@ class DBManager(object):
 
 
 	@classmethod
-	def db_get_single(self, post_id=None):
+	def db_get_single(self, request, post_id=None):
+		absolute_uri = request.build_absolute_uri()
 		try:
 			single_post = models.Post.objects.get(id=post_id)
 			if single_post:
@@ -349,7 +349,8 @@ class DBManager(object):
 					'location': single_post.location_name,
 					'location_link': '',
 					'post_type': single_post.post_type,
-					'class': 'direct-post'}
+					'class': 'direct-post',
+					'post_url': absolute_uri}
 				return post_data
 		except:
 			pass

@@ -3,17 +3,22 @@
   <head>
     <meta charset="utf-8">
 
-    {% if direct_post and direct_post.description %}
-      <title>{{title}}|{{ direct_post.description }}</title>
-      <meta property="og:image" content="{{ direct_post.img_url }}" />
+    {% if direct_post %}
+      <title>{{title}}|{{ direct_post.title }}</title>
+      <meta property="og:url" content="{{ direct_post.post_url}}" />
+      <meta property="og:type" content="article" />
+      <meta property="og:title" content='{{ title }}|{{ direct_post.title }}' />
+      <meta property="og:description" content='{{ description }}|{{ direct_post.description }}' />
+      <meta property="og:image" content='{{ direct_post.img_url }}'/>
+      <meta name="description" content='{{ description }}|{{ direct_post.description }}'>
     {% else %}
       <title>{{title}}</title>
+      <meta property="og:title" content='{{ title }}' />
+      <meta property="og:description" content='{{ description }}' />
+      <meta name="description" content='{{description}}'>
     {% endif %}
-    <meta name="description" content="{{description}}">
-    <meta name="keywords" content="{{keywords}}">
+    <meta name="keywords" content='{{keywords}}'>
     <meta name="viewport" content="width=device-width">
-    <meta property="og:title" content="{{ title }}" />
-    <meta property="og:description" content="{{ description }}" />
     <!-- build:css(.) /static/styles/vendor.css -->
     <!-- bower:css -->
     <!-- endbower -->
@@ -277,11 +282,6 @@
     <script src="/scripts/admin_app.js"></script>
     <script src="/scripts/dom_events.js"></script>
     <!-- endbuild -->
-
-
     <script src="/static/dist/static/scripts/scripts.js"></script>
-
-
-
 </body>
 </html>
