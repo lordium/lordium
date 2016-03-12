@@ -34,7 +34,7 @@ def index(request, post_id=None, post_title=None):
 	if accounts:
 		req_context['brand_logo'] = accounts[0].profile_picture
 	context = RequestContext(request, req_context)
-	template = loader.get_template('dist/index.html')
+	template = loader.get_template('index.html')
 	return HttpResponse(template.render(context))
 
 def initiate_app(request):

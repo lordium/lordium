@@ -18,12 +18,12 @@ djcelery.setup_loader()
 BROKER_URL = 'django://'
 
 
-ENVIRONMENT = os.getenv("LORDIUM_ENVIRONMENT")
+ENVIRONMENT = os.getenv("LORDIUM_ENV")
 
-development = False
+DEVELOPMENT = False
 
 if ENVIRONMENT == "dev" or ENVIRONMENT == "DEV":
-    development = True
+    DEVELOPMENT = True
     LEVELS = {'debug': logging.DEBUG,
               'info': logging.INFO,
               'warning': logging.WARNING,
@@ -34,7 +34,7 @@ if ENVIRONMENT == "dev" or ENVIRONMENT == "DEV":
         level_name = sys.argv[1]
         level = LEVELS.get(level_name, logging.NOTSET)
         logging.basicConfig(level=level)
-    logging.info("Development Mode")
+    logging.info("DEVELOPMENT Mode")
 else:
     database_name = os.getenv("LORDIUM_DATABASE_NAME")
     database_user = os.getenv("LORDIUM_DATABASE_USER")
@@ -46,24 +46,31 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 from os.path import join
-TEMPLATE_DIRS = (
+
+if DEVELOPMENT == False:
+  TEMPLATE_DIRS = (
+      join(BASE_DIR,  'templates'),
+      join(BASE_DIR,  'app/static/dist'),
+  )
+  STATIC_ROOT = join(BASE_DIR,  'static')
+else:
+  TEMPLATE_DIRS = (
     join(BASE_DIR,  'templates'),
-    join(BASE_DIR,  'app/static'),
-)
-
-
-STATIC_ROOT = join(BASE_DIR,  'static')
+    join(BASE_DIR,  'app/static/app'),
+  )
+  STATIC_ROOT = join(BASE_DIR,  'app/static')
 
 
 
-# Quick-start development settings - unsuitable for production
+# Quick-start DEVELOPMENT settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '^#3&wa7m43_4d6te-y2on-x4u=__w*d_e)iptq_d*t#bg&59(@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = development
+DEBUG = DEVELOPMENT
+
 
 TEMPLATE_DEBUG = True
 
@@ -110,7 +117,7 @@ WSGI_APPLICATION = 'lordium.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
-if development:
+if DEVELOPMENT:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',

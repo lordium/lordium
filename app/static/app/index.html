@@ -2,7 +2,6 @@
 <html ng-app="lordiumApp">
   <head>
     <meta charset="utf-8">
-
     {% if direct_post %}
       <title>{{title}}|{{ direct_post.title }}</title>
       <meta property="og:url" content="{{ direct_post.post_url}}" />
@@ -38,7 +37,7 @@
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css(.tmp) /static/styles/main.css -->
-    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="static/app/styles/main.css">
     <!-- endbuild -->
   </head>
   <body ng-controller="LordiumCtrl">
@@ -273,28 +272,28 @@
     {{ google_analytics|safe }}
     <!-- build:js(.) /static/scripts/vendor.js -->
     <!-- bower:js -->
-    <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="bower_components/angular/angular.js"></script>
-    <script src="bower_components/bootstrap-sass-official/assets/javascripts/bootstrap.js"></script>
-    <script src="bower_components/angular-animate/angular-animate.js"></script>
-    <script src="bower_components/angular-aria/angular-aria.js"></script>
-    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
-    <script src="bower_components/angular-messages/angular-messages.js"></script>
-    <script src="bower_components/angular-resource/angular-resource.js"></script>
-    <script src="bower_components/angular-route/angular-route.js"></script>
-    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-    <script src="bower_components/angular-touch/angular-touch.js"></script>
-    <script src="bower_components/angular-mocks/angular-mocks.js"></script>
+    <script src="static/bower_components/jquery/dist/jquery.js"></script>
+    <script src="static/bower_components/angular/angular.js"></script>
+    <script src="static/bower_components/bootstrap-sass-official/assets/javascripts/bootstrap.js"></script>
+    <script src="static/bower_components/angular-animate/angular-animate.js"></script>
+    <script src="static/bower_components/angular-aria/angular-aria.js"></script>
+    <script src="static/bower_components/angular-cookies/angular-cookies.js"></script>
+    <script src="static/bower_components/angular-messages/angular-messages.js"></script>
+    <script src="static/bower_components/angular-resource/angular-resource.js"></script>
+    <script src="static/bower_components/angular-route/angular-route.js"></script>
+    <script src="static/bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="static/bower_components/angular-touch/angular-touch.js"></script>
+    <script src="static/bower_components/angular-mocks/angular-mocks.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
     <!-- build:remove:prod -->
-    <script src="/scripts/app.js"></script>
-    <script src="/scripts/services/factory.js"></script>
-    <script src="/scripts/controllers/main.js"></script>
-    <script src="/scripts/test/mock.js"></script>
-    <script src="/scripts/admin_app.js"></script>
-    <script src="/scripts/dom_events.js"></script>
+    <script src="static/app/scripts/app.js"></script>
+    <script src="static/app/scripts/services/factory.js"></script>
+    <script src="static/app/scripts/controllers/main.js"></script>
+    <script src="static/app/scripts/test/mock.js"></script>
+    <script src="static/app/scripts/admin_app.js"></script>
+    <script src="static/app/scripts/dom_events.js"></script>
     <!-- endbuild -->
     <script src="/static/dist/static/scripts/scripts.js"></script>
 </body>
