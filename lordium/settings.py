@@ -102,8 +102,8 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
-COMPRESS_OFFLINE = True
-COMPRESS_ENABLED = True
+COMPRESS_OFFLINE = False
+COMPRESS_ENABLED = False
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

@@ -6161,7 +6161,27 @@ body {
   border: solid 1px #dddddd;
   -webkit-box-shadow: 0px 1px 3px 0px #dddddd;
   -moz-box-shadow: 0px 1px 3px 0px #dddddd;
-  box-shadow: 0px 1px 3px 0px #dddddd; }
+  box-shadow: 0px 1px 3px 0px #dddddd;
+  -webkit-transition: all .1s ease;
+  /* Safari and Chrome */
+  -moz-transition: all .1s ease;
+  /* Firefox */
+  -o-transition: all .1s ease;
+  /* IE 9 */
+  -ms-transition: all .1s ease;
+  /* Opera */
+  transition: all .1s ease;
+  max-width: 100%; }
+  .thumbnail:hover {
+    -webkit-transform: scale(1.05);
+    /* Safari and Chrome */
+    -moz-transform: scale(1.05);
+    /* Firefox */
+    -ms-transform: scale(1.05);
+    /* IE 9 */
+    -o-transform: scale(1.05);
+    /* Opera */
+    transform: scale(1.05); }
 
 .panel, .data-container.admin-data .main-options-container form div.actions, .data-container.admin-data .main-options-container p.paginator {
   border: solid 1px #dddddd;
