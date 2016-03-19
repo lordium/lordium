@@ -34,7 +34,7 @@ def index(request, post_id=None, post_title=None):
 	if accounts:
 		req_context['brand_logo'] = accounts[0].profile_picture
 	context = RequestContext(request, req_context)
-	template = loader.get_template('index.html')
+	template = loader.get_template('app/index.html')
 	return HttpResponse(template.render(context))
 
 def initiate_app(request):
@@ -54,7 +54,7 @@ def initiate_app(request):
 		return HttpResponseRedirect(INSTA_URL)
 	else:
 		form = InitForm()
-	return render(request, 'app/index.html', {'form': form})
+	return render(request, 'app/start_index.html', {'form': form})
 
 @login_required(login_url='/')
 def fetch(request):

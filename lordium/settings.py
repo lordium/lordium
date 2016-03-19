@@ -50,15 +50,15 @@ from os.path import join
 if DEVELOPMENT == False:
   TEMPLATE_DIRS = (
       join(BASE_DIR,  'templates'),
-      join(BASE_DIR,  'app/static/dist'),
+      # join(BASE_DIR,  'app/static/dist'),
   )
   STATIC_ROOT = join(BASE_DIR,  'static')
 else:
   TEMPLATE_DIRS = (
     join(BASE_DIR,  'templates'),
-    join(BASE_DIR,  'app/static/app'),
+    # join(BASE_DIR,  'app/static/app'),
   )
-  STATIC_ROOT = join(BASE_DIR,  'app/static')
+  STATIC_ROOT = join(BASE_DIR,  'static')
 
 
 
@@ -72,7 +72,7 @@ SECRET_KEY = '^#3&wa7m43_4d6te-y2on-x4u=__w*d_e)iptq_d*t#bg&59(@'
 DEBUG = DEVELOPMENT
 
 
-TEMPLATE_DEBUG = True
+TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -90,8 +90,20 @@ INSTALLED_APPS = (
     'darbaan',
     'djcelery',
     'kombu.transport.django',
-    'tasker'
+    'tasker',
+    'django_pyscss',
+    'compressor'
 )
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # other finders..
+    'compressor.finders.CompressorFinder',
+)
+
+COMPRESS_OFFLINE = True
+COMPRESS_ENABLED = True
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -152,6 +164,16 @@ USE_L10N = True
 USE_TZ = True
 
 
+COMPRESS_PRECOMPILERS = (
+    # ...
+    ('text/scss', 'app.scss_filter.ScssFilter'),
+    # ...
+)
+
+COMPRESS_CSS_FILTERS = (
+    'compressor.filters.css_default.CssAbsoluteFilter',
+)
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
@@ -165,7 +187,7 @@ STATICFILES_DIRS = None
 #     )
 # else:
 STATICFILES_DIRS =(
-    os.path.join(BASE_DIR, "app/static/dist/static"),
+    os.path.join(BASE_DIR, "app/static/app"),
 
 )
 
