@@ -5,7 +5,7 @@ from django.template import RequestContext, loader
 from django.views.decorators.csrf import csrf_exempt
 
 from django.conf import settings
-from models import Account
+from models import Account, Post
 from manager import Provider as pd
 from forms import InitForm
 
@@ -21,7 +21,7 @@ def index(request, post_id=None, post_title=None):
 		return HttpResponseRedirect('/init_app')
 
 	req_context['google_analytics'] = config.google_analytics or ''
-	req_context['description'] = config.description or ''
+	req_context['description'] = config.description.replace('\n', '<br/>') or ''
 	req_context['keywords'] = config.keywords or ''
 	req_context['title'] = config.title or ''
 
@@ -34,7 +34,10 @@ def index(request, post_id=None, post_title=None):
 	if accounts:
 		req_context['brand_logo'] = accounts[0].profile_picture
 	context = RequestContext(request, req_context)
+
+	top_posts = Post.objects.all().order_by('-id')[6:]
 	template = loader.get_template('app/index.html')
+	context['top_posts'] = top_posts
 	return HttpResponse(template.render(context))
 
 def initiate_app(request):
