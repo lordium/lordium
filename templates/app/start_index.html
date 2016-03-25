@@ -2,10 +2,16 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title></title>
-    <meta name="description" content="">
+    <title>Lordium Setup</title>
+    <meta name="description" content="Lordium Setup">
     <meta name="viewport" content="width=device-width">
-    <link rel="stylesheet" href="/static/dist/static/styles/main.css">
+    <!-- <link rel="stylesheet" href="/static/dist/static/styles/main.css"> -->
+    {% load static from staticfiles %}
+    {% load compress %}
+
+    {% compress css %}
+      <link rel="stylesheet" type="text/scss" href="{% block stylesheet %}{% static "styles/main.css" %}{% endblock %}">
+    {% endcompress %}
   </head>
   <body class="container">
     <div class="row app-detail-inpage">
