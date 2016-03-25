@@ -44,7 +44,7 @@
 
   <body ng-controller="LordiumCtrl">
     {% if not direct_post %}
-    <div class="background-image" style="background-image:url({{brand_logo}})"></div>
+    <div class="background-image" style="background-image:url({{brand_background}})"></div>
     {% endif %}
   <div class="container-fluid">
     {% if direct_post %}
@@ -212,8 +212,34 @@
       </div>
     </div>
     {% endif %}
-
     <div class="row ">
+      {% for im_post in latest_posts %}
+      <div class="col-xs-12 col-sm-4 col-md-4 col-lg-4 post-container hide-em-for-disp">
+        <div class="thumbnail front-post {{ im_post.class }}" itemscope itemtype="http://schema.org/BlogPosting">
+         <a href="/{{im_post.id}}/{{im_post.title}}">
+            {% if im_post.post_type == 1 %}
+              <img itemprop="image" src="{{ im_post.post_url }}" alt="">
+            {% else %}
+              <video itemprop="video" itemscope itemtype="http://schema.org/VideoObject" controls width="100%" height="100%"><source src="{{ im_post.post_url }}" type="video/mp4"/></video>
+            {% endif%}
+         </a>
+         <div class="caption">
+          <div class="tags-container" >
+            <span>{{ im_post.tags}}</span>
+          </div>
+           <h3  itemprop="headline">{{ im_post.title }} </h3>
+           <p  class="post-description" itemprop="articleBody">{{ im_post.description }}</p>
+           <div class="location-container" >
+              <div class="location_markers" itemscope itemtype="http://schema.org/Place">
+                <span class="glyphicon glyphicon-map-marker"></span>
+                <span  itemprop="name">{{ im_post.location_name }}</span>
+              </div>
+            </div>
+         </div>
+       </div>
+      </div>
+      {% endfor %}
+
       <div ng-cloak class="col-xs-12 col-sm-4 col-md-4 col-lg-4 post-container" ng-repeat="tunnel in sc.tunnels" ng-cloak>
        <div class="thumbnail front-post {$ im_post.class $}" ng-repeat="im_post in tunnel|filter:search" itemscope itemtype="http://schema.org/BlogPosting">
          <a href="{$ im_post.dir_url $}">

@@ -34,10 +34,14 @@ def index(request, post_id=None, post_title=None):
 	if accounts:
 		req_context['brand_logo'] = accounts[0].profile_picture
 	context = RequestContext(request, req_context)
-
-	top_posts = Post.objects.all().order_by('-id')[6:]
+	try:
+		latest_posts = Post.objects.all().order_by('-id')[:6]
+		context['latest_posts'] = latest_posts
+		context['brand_background'] = latest_posts[0].post_url
+	except:
+		pass
 	template = loader.get_template('app/index.html')
-	context['top_posts'] = top_posts
+
 	return HttpResponse(template.render(context))
 
 def initiate_app(request):
