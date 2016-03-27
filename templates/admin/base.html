@@ -15,8 +15,28 @@
 {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" />{% endif %}
 <script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static "admin/" %}{% endfilter %}";</script>
 <script type="text/javascript">window.__admin_utc_offset__ = "{% filter escapejs %}{% now "Z" %}{% endfilter %}";</script>
-<script type="text/javascript" src="/static/scripts/vendor.js"></script>
-<script type="text/javascript" src="/static/scripts/scripts.js"></script>
+
+{% compress js %}
+<script src="/static/bower_components/jquery/dist/jquery.js"></script>
+<script src="/static/bower_components/angular/angular.js"></script>
+<script src="/static/bower_components/bootstrap-sass-official/assets/javascripts/bootstrap.js"></script>
+<script src="/static/bower_components/angular-animate/angular-animate.js"></script>
+<script src="/static/bower_components/angular-aria/angular-aria.js"></script>
+<script src="/static/bower_components/angular-cookies/angular-cookies.js"></script>
+<script src="/static/bower_components/angular-messages/angular-messages.js"></script>
+<script src="/static/bower_components/angular-resource/angular-resource.js"></script>
+<script src="/static/bower_components/angular-route/angular-route.js"></script>
+<script src="/static/bower_components/angular-sanitize/angular-sanitize.js"></script>
+<script src="/static/bower_components/angular-touch/angular-touch.js"></script>
+<script src="/static/bower_components/angular-mocks/angular-mocks.js"></script>
+
+<script src="/static/app/scripts/app.js"></script>
+<script src="/static/app/scripts/services/factory.js"></script>
+<script src="/static/app/scripts/controllers/main.js"></script>
+<!-- script src="/static/app/scripts/test/mock.js" ></script -->
+<script src="/static/app/scripts/admin_app.js"></script>
+<script src="/static/app/scripts/dom_events.js"></script>
+{% endcompress %}
 {% block extrahead %}{% endblock %}
 {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
 </head>
